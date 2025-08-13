@@ -14,7 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      onboarding_responses: {
+        Row: {
+          age_range: string | null
+          brand_colors: string[] | null
+          brand_name: string | null
+          brand_personality: Json | null
+          budget_range: string | null
+          challenges: string | null
+          competitors: string | null
+          created_at: string
+          elevator_pitch: string | null
+          extra_notes: string | null
+          five_year_vision: string | null
+          fonts: string[] | null
+          gender_focus: string | null
+          id: string
+          income_level: string | null
+          industry: string | null
+          inspiration_files: string[] | null
+          launch_timing: string | null
+          likes_dislikes: string | null
+          offerings: string | null
+          one_year_vision: string | null
+          online_link: string | null
+          primary_audience: string | null
+          problem_solved: string | null
+          session_id: string | null
+          tagline: string | null
+          updated_at: string
+          user_id: string | null
+          usp: string | null
+        }
+        Insert: {
+          age_range?: string | null
+          brand_colors?: string[] | null
+          brand_name?: string | null
+          brand_personality?: Json | null
+          budget_range?: string | null
+          challenges?: string | null
+          competitors?: string | null
+          created_at?: string
+          elevator_pitch?: string | null
+          extra_notes?: string | null
+          five_year_vision?: string | null
+          fonts?: string[] | null
+          gender_focus?: string | null
+          id?: string
+          income_level?: string | null
+          industry?: string | null
+          inspiration_files?: string[] | null
+          launch_timing?: string | null
+          likes_dislikes?: string | null
+          offerings?: string | null
+          one_year_vision?: string | null
+          online_link?: string | null
+          primary_audience?: string | null
+          problem_solved?: string | null
+          session_id?: string | null
+          tagline?: string | null
+          updated_at?: string
+          user_id?: string | null
+          usp?: string | null
+        }
+        Update: {
+          age_range?: string | null
+          brand_colors?: string[] | null
+          brand_name?: string | null
+          brand_personality?: Json | null
+          budget_range?: string | null
+          challenges?: string | null
+          competitors?: string | null
+          created_at?: string
+          elevator_pitch?: string | null
+          extra_notes?: string | null
+          five_year_vision?: string | null
+          fonts?: string[] | null
+          gender_focus?: string | null
+          id?: string
+          income_level?: string | null
+          industry?: string | null
+          inspiration_files?: string[] | null
+          launch_timing?: string | null
+          likes_dislikes?: string | null
+          offerings?: string | null
+          one_year_vision?: string | null
+          online_link?: string | null
+          primary_audience?: string | null
+          problem_solved?: string | null
+          session_id?: string | null
+          tagline?: string | null
+          updated_at?: string
+          user_id?: string | null
+          usp?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
