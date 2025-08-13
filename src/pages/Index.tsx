@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/sections/Hero";
-import PortfolioGrid from "@/components/sections/PortfolioGrid";
+import CategoryStrip from "@/components/sections/CategoryStrip";
 import Testimonials from "@/components/sections/Testimonials";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
@@ -27,7 +27,7 @@ const Index = () => {
         </script>
       </Helmet>
       <Hero />
-      <PortfolioGrid />
+      <CategoryStrip />
       <Testimonials />
       <section className="container mx-auto py-16">
         <div className="rounded-xl border bg-card p-8 text-center">

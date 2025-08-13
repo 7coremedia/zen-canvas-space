@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { caseStudies } from "@/data/caseStudies";
 import { motion } from "framer-motion";
-import { HeroBlock, FullBleedImageBlock, SplitMediaTextBlock, BentoGridBlock, GalleryBlock, QuoteBlock, StatsBlock, CTABlock, type CaseBlock } from "@/components/sections/case/blocks";
+import { HeroBlock, FullBleedImageBlock, SplitMediaTextBlock, BentoGridBlock, GalleryBlock, QuoteBlock, StatsBlock, CTABlock, BreakdownBlock, type CaseBlock } from "@/components/sections/case/blocks";
 
 export default function CaseStudy() {
   const { slug } = useParams();
@@ -17,19 +17,8 @@ export default function CaseStudy() {
         <link rel="canonical" href={`/portfolio/${cs.slug}`} />
       </Helmet>
 
-      {/* Hero */}
-      <section className="relative flex min-h-[60vh] items-end overflow-hidden">
-        <img src={cs.cover} alt={cs.title} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="container relative z-10 mx-auto py-12">
-          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="font-display text-4xl md:text-6xl text-white">
-            {cs.title}
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="mt-2 max-w-3xl text-white/90">
-            {cs.tagline}
-          </motion.p>
-        </div>
-      </section>
+      {/* Full-screen hero with cover under the header */}
+      <HeroBlock type="hero" media={cs.cover} headline={cs.title} sub={cs.tagline} />
 
       <section className="mt-0 space-y-12">
         {(cs.sections as CaseBlock[]).map((s, idx) => {
@@ -50,6 +39,8 @@ export default function CaseStudy() {
               return <StatsBlock key={idx} type="stats" items={(s as any).items || []} />;
             case "cta":
               return <CTABlock key={idx} type="cta" headline={(s as any).headline} sub={(s as any).sub} primaryHref={(s as any).primaryHref} primaryLabel={(s as any).primaryLabel} secondaryHref={(s as any).secondaryHref} secondaryLabel={(s as any).secondaryLabel} />;
+            case "breakdown":
+              return <BreakdownBlock key={idx} type="breakdown" hero={(s as any).hero} sections={(s as any).sections || []} />;
             default:
               return null;
           }

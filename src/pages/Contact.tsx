@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const Schema = z.object({ name: z.string().min(2), email: z.string().email(), message: z.string().min(10) });
 
@@ -15,9 +17,25 @@ type Values = z.infer<typeof Schema>;
 export default function Contact() {
   const form = useForm<Values>({ resolver: zodResolver(Schema) });
 
+  const sendMessage = useMutation({
+    mutationKey: ["contact:send"],
+    mutationFn: async (values: Values) =>
+      api.post<{
+        ok: boolean;
+      }>("/contact", values),
+    onSuccess: () => {
+      toast({ title: "Message sent", description: "I’ll get back to you soon." });
+      form.reset();
+    },
+    onError: (err: unknown) => {
+      const message =
+        (err as any)?.payload?.message || (err as Error)?.message || "Something went wrong";
+      toast({ title: "Failed to send", description: String(message) });
+    },
+  });
+
   const onSubmit = (v: Values) => {
-    console.log("contact submit", v);
-    toast({ title: "Message sent", description: "I’ll get back to you soon." });
+    sendMessage.mutate(v);
   };
 
   return (
@@ -52,7 +70,7 @@ export default function Contact() {
                 <FormMessage />
               </FormItem>
             )} />
-            <div className="pt-2"><Button variant="premium">Send</Button></div>
+            <div className="pt-2"><Button variant="premium" disabled={sendMessage.isPending}>{sendMessage.isPending ? "Sending..." : "Send"}</Button></div>
           </form>
         </Form>
       </div>

@@ -71,3 +71,28 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Backend integration
+
+You can call your backend in two ways:
+
+- Set `VITE_API_URL` in a `.env` file at the project root, and all requests will go to that base URL.
+- Or in development, use the Vite dev proxy by setting `VITE_PROXY_TARGET` and calling paths under `/api/*`.
+
+Example `.env`:
+
+```
+# Option 1: direct base URL
+VITE_API_URL=https://api.example.com
+
+# Option 2: dev proxy (when running `npm run dev`/`bun run dev`)
+# VITE_PROXY_TARGET=http://localhost:3000
+
+# Optional Supabase (already stubbed if unset)
+# VITE_SUPABASE_URL=
+# VITE_SUPABASE_ANON_KEY=
+```
+
+There is a small API helper in `src/lib/api.ts` and React Query is already configured in `src/App.tsx`.
+
+Example usage (Contact form): a POST request is sent to `POST /contact` via React Query. If using the proxy, implement it at `POST http://localhost:3000/contact` and return JSON like `{ "ok": true }`.

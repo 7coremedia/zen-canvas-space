@@ -9,6 +9,16 @@ export default defineConfig(({ mode }) => ({
     host: "localhost",
     port: 5173,
     strictPort: false, // allow Vite to pick a free port if 5173 is busy
+    proxy: {
+      // Forward /api/* to backend in development to avoid CORS
+      // Set target with your backend URL or use VITE_PROXY_TARGET env
+      "/api": {
+        target: process.env.VITE_PROXY_TARGET || "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
   plugins: [
     react(),
