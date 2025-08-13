@@ -13,7 +13,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
 import { HelpCircle, Download } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/integrations/supabase/client";
 import { generateBrandPersonalitySnapshotPDF, type BrandSnapshot } from "@/lib/pdf";
 import AuthDialog from "@/components/forms/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
@@ -183,10 +183,10 @@ export default function OnboardingForm() {
       if (!files?.length) return [] as string[];
       const uploads = await Promise.all(
         files.map(async (file) => {
-          const path = `inspiration/${Date.now()}-${file.name}`;
-          const { error } = await supabase.storage.from("onboarding").upload(path, file);
+          const path = `${user?.id || 'anonymous'}/${Date.now()}-${file.name}`;
+          const { error } = await supabase.storage.from("inspiration").upload(path, file);
           if (error) return "";
-          const { data } = supabase.storage.from("onboarding").getPublicUrl(path);
+          const { data } = supabase.storage.from("inspiration").getPublicUrl(path);
           return data.publicUrl || "";
         })
       );
@@ -205,11 +205,53 @@ export default function OnboardingForm() {
     try {
       const files = (values.inspirationFiles as File[] | undefined) || [];
       const fileUrls = await uploadInspirationFiles(files);
-      const payload = { ...values, inspirationFileUrls: fileUrls } as Record<string, unknown>;
+
+      // Prepare the data for insertion according to our schema
+      const insertData = {
+        user_id: user?.id,
+        session_id: user?.id || Date.now().toString(),
+        brand_name: values.brandName,
+        tagline: values.tagline,
+        online_link: values.onlineLink,
+        elevator_pitch: values.elevator,
+        industry: values.industry,
+        offerings: values.offerings,
+        usp: values.usp,
+        problem_solved: values.problem,
+        primary_audience: values.audiencePrimary.join(", "),
+        age_range: values.ageRanges.join(", "),
+        gender_focus: values.genderFocus.join(", "),
+        income_level: values.incomeLevels.join(", "),
+        brand_personality: {
+          masculine: values.masculine,
+          classic: values.classic,
+          playful: values.playful,
+          loud: values.loud,
+          approachable: values.approachable,
+          warm: values.warm,
+          traditional: values.traditional,
+          luxury: values.luxury,
+          textFocused: values.textFocused,
+          corporate: values.corporate,
+        },
+        inspiration_files: fileUrls,
+        brand_colors: values.brandColors,
+        fonts: values.fontsLoved ? [values.fontsLoved] : [],
+        competitors: [values.competitor1, values.competitor2, values.competitor3].filter(Boolean).join(", "),
+        likes_dislikes: `Likes: ${values.compLike || 'N/A'}\nDislikes: ${values.compDislike || 'N/A'}`,
+        one_year_vision: values.vision1y,
+        five_year_vision: values.vision5y,
+        challenges: values.challenge,
+        launch_timing: values.launchTiming,
+        budget_range: values.budgetRange,
+        extra_notes: values.extraNotes,
+      };
 
       try {
-        await supabase.from("onboarding_responses").insert({ payload });
-      } catch {}
+        await supabase.from("onboarding_responses").insert(insertData);
+      } catch (error) {
+        console.error("Failed to save onboarding response:", error);
+      }
 
       const snapshot: BrandSnapshot = {
         basics: {
@@ -271,12 +313,6 @@ export default function OnboardingForm() {
         </TooltipTrigger>
         <TooltipContent className="max-w-sm leading-relaxed">{tip}</TooltipContent>
       </Tooltip>
-      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} onContinue={async () => {
-        // try resubmitting after auth
-        const currentValues = form.getValues();
-        if (!user) return; // will submit on next click if still not logged in
-        await onSubmit(currentValues as FormValues);
-      }} />
     </div>
   );
 
@@ -864,6 +900,17 @@ export default function OnboardingForm() {
           )}
         </form>
       </Form>
+      
+      <AuthDialog 
+        open={authOpen} 
+        onOpenChange={setAuthOpen} 
+        onContinue={async () => {
+          // try resubmitting after auth
+          const currentValues = form.getValues();
+          if (!user) return; // will submit on next click if still not logged in
+          await onSubmit(currentValues as FormValues);
+        }} 
+      />
     </div>
   );
 }
