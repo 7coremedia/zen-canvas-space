@@ -1,0 +1,51 @@
+## Cursor Rules for This Repo
+
+### Prime Directive
+**Always reuse existing components first.** Only create a new component if a suitable, adaptable component truly does not exist anywhere in the codebase. Favor composition and extension via props/variants over duplication.
+
+### Where to Look (Existing Building Blocks)
+- **UI library**: `src/components/ui/*` (shadcn-ui based: `button`, `card`, `input`, `dialog`, `sheet`, `tabs`, `table`, etc.)
+- **Layout**: `src/components/layout/*` (e.g., `Header`, `Footer`)
+- **Sections**: `src/components/sections/*` (composable page sections)
+- **Utilities**: `src/lib/utils.ts` (e.g., `cn` for class merging)
+- **Styling**: Tailwind + tokens in `tailwind.config.ts`
+
+### Reuse and Extension Rules
+1. Prefer composing existing components (e.g., wrap `ui/card` + `ui/button`) over introducing new primitives.
+2. If visuals differ slightly, add a prop/variant (using `class-variance-authority` where applicable) or pass `className` to match the design. Do not fork components unless necessary.
+3. Align with existing tokens, spacing, and typography from Tailwind config; do not hardcode new colors/sizes if tokens exist.
+4. Keep new styles minimal and local. Prefer utility classes; avoid global CSS unless required.
+5. Follow TypeScript rigor: explicit interfaces/props, no `any`, keep components pure and focused.
+
+### When a New Component Is Justified (Rare)
+Create a new component only if:
+- No suitable component exists in `src/components/ui`, `layout`, or `sections` that can be adapted via props/variants.
+- The new piece is reusable across views (generic UI → `src/components/ui`; page-specific composition → `src/components/sections`).
+
+If creating new:
+- Co-locate under the correct folder and export with clear, descriptive names.
+- Document props with JSDoc. Expose `className` and forward refs when appropriate.
+- Use existing tokens and `cn` for class merging. Provide sensible variants instead of multiple similar components.
+
+### Workflow for Visual Tasks (Screenshots/Designs)
+1. Break down the design into primitives: buttons, inputs, cards, nav, tables, sheets, dialogs, etc.
+2. Search for matches in codebase (by meaning and by name) under the folders above.
+3. Adapt via props/variants; only then consider adding a small wrapper to compose existing parts.
+4. Only create a new component if steps 2–3 fail. Justify creation in the PR/commit message.
+
+### Integration & Architecture
+- Use React Router patterns found in `src/App.tsx` and `src/pages/*`; do not introduce a new routing style.
+- Keep data-fetch and side effects aligned with `@tanstack/react-query` usage where relevant.
+- Maintain naming, file structure, and code style consistent with existing components.
+
+### Quality & Consistency
+- Enforce accessibility (labels, roles, focus states). Prefer shadcn primitives that already handle a11y.
+- Add tests or usage examples when adding new reusable components.
+- No dead code or duplicates. If you find two similar components, consolidate.
+
+### Quick Checklist (before committing)
+- Reused an existing component? If not, why not?
+- If new, is it placed correctly (`ui` vs `sections`)? Has `className`, variants, and tokens been used?
+- Consistent with Tailwind tokens and `tailwind.config.ts`? No magic numbers/colors?
+- Type-safe props, descriptive names, minimal surface area, documented behavior.
+

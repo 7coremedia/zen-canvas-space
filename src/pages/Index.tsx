@@ -1,13 +1,44 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Helmet } from "react-helmet-async";
+import Hero from "@/components/sections/Hero";
+import PortfolioGrid from "@/components/sections/PortfolioGrid";
+import Testimonials from "@/components/sections/Testimonials";
+import { Button } from "@/components/ui/button";
+import { NavLink } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main>
+      <Helmet>
+        <title>KING – Branding & Creative Portfolio</title>
+        <meta name="description" content="Premium branding, logo design, and creative portfolio by KING. Explore work, services, and start your brand journey." />
+        <link rel="canonical" href="/" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "KING Edmund",
+            url: "/",
+            jobTitle: "Brand Designer",
+            sameAs: [
+              "https://instagram.com/",
+              "https://www.linkedin.com/"
+            ]
+          })}
+        </script>
+      </Helmet>
+      <Hero />
+      <PortfolioGrid />
+      <Testimonials />
+      <section className="container mx-auto py-16">
+        <div className="rounded-xl border bg-card p-8 text-center">
+          <h2 className="font-display text-2xl md:text-3xl">Ready to build a brand with gravity?</h2>
+          <p className="mt-2 text-muted-foreground">Let’s turn your vision into a decisive identity.</p>
+          <div className="mt-6">
+            <NavLink to="/onboarding"><Button variant="premium" size="lg">Work With Me</Button></NavLink>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 };
 
