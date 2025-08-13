@@ -20,11 +20,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let isMounted = true;
     (async () => {
       try {
-        const { data } = await (supabase as any).auth?.getSession?.();
+        const response = await (supabase as any).auth?.getSession?.();
+        const data = response?.data;
         if (isMounted) {
           setSession(data?.session || null);
           setUser(data?.session?.user || null);
         }
+      } catch (error) {
+        console.error('Auth session error:', error);
       } finally {
         if (isMounted) setLoading(false);
       }

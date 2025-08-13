@@ -35,21 +35,21 @@ export default function CaseStudy() {
         {(cs.sections as CaseBlock[]).map((s, idx) => {
           switch (s.type) {
             case "hero":
-              return <HeroBlock key={idx} media={(s as any).media || cs.cover} headline={(s as any).headline} sub={(s as any).sub} />;
+              return <HeroBlock key={idx} type="hero" media={(s as any).media || cs.cover} headline={(s as any).headline} sub={(s as any).sub} />;
             case "full-bleed":
-              return <FullBleedImageBlock key={idx} src={(s as any).src} alt={(s as any).alt} height={(s as any).height} caption={(s as any).caption} />;
+              return <FullBleedImageBlock key={idx} type="full-bleed" src={(s as any).src} alt={(s as any).alt} height={(s as any).height} caption={(s as any).caption} />;
             case "split":
-              return <SplitMediaTextBlock key={idx} mediaLeft={(s as any).mediaLeft} src={(s as any).src} alt={(s as any).alt} title={(s as any).title} body={(s as any).body} />;
+              return <SplitMediaTextBlock key={idx} type="split" mediaLeft={(s as any).mediaLeft} src={(s as any).src} alt={(s as any).alt} title={(s as any).title} body={(s as any).body} />;
             case "bento":
-              return <BentoGridBlock key={idx} items={(s as any).items || []} />;
+              return <BentoGridBlock key={idx} type="bento" items={(s as any).items || []} />;
             case "gallery":
-              return <GalleryBlock key={idx} images={(s as any).images || []} />;
+              return <GalleryBlock key={idx} type="gallery" images={(s as any).images || []} />;
             case "quote":
-              return <QuoteBlock key={idx} quote={(s as any).quote} author={(s as any).author} role={(s as any).role} />;
+              return <QuoteBlock key={idx} type="quote" quote={(s as any).quote} author={(s as any).author} role={(s as any).role} />;
             case "stats":
-              return <StatsBlock key={idx} items={(s as any).items || []} />;
+              return <StatsBlock key={idx} type="stats" items={(s as any).items || []} />;
             case "cta":
-              return <CTABlock key={idx} headline={(s as any).headline} sub={(s as any).sub} primaryHref={(s as any).primaryHref} primaryLabel={(s as any).primaryLabel} secondaryHref={(s as any).secondaryHref} secondaryLabel={(s as any).secondaryLabel} />;
+              return <CTABlock key={idx} type="cta" headline={(s as any).headline} sub={(s as any).sub} primaryHref={(s as any).primaryHref} primaryLabel={(s as any).primaryLabel} secondaryHref={(s as any).secondaryHref} secondaryLabel={(s as any).secondaryLabel} />;
             default:
               return null;
           }
