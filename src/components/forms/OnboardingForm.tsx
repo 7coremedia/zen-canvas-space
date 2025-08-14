@@ -15,8 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { HelpCircle, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { generateBrandPersonalitySnapshotPDF, type BrandSnapshot } from "@/lib/pdf";
-import AuthDialog from "@/components/forms/AuthDialog";
-import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const industries = [
   "Technology",
@@ -111,10 +110,10 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>;
 
 export default function OnboardingForm() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = React.useState(1);
   const [completed, setCompleted] = React.useState(false);
-  const [authOpen, setAuthOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const total = 10; // final screen included
 
   const form = useForm<FormValues>({
@@ -183,7 +182,7 @@ export default function OnboardingForm() {
       if (!files?.length) return [] as string[];
       const uploads = await Promise.all(
         files.map(async (file) => {
-          const path = `${user?.id || 'anonymous'}/${Date.now()}-${file.name}`;
+          const path = `anonymous/${Date.now()}-${file.name}`;
           const { error } = await supabase.storage.from("inspiration").upload(path, file);
           if (error) return "";
           const { data } = supabase.storage.from("inspiration").getPublicUrl(path);
@@ -197,19 +196,17 @@ export default function OnboardingForm() {
   };
 
   const onSubmit = async (values: FormValues) => {
-    // If user not logged in, prompt auth first
-    if (!user) {
-      setAuthOpen(true);
-      return;
-    }
     try {
+      setLoading(true);
+      
       const files = (values.inspirationFiles as File[] | undefined) || [];
       const fileUrls = await uploadInspirationFiles(files);
+      const sessionId = Date.now().toString();
 
       // Prepare the data for insertion according to our schema
       const insertData = {
-        user_id: user?.id,
-        session_id: user?.id || Date.now().toString(),
+        user_id: null, // Will be linked after user signs up
+        session_id: sessionId,
         brand_name: values.brandName,
         tagline: values.tagline,
         online_link: values.onlineLink,
@@ -247,10 +244,10 @@ export default function OnboardingForm() {
         extra_notes: values.extraNotes,
       };
 
-      try {
-        await supabase.from("onboarding_responses").insert(insertData);
-      } catch (error) {
-        console.error("Failed to save onboarding response:", error);
+      const { error } = await supabase.from("onboarding_responses").insert(insertData);
+      
+      if (error) {
+        throw error;
       }
 
       const snapshot: BrandSnapshot = {
@@ -894,23 +891,15 @@ export default function OnboardingForm() {
               {step < 9 ? (
                 <Button type="button" variant="premium" onClick={next}>Next</Button>
               ) : (
-                <Button type="submit" variant="premium">Finish</Button>
+                <Button type="submit" variant="premium" disabled={loading}>
+                  {loading ? "Saving..." : "Finish"}
+                </Button>
               )}
             </div>
           )}
         </form>
       </Form>
       
-      <AuthDialog 
-        open={authOpen} 
-        onOpenChange={setAuthOpen} 
-        onContinue={async () => {
-          // try resubmitting after auth
-          const currentValues = form.getValues();
-          if (!user) return; // will submit on next click if still not logged in
-          await onSubmit(currentValues as FormValues);
-        }} 
-      />
     </div>
   );
 }
