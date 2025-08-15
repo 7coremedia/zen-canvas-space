@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import PortfolioGrid from "@/components/sections/PortfolioGrid";
+import Cta from "@/components/sections/Cta";
 
 export default function Portfolio() {
   return (
@@ -14,6 +15,7 @@ export default function Portfolio() {
         <p className="mt-2 max-w-2xl text-muted-foreground">Categorized work across Branding, Logos, Graphic Design, Marketing Materials, and Special Projects.</p>
       </header>
       <PortfolioGrid />
+      <Cta />
     </main>
   );
 }
