@@ -34,7 +34,7 @@ export default function Auth() {
         title: "Welcome back!",
         description: "You've successfully signed in.",
       });
-      navigate("/");
+      navigate("/brand-details");
     }
     
     setLoading(false);

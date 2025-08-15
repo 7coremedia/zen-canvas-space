@@ -2,17 +2,20 @@ import { NavLink, useLocation } from "react-router-dom";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Heart, Briefcase } from "lucide-react";
+import { Menu, Heart, Briefcase, LogOut, User, FileText } from "lucide-react";
 import logoUrl from "@/assets/king-logo.svg";
 import mobileLogoUrl from "@/assets/king-logo-mobile.svg";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const location = useLocation();
   const isCasePage = location.pathname.startsWith("/portfolio/");
   const isLight = !(location.pathname === "/" || isCasePage);
   const isMobile = useIsMobile();
+  const { user, signOut } = useAuth();
+  const [sheetOpen, setSheetOpen] = React.useState(false);
 
   const [isHidden, setIsHidden] = React.useState(false);
   const lastScrollY = React.useRef(0);
@@ -47,7 +50,7 @@ export default function Header() {
       <div className={cn("container mx-auto flex h-full items-center justify-between", isLight ? "text-black" : "text-white")}> 
         {/* Left: Menu + Portfolio pill */}
         <div className="flex items-center gap-3">
-          <Sheet>
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
@@ -57,12 +60,88 @@ export default function Header() {
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72">
-              <nav className="mt-8 grid gap-3">
-                <NavLink to="/services" className="text-lg">Services</NavLink>
-                <NavLink to="/about" className="text-lg">About</NavLink>
-                <NavLink to="/contact" className="text-lg">Contact</NavLink>
-              </nav>
+            <SheetContent 
+              side="left" 
+              className="w-full h-full bg-background p-0 border-none"
+            >
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b">
+                  <img src={logoUrl} alt="KING" className="h-8" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSheetOpen(false)}
+                    className="text-foreground hover:bg-muted"
+                  >
+                    <Menu />
+                  </Button>
+                </div>
+
+                {/* Navigation */}
+                <nav className="flex-1 px-6 py-12">
+                  <div className="space-y-8">
+                    <NavLink 
+                      to="/services" 
+                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      onClick={() => setSheetOpen(false)}
+                    >
+                      Services
+                    </NavLink>
+                    <NavLink 
+                      to="/about" 
+                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      onClick={() => setSheetOpen(false)}
+                    >
+                      About
+                    </NavLink>
+                    <NavLink 
+                      to="/contact" 
+                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      onClick={() => setSheetOpen(false)}
+                    >
+                      Contact
+                    </NavLink>
+                    <NavLink 
+                      to="/portfolio" 
+                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      onClick={() => setSheetOpen(false)}
+                    >
+                      Portfolio
+                    </NavLink>
+                    
+                    {user && (
+                      <>
+                        <div className="border-t pt-8 mt-8">
+                          <NavLink 
+                            to="/brand-details" 
+                            className="flex items-center gap-3 font-display text-2xl text-foreground hover:text-accent transition-colors mb-6"
+                            onClick={() => setSheetOpen(false)}
+                          >
+                            <FileText className="h-6 w-6" />
+                            Brand Details
+                          </NavLink>
+                          <button 
+                            onClick={async () => {
+                              await signOut();
+                              setSheetOpen(false);
+                            }}
+                            className="flex items-center gap-3 font-display text-2xl text-foreground hover:text-accent transition-colors"
+                          >
+                            <LogOut className="h-6 w-6" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </nav>
+
+                {/* Footer */}
+                <div className="p-6 border-t">
+                  <p className="text-sm text-muted-foreground">© 2024 KING. All rights reserved.</p>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
 
@@ -95,9 +174,18 @@ export default function Header() {
           >
             Contact Us <Heart className="ml-2 h-4 w-4" />
           </NavLink>
-          <NavLink to="/onboarding">
-            <Button variant="gold" className="px-4">Start My Brand</Button>
-          </NavLink>
+          {user ? (
+            <NavLink to="/brand-details">
+              <Button variant="outline" className="px-4 flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Account
+              </Button>
+            </NavLink>
+          ) : (
+            <NavLink to="/onboarding">
+              <Button variant="gold" className="px-4">Start My Brand</Button>
+            </NavLink>
+          )}
         </div>
       </div>
     </header>

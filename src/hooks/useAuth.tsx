@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = React.useCallback(async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/onboarding" },
+      options: { redirectTo: window.location.origin + "/brand-details" },
     });
     return { error };
   }, []);
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUpWithEmail = React.useCallback(async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/onboarding`;
+    const redirectUrl = `${window.location.origin}/brand-details`;
     
     const { error } = await supabase.auth.signUp({
       email,

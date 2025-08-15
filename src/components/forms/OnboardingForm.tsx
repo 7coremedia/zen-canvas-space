@@ -292,10 +292,12 @@ export default function OnboardingForm() {
         title: "You’ve started your Empire.",
         description: "Your answers are the blueprint. Next: book your strategy session.",
       });
-      setCompleted(true);
-      setStep(10);
+      // Redirect to auth page after successful submission
+      navigate("/auth");
     } catch (e) {
       toast({ title: "Something went wrong", description: "Please try again.", variant: "destructive" as any });
+    } finally {
+      setLoading(false);
     }
   };
 
