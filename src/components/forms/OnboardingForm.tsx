@@ -292,8 +292,9 @@ export default function OnboardingForm() {
         title: "You’ve started your Empire.",
         description: "Your answers are the blueprint. Next: book your strategy session.",
       });
-      // Redirect to auth page after successful submission
-      navigate("/auth");
+      // Set completion state and move to final step
+      setCompleted(true);
+      setStep(10);
     } catch (e) {
       toast({ title: "Something went wrong", description: "Please try again.", variant: "destructive" as any });
     } finally {
@@ -874,7 +875,7 @@ export default function OnboardingForm() {
                 </p>
                 <p className="mt-2 text-muted-foreground">Next steps: Book your strategy session below, and I’ll walk you through your personalized Brand Personality Snapshot.</p>
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                  <Button asChild variant="premium"><a href="#book" rel="noreferrer">Book My Strategy Call</a></Button>
+                  <Button onClick={() => navigate("/auth")} variant="premium">Continue to Create Account</Button>
                   <Button asChild variant="secondary"><a href="https://wa.me/2340000000000" target="_blank" rel="noreferrer">Call on WhatsApp</a></Button>
                   <Button asChild variant="outline"><a href="https://wa.me/2340000000000?text=Hi%20KING%2C%20I%20completed%20the%20onboarding" target="_blank" rel="noreferrer">Text on WhatsApp</a></Button>
                 </div>
