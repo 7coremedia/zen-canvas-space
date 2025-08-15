@@ -1,98 +1,107 @@
-# Welcome to your Lovable project
+# KING – Branding & Creative Portfolio
 
-## Project info
+A modern, responsive portfolio website for KING, a premium branding and design studio. Built with a focus on aesthetics, performance, and user experience to showcase creative work and attract potential clients.
 
-**URL**: https://lovable.dev/projects/3cfb387b-49ab-4a43-9cf3-016f3ccb1d98
+## 🌟 Features
 
-## How can I edit this code?
+- **Responsive Design**: Looks great on all devices
+- **Modern UI/UX**: Built with shadcn/ui and Tailwind CSS
+- **Performance Optimized**: Fast loading with Vite and React
+- **Interactive Elements**: Custom cursor, smooth animations
+- **Case Study Showcase**: Detailed project presentations
+- **Contact & Onboarding**: Easy client engagement
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui
+- **State Management**: React Query
+- **Routing**: React Router
+- **Form Handling**: React Hook Form
+- **Icons**: Lucide Icons
+- **Deployment**: Vercel/Netlify ready
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3cfb387b-49ab-4a43-9cf3-016f3ccb1d98) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 16+ (recommend using [nvm](https://github.com/nvm-sh/nvm))
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/king-portfolio.git
+   cd king-portfolio
+   ```
 
-Follow these steps:
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/3cfb387b-49ab-4a43-9cf3-016f3ccb1d98) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
-
-## Backend integration
-
-You can call your backend in two ways:
-
-- Set `VITE_API_URL` in a `.env` file at the project root, and all requests will go to that base URL.
-- Or in development, use the Vite dev proxy by setting `VITE_PROXY_TARGET` and calling paths under `/api/*`.
-
-Example `.env`:
+## 📂 Project Structure
 
 ```
-# Option 1: direct base URL
-VITE_API_URL=https://api.example.com
-
-# Option 2: dev proxy (when running `npm run dev`/`bun run dev`)
-# VITE_PROXY_TARGET=http://localhost:3000
-
-# Optional Supabase (already stubbed if unset)
-# VITE_SUPABASE_URL=
-# VITE_SUPABASE_ANON_KEY=
+src/
+├── assets/           # Images, icons, and other static files
+├── components/       # Reusable UI components
+│   ├── forms/       # Form components
+│   ├── layout/      # Layout components
+│   └── sections/    # Page sections
+├── hooks/           # Custom React hooks
+├── lib/             # Utility functions and API clients
+├── pages/           # Page components
+└── styles/          # Global styles
 ```
 
-There is a small API helper in `src/lib/api.ts` and React Query is already configured in `src/App.tsx`.
+## 🔧 Environment Variables
 
-Example usage (Contact form): a POST request is sent to `POST /contact` via React Query. If using the proxy, implement it at `POST http://localhost:3000/contact` and return JSON like `{ "ok": true }`.
+Create a `.env` file in the root directory and add the following variables:
+
+```env
+# Backend API URL (if applicable)
+VITE_API_URL=your_api_url_here
+
+# Supabase (if using)
+# VITE_SUPABASE_URL=your_supabase_url
+# VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## 📦 Deployment
+
+This project can be deployed to any static hosting service:
+
+- [Vercel](https://vercel.com/)
+- [Netlify](https://www.netlify.com/)
+- [GitHub Pages](https://pages.github.com/)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Vite](https://vitejs.dev/)
+- UI components by [shadcn/ui](https://ui.shadcn.com/)
+- Icons by [Lucide](https://lucide.dev/)

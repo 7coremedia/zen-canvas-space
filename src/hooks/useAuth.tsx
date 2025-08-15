@@ -1,6 +1,7 @@
 import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { toast } from "@/hooks/use-toast";
 
 export type AuthContextValue = {
   session: Session | null;
@@ -21,11 +22,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+
+        // --- Save pending brand data after sign-in ---
+        if (event === "SIGNED_IN" && session?.user) {
+          const pendingDataString = sessionStorage.getItem('pendingBrandData');
+          if (pendingDataString) {
+            try {
+              const brandData = JSON.parse(pendingDataString);
+
+              // Check how many brands the user already has.
+              const { count, error: countError } = await supabase
+                .from('brands')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', session.user.id);
+
+              if (countError) throw countError;
+
+              // If the user has no brands, this one becomes the primary.
+              const isPrimary = count === 0;
+
+              const { data: newBrand, error } = await supabase
+                .from('brands')
+                .insert({
+                  ...brandData,
+                  user_id: session.user.id,
+                  is_primary: isPrimary,
+                })
+                .select()
+                .single();
+
+              if (error) throw error;
+
+              sessionStorage.removeItem('pendingBrandData');
+              toast({
+                title: "Welcome!",
+                description: `Your brand profile for "${newBrand.brand_name}" has been saved.`,
+              });
+
+            } catch (error: any) {
+              console.error("Failed to save pending brand data:", error);
+              toast({
+                title: "Save Failed",
+                description: "We couldn't save your onboarding data. Please contact support.",
+                variant: "destructive",
+              });
+            }
+          }
+        }
       }
     );
 

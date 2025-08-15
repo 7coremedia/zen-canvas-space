@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +14,39 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
+  const { user, signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const savePendingBrand = async () => {
+      if (user) {
+        const pendingData = sessionStorage.getItem('pendingBrandData');
+        if (pendingData) {
+          try {
+            const brandData = JSON.parse(pendingData);
+            const { data, error } = await supabase
+              .from('brands')
+              .insert({ ...brandData, user_id: user.id, is_primary: false })
+              .select()
+              .single();
+
+            if (error) throw error;
+
+            sessionStorage.removeItem('pendingBrandData');
+            toast({ title: "Brand profile created!", description: "Your new brand has been saved." });
+            navigate(`/brand/${data.id}`);
+          } catch (error: any) {
+            toast({ title: "Save Failed", description: error.message || "Could not save your brand.", variant: "destructive" });
+            navigate('/dashboard'); // Navigate to dashboard even if save fails
+          }
+        }
+      }
+    };
+
+    savePendingBrand();
+  }, [user, navigate, toast]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +65,8 @@ export default function Auth() {
         title: "Welcome back!",
         description: "You've successfully signed in.",
       });
-      navigate("/brand-details");
+      const redirectTo = location.state?.redirectTo || '/dashboard';
+      navigate(redirectTo);
     }
     
     setLoading(false);

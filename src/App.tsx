@@ -17,6 +17,7 @@ import Contact from "./pages/Contact";
 import CaseStudy from "./pages/CaseStudy";
 import Auth from "./pages/Auth";
 import BrandDetails from "./pages/BrandDetails";
+import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "@/hooks/useAuth";
 import CursorRing from "@/components/ui/CursorRing";
 
@@ -39,7 +40,8 @@ function AppShell() {
           <Route path="/services" element={<Services />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/brand-details" element={<BrandDetails />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/brand/:id" element={<BrandDetails />} />
           <Route path="/contact" element={<Contact />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

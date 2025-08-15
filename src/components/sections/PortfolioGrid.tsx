@@ -1,66 +1,141 @@
-import * as React from "react";
-import p1 from "@/assets/portfolio-1.jpg";
-import p2 from "@/assets/portfolio-2.jpg";
-import p3 from "@/assets/portfolio-3.jpg";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { CardHoverReveal, CardHoverRevealContent, CardHoverRevealMain } from '@/components/ui/reveal-on-hover';
+import { ScrollXCarousel, ScrollXCarouselContainer, ScrollXCarouselProgress, ScrollXCarouselWrap } from '@/components/ui/scroll-x-carousel';
 
-const items = [
-  { src: p1, title: "Periscope", category: "Branding", slug: "periscope" },
-  { src: p2, title: "Monogram Exploration", category: "Logo", slug: "monogram" },
-  { src: p3, title: "Campaign Poster", category: "Poster", slug: "campaign-poster" },
+const PORTFOLIO_ITEMS = [
+  {
+    id: 'periscope',
+    title: 'Periscope',
+    description: 'A modern branding project with a focus on clean aesthetics and user experience.',
+    services: ['Branding', 'UI/UX', 'Web Design'],
+    type: 'Branding',
+    imageUrl: 'https://images.unsplash.com/photo-1688733720228-4f7a18681c4f?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    id: 'monogram',
+    title: 'Monogram Exploration',
+    description: 'Exploring unique monogram designs that represent brand identity with simplicity and impact.',
+    services: ['Logo Design', 'Brand Identity'],
+    type: 'Logo',
+    imageUrl: 'https://images.unsplash.com/photo-1624996752380-8ec242e0f85d?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    id: 'campaign-poster',
+    title: 'Campaign Poster',
+    description: 'Vibrant poster design for a marketing campaign that captures attention and communicates effectively.',
+    services: ['Print Design', 'Marketing'],
+    type: 'Poster',
+    imageUrl: 'https://images.unsplash.com/photo-1574717025058-2f8737d2e2b7?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    id: 'saas-platform',
+    title: 'SaaS Platform',
+    description: 'Designing a comprehensive SaaS platform with a focus on user experience and scalability.',
+    services: ['UI/UX', 'Web App', 'Development'],
+    type: 'Web',
+    imageUrl: 'https://images.unsplash.com/photo-1654618977232-a6c6dea9d1e8?q=80&w=2486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    id: 'seo-optimization',
+    title: 'SEO Optimization',
+    description: 'Comprehensive SEO strategy and implementation for better online visibility and performance.',
+    services: ['SEO', 'Analytics', 'Content Strategy'],
+    type: 'Marketing',
+    imageUrl: 'https://images.unsplash.com/photo-1726066012698-bb7a3abce786?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
 ];
 
-const filters = ["All", "Branding", "Logo", "Poster"] as const;
+const filters = ['All', 'Branding', 'Logo', 'Poster', 'Web', 'Marketing'] as const;
 
 export default function PortfolioGrid() {
-  const [active, setActive] = React.useState<(typeof filters)[number]>("All");
-  const filtered = items.filter((it) => active === "All" || it.category === active);
+  const [active, setActive] = React.useState<(typeof filters)[number]>('All');
+  const filtered = PORTFOLIO_ITEMS.filter((item) => active === 'All' || item.type === active);
+
   return (
-    <section className="container mx-auto py-12">
-      <div className="mb-8">
+    <section className="relative py-12">
+      <div className="container mx-auto mb-8">
         <h2 className="font-display text-3xl md:text-4xl">Selected Work</h2>
         <p className="mt-2 text-muted-foreground">Branding, logos, and design systems built to lead.</p>
       </div>
 
-      <div className="mb-6 flex flex-wrap gap-2">
-        {filters.map((f) => (
-          <Button key={f} variant={active === f ? "premium" : "outline"} size="sm" onClick={() => setActive(f)}>
-            {f}
+      <div className="mb-6 container mx-auto flex flex-wrap gap-2">
+        {filters.map((filter) => (
+          <Button
+            key={filter}
+            variant={active === filter ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActive(filter)}
+            className="rounded-full"
+          >
+            {filter}
           </Button>
         ))}
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((it, idx) => (
-          <motion.div
-            key={it.title}
-            initial={{ opacity: 0, scale: 0.98, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: idx * 0.05, duration: 0.4, ease: "easeOut" }}
-          >
-            <Card className="group overflow-hidden border bg-card">
-              <CardContent className="p-0">
-                <Link to={`/portfolio/${it.slug}`} className="block">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img src={it.src} alt={`${it.title} – ${it.category} by KING`} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-black/0" />
-                      <div className="absolute bottom-3 right-3 rounded-full bg-gradient-primary px-3 py-1 text-xs text-foreground">View Case Study</div>
+      <ScrollXCarousel className="h-[150vh]">
+        <ScrollXCarouselContainer className="h-dvh place-content-center flex flex-col gap-8 py-12">
+          <div className="pointer-events-none w-[12vw] h-[103%] absolute inset-[0_auto_0_0] z-10 bg-[linear-gradient(90deg,_var(--background)_35%,_transparent)]" />
+          <div className="pointer-events-none bg-[linear-gradient(270deg,_var(--background)_35%,_transparent)] w-[15vw] h-[103%] absolute inset-[0_0_0_auto] z-10" />
+
+          <ScrollXCarouselWrap className="flex-4/5 flex space-x-8 [&>*:first-child]:ml-8">
+            {filtered.map((item) => (
+              <CardHoverReveal
+                key={item.id}
+                className="min-w-[70vw] md:min-w-[38vw] shadow-xl border xl:min-w-[30vw] rounded-xl overflow-hidden"
+              >
+                <CardHoverRevealMain>
+                  <img
+                    alt={item.title}
+                    src={item.imageUrl}
+                    className="size-full aspect-square object-cover"
+                  />
+                </CardHoverRevealMain>
+                <CardHoverRevealContent className="space-y-4 rounded-2xl bg-[rgba(0,0,0,.7)] backdrop-blur-3xl p-6">
+                  <div className="space-y-2">
+                    <h3 className="text-sm text-white/80">Type</h3>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge className="capitalize rounded-full bg-indigo-500">
+                        {item.type}
+                      </Badge>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <div className="text-sm text-muted-foreground">{it.category}</div>
-                    <div className="mt-1 font-medium">{it.title}</div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm text-white/80">Services</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {item.services.map((service) => (
+                        <Badge
+                          key={service}
+                          className="capitalize rounded-full"
+                          variant={'secondary'}
+                        >
+                          {service}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </Link>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+
+                  <div className="space-y-2 mt-4">
+                    <h3 className="text-white capitalize font-medium text-xl">
+                      {item.title}
+                    </h3>
+                    <p className="text-white/80 text-sm">{item.description}</p>
+                    <Button variant="outline" size="sm" className="mt-4 border-white/20 text-white hover:bg-white/10">
+                      View Case Study
+                    </Button>
+                  </div>
+                </CardHoverRevealContent>
+              </CardHoverReveal>
+            ))}
+          </ScrollXCarouselWrap>
+          
+          <ScrollXCarouselProgress
+            className="bg-secondary mx-8 h-1.5 rounded-full overflow-hidden"
+            progressStyle="size-full bg-indigo-500/80 rounded-full"
+          />
+        </ScrollXCarouselContainer>
+      </ScrollXCarousel>
     </section>
   );
 }

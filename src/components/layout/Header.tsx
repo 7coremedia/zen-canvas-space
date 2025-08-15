@@ -2,7 +2,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Heart, Briefcase, LogOut, User, FileText } from "lucide-react";
+import { Menu, Heart, Briefcase, LogOut, User, FileText, X } from "lucide-react";
 import logoUrl from "@/assets/king-logo.svg";
 import mobileLogoUrl from "@/assets/king-logo-mobile.svg";
 import { cn } from "@/lib/utils";
@@ -62,7 +62,7 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent 
               side="left" 
-              className="w-full h-full bg-background p-0 border-none"
+              className="w-full h-full bg-background p-0 border-none max-w-full sm:max-w-md"
             >
               <div className="flex flex-col h-full">
                 {/* Header */}
@@ -74,72 +74,91 @@ export default function Header() {
                     onClick={() => setSheetOpen(false)}
                     className="text-foreground hover:bg-muted"
                   >
-                    <Menu />
+                    <X className="h-6 w-6" />
+                    <span className="sr-only">Close menu</span>
                   </Button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-6 py-12">
-                  <div className="space-y-8">
+                <nav className="flex-1 px-6 py-12 overflow-y-auto">
+                  <div className="space-y-10">
                     <NavLink 
                       to="/services" 
-                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight"
                       onClick={() => setSheetOpen(false)}
                     >
-                      Services
+                      SERVICES
                     </NavLink>
                     <NavLink 
                       to="/about" 
-                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight"
                       onClick={() => setSheetOpen(false)}
                     >
-                      About
+                      ABOUT
                     </NavLink>
                     <NavLink 
                       to="/contact" 
-                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight"
                       onClick={() => setSheetOpen(false)}
                     >
-                      Contact
+                      CONTACT
                     </NavLink>
                     <NavLink 
                       to="/portfolio" 
-                      className="block font-display text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors"
+                      className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight"
                       onClick={() => setSheetOpen(false)}
                     >
-                      Portfolio
+                      PORTFOLIO
                     </NavLink>
                     
-                    {user && (
-                      <>
-                        <div className="border-t pt-8 mt-8">
+                    {user ? (
+                      <div className="border-t border-muted pt-10 mt-10">
+                        <h3 className="text-sm font-medium text-muted-foreground mb-6 tracking-wider">ACCOUNT</h3>
+                        <div className="space-y-6">
                           <NavLink 
-                            to="/brand-details" 
-                            className="flex items-center gap-3 font-display text-2xl text-foreground hover:text-accent transition-colors mb-6"
+                            to="/dashboard" 
+                            className="flex items-center gap-3 font-display font-medium text-2xl text-foreground hover:text-accent transition-colors"
                             onClick={() => setSheetOpen(false)}
                           >
                             <FileText className="h-6 w-6" />
-                            Brand Details
+                            My Brands
                           </NavLink>
                           <button 
                             onClick={async () => {
                               await signOut();
                               setSheetOpen(false);
                             }}
-                            className="flex items-center gap-3 font-display text-2xl text-foreground hover:text-accent transition-colors"
+                            className="flex items-center gap-3 font-display font-medium text-2xl text-foreground hover:text-accent transition-colors w-full text-left"
                           >
                             <LogOut className="h-6 w-6" />
                             Sign Out
                           </button>
                         </div>
-                      </>
+                      </div>
+                    ) : (
+                      <div className="border-t border-muted pt-10 mt-10">
+                        <h3 className="text-sm font-medium text-muted-foreground mb-6 tracking-wider">ACCOUNT</h3>
+                        <div className="space-y-4">
+                          <NavLink 
+                            to="/auth" 
+                            className="inline-flex items-center justify-center w-full px-4 py-3 text-base font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                            onClick={() => setSheetOpen(false)}
+                            state={{ fromMenu: true }}
+                          >
+                            Sign In / Sign Up
+                          </NavLink>
+                          <p className="text-sm text-muted-foreground text-center">
+                            Create an account to save your progress
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </nav>
 
                 {/* Footer */}
-                <div className="p-6 border-t">
-                  <p className="text-sm text-muted-foreground">© 2024 KING. All rights reserved.</p>
+                <div className="p-6 border-t border-muted mt-auto">
+                  <p className="text-sm text-muted-foreground"> 2024 KING. All rights reserved.</p>
                 </div>
               </div>
             </SheetContent>
@@ -175,10 +194,10 @@ export default function Header() {
             Contact Us <Heart className="ml-2 h-4 w-4" />
           </NavLink>
           {user ? (
-            <NavLink to="/brand-details">
+            <NavLink to="/dashboard">
               <Button variant="outline" className="px-4 flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Account
+                Dashboard
               </Button>
             </NavLink>
           ) : (
