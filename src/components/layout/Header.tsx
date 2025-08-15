@@ -12,7 +12,8 @@ import { useAuth } from "@/hooks/useAuth";
 export default function Header() {
   const location = useLocation();
   const isCasePage = location.pathname.startsWith("/portfolio/");
-  const isLight = !(location.pathname === "/" || isCasePage);
+  // Treat all pages except home as light (black text). Case pages now use black.
+  const isLight = location.pathname !== "/";
   const isMobile = useIsMobile();
   const { user, signOut } = useAuth();
   const [sheetOpen, setSheetOpen] = React.useState(false);
@@ -179,7 +180,7 @@ export default function Header() {
 
         {/* Center: Logo */}
         <NavLink to="/" aria-label="Home" className="inline-flex items-center">
-          <img src={logoSrc} alt="KING" className={cn("h-7 md:h-9", !isLight && "invert")} />
+          <img src={logoSrc} alt="KING" className={cn("h-7 md:h-9", !isLight && "invert") } />
         </NavLink>
 
         {/* Right: Contact + CTA */}

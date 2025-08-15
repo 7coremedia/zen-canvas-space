@@ -1,416 +1,315 @@
-import { useParams } from "react-router-dom";
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import Footer from "@/components/layout/Footer";
-import { ArrowRight } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import { caseStudies } from "@/data/caseStudies";
 
-// This would typically come from an API or data file
-const CASE_STUDIES = {
-  periscope: {
-    title: 'Periscope',
-    tagline: 'A modern branding project with a focus on clean aesthetics and user experience.',
-    heroImage: '/src/assets/aaluxury-branding-presentation-hero.jpg',
-    mobileHeroImage: '/src/assets/aaluxury-intro-hero-mobile.png',
-    services: ['Branding', 'UI/UX', 'Web Design'],
-    year: '2024',
-    client: 'Periscope Inc.',
-    category: 'Branding',
+// Replaceable hero + content images (use any luxury photography)
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2000&auto=format&fit=crop";
+const SUPPORT_IMAGE =
+  "https://images.unsplash.com/photo-1516054719048-38394d4a9a5a?q=80&w=1600&auto=format&fit=crop";
+const RESEARCH_IMAGE =
+  "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=2000&auto=format&fit=crop";
+const PROCESS_IMAGE =
+  "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=2000&auto=format&fit=crop";
+const FINAL_A =
+  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=2000&auto=format&fit=crop";
+const FINAL_B =
+  "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=2000&auto=format&fit=crop";
+const FINAL_C =
+  "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2000&auto=format&fit=crop";
+
+// Optional: light mock map to make title/meta feel “connected” by slug
+const CASE_META: Record<
+  string,
+  { title: string; client: string; role: string; year: string }
+> = {
+  "aaluxury-identity": {
+    title: "AA Luxury – Identity System",
+    client: "AA Luxury",
+    role: "Branding",
+    year: "2024",
   },
-  // Add more case studies here
-};
-
-type CaseStudyParams = {
-  slug: string;
+  "royal-monogram": {
+    title: "Royal Monogram Exploration",
+    client: "Monarch Atelier",
+    role: "Logo",
+    year: "2023",
+  },
+  "atelier-campaign-ss24": {
+    title: "Atelier SS24 Campaign",
+    client: "Atelier No. 9",
+    role: "Marketing",
+    year: "2024",
+  },
 };
 
 export default function CaseStudy() {
-  const { slug } = useParams<CaseStudyParams>();
-  const cs = CASE_STUDIES[slug as keyof typeof CASE_STUDIES] || CASE_STUDIES.periscope;
-  
-  if (!cs) {
-    return <main className="container mx-auto py-16">Case study not found</main>;
-  }
+  const { slug } = useParams();
+  const study = caseStudies.find((c) => c.slug === slug);
+  const isAALuxury = slug === "aaluxury-identity";
+  const meta = study
+    ? {
+        title: study.title,
+        client: study.client ?? "",
+        role: study.category,
+        year: study.year,
+      }
+    : (slug && CASE_META[slug]) || {
+        title: "Signature Identity Collection",
+        client: "Maison d’Or",
+        role: "Branding",
+        year: "2024",
+      };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Helmet>
-        <title>{cs.title} – Case Study | KING</title>
-        <meta name="description" content={cs.tagline} />
-        <link rel="canonical" href={`/portfolio/${cs.slug}`} />
+        <title>{meta.title} – KING</title>
+        <meta
+          name="description"
+          content={`${meta.title} for ${meta.client} – a refined case study by KING.`}
+        />
+        <link rel="canonical" href={`/portfolio/${slug ?? "case"}`} />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 -z-10">
-          <picture>
-            <source media="(max-width: 768px)" srcSet={cs.mobileHeroImage} />
-            <img 
-              src={cs.heroImage} 
-              alt={`${cs.title} - ${cs.tagline}`}
-              className="w-full h-full object-cover object-center"
-            />
-          </picture>
-          <div className="absolute inset-0 bg-black/30" />
-        </div>
-
-        {/* Content */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center text-white">
-          <motion.div 
-            className="max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="inline-block mb-6 px-4 py-1.5 text-sm font-medium bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              {cs.category} • {cs.year}
+      {/* Hero */}
+      <section className={isAALuxury ? "relative h-screen w-full" : "relative h-[70vh] w-full"}>
+        <img
+          src={study?.cover || HERO_IMAGE}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+          onError={(e) => {
+            const t = e.target as HTMLImageElement;
+            t.onerror = null;
+            t.src = "https://placehold.co/2000x1200";
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0">
+          <div className="container mx-auto px-4 pb-12 md:pb-16">
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.6, 0.05, -0.01, 0.9] }}
+              className="font-display font-medium text-4xl md:text-5xl lg:text-6xl tracking-tight text-white"
+            >
+              {meta.title}
+            </motion.h1>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs uppercase tracking-wider text-black">
+                {meta.client}
+              </span>
+              <span className="rounded-full bg-white/80 px-3 py-1 text-xs uppercase tracking-wider text-gray-700">
+                {meta.role}
+              </span>
+              <span className="rounded-full bg-white/70 px-3 py-1 text-xs uppercase tracking-wider text-gray-700">
+                {meta.year}
+              </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6">
-              {cs.title}
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8">
-              {cs.tagline}
-            </p>
-            <div className="flex flex-wrap justify-center gap-3 mb-12">
-              {cs.services.map((service) => (
-                <span key={service} className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm">
-                  {service}
-                </span>
+          </div>
+        </div>
+      </section>
+
+      <main>
+        {/* Overview */}
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl tracking-tight uppercase mb-10">
+              Project Overview
+            </h2>
+            <div className="grid md:grid-cols-2 gap-12 items-start">
+              <div>
+                <h3 className="font-display font-medium text-2xl md:text-3xl uppercase tracking-tight mb-4">
+                  The Challenge
+                </h3>
+                <p className="text-gray-700 mb-8 text-lg leading-relaxed">
+                  Establish a timeless identity across print and digital without
+                  sacrificing purity. The goal was a signature system capable of
+                  scaling from boutique packaging to large-format campaigns.
+                </p>
+                <h3 className="font-display font-medium text-2xl md:text-3xl uppercase tracking-tight mb-4">
+                  The Solution
+                </h3>
+                <p className="text-gray-700 text-lg leading-relaxed">
+                  We engineered a modular typographic suite, a calibrated grid,
+                  and a restrained palette—delivering a luxurious, flexible
+                  system that amplifies brand equity across every touchpoint.
+                </p>
+              </div>
+              <div className={isAALuxury ? "relative h-[80vh] overflow-hidden" : "relative h-80 md:h-96 rounded-2xl overflow-hidden"}>
+                <img
+                  src={SUPPORT_IMAGE}
+                  alt="Project showcase"
+                  className={isAALuxury ? "h-full w-full object-cover" : "h-full w-full object-cover"}
+                  loading="lazy"
+                  onError={(e) => {
+                    const t = e.target as HTMLImageElement;
+                    t.onerror = null;
+                    t.src = "https://placehold.co/1200x800";
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Research */}
+        <section className="py-16 md:py-24 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl tracking-tight uppercase mb-10">
+              Research & Discovery
+            </h2>
+            <div className={isAALuxury ? "relative w-full h-[85vh] overflow-hidden mb-10" : "relative w-full h-80 md:h-[28rem] rounded-2xl overflow-hidden mb-10"}>
+              <img
+                src={RESEARCH_IMAGE}
+                alt="Research findings"
+                className="h-full w-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  const t = e.target as HTMLImageElement;
+                  t.onerror = null;
+                  t.src = "https://placehold.co/1600x900";
+                }}
+              />
+            </div>
+            <div className="prose max-w-3xl">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                We mapped audience expectations and audited competitive
+                identities to surface whitespace. Insights shaped the
+                typography-first direction, emphasizing proportion, materials,
+                and detail as performance levers for perceived quality.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Design Process */}
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl tracking-tight uppercase text-center mb-12">
+              Design Process
+            </h2>
+            <div className={isAALuxury ? "relative w-full h-[85vh] overflow-hidden mb-12" : "relative w-full h-80 md:h-[32rem] rounded-2xl overflow-hidden mb-12"}>
+              <img
+                src={PROCESS_IMAGE}
+                alt="Design process"
+                className="h-full w-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  const t = e.target as HTMLImageElement;
+                  t.onerror = null;
+                  t.src = "https://placehold.co/1600x900";
+                }}
+              />
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                {
+                  title: "Wireframing",
+                  description:
+                    "Structural studies for layouts, ratios, and typographic rhythm.",
+                },
+                {
+                  title: "Prototyping",
+                  description:
+                    "Interactive previews to validate transitions and hierarchy.",
+                },
+                {
+                  title: "User Testing",
+                  description:
+                    "Feedback loops to calibrate clarity, legibility, and impact.",
+                },
+              ].map((step, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white p-6 rounded-xl border border-gray-100"
+                >
+                  <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
+                  <p className="text-gray-600">{step.description}</p>
+                </div>
               ))}
             </div>
-            <Button 
-              size="lg" 
-              className="group bg-white text-foreground hover:bg-white/90 px-8 py-6 text-base"
-            >
-              View Live Project
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </motion.div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <span className="text-sm text-white/80 mb-2">Scroll to explore</span>
-          <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
-        </div>
-      </section>
-
-      {/* 1. Full Screen Hero Image */}
-      <section className="relative h-screen w-full overflow-hidden">
-        <motion.img
-          src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop"
-          alt={cs.title}
-          className="absolute inset-0 h-full w-full object-cover"
-          initial={{ scale: 1.05 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        />
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 flex items-end">
-          <div className="w-full p-8 md:p-16">
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display text-4xl md:text-6xl lg:text-7xl text-white"
-            >
-              {cs.title}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-4 max-w-2xl text-lg text-white/90"
-            >
-              {cs.tagline}
-            </motion.p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 2. Client Request Section */}
-      <section className="py-16 md:py-24">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center px-8 md:px-16">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="font-display text-3xl md:text-4xl mb-6">CLIENT REQUEST</h2>
-            <blockquote className="text-lg md:text-xl mb-4">
-              "King I need a logo for my brand and a revamp. Luxury, Highend my goal is to sell outside of Africa"
-            </blockquote>
-            <cite className="text-muted-foreground">— Amara O., CEO, Aalux Labs</cite>
-            
-            <div className="mt-12">
-              <h3 className="font-display text-xl mb-4">PROCESS</h3>
-              <p className="text-muted-foreground">
-                "Our creative process doesn't come first. Research does. It's the first process"
-              </p>
-              <cite className="text-sm text-muted-foreground">— Abby. K, CCO, King Labs</cite>
-            </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&h=600&fit=crop"
-              alt="Client request visual"
-              className="w-full rounded-lg"
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 3. Creative Process - Research Meets Creative Thinking */}
-      <section className="py-16 md:py-24">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start px-8 md:px-16">
-          {/* Image Container with Overlapping Images */}
-          <div className="relative">
-            <motion.img
-              src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&h=1000&fit=crop"
-              alt="Research process"
-              className="w-full"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            />
-            <motion.img
-              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop"
-              alt="Creative thinking"
-              className="absolute -bottom-16 -right-8 w-3/4 rounded-lg shadow-lg"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            />
-          </div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="md:mt-16"
-          >
-            <h2 className="font-display text-3xl md:text-4xl mb-6">
-              RESEARCH MEETS<br />CREATIVE THINKING
+        {/* Final Design */}
+        <section className="py-16 md:py-24 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl tracking-tight uppercase text-center mb-12">
+              Final Design
             </h2>
-            <p className="text-muted-foreground mb-8">
-              THE RESULTS<br />ARE IN THE<br />RESEARCH
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 4. Problem & Solution Section */}
-      <section className="py-16 md:py-24">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start px-8 md:px-16">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&h=600&fit=crop"
-              alt="Problem visualization"
-              className="w-full rounded-lg"
-            />
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="mb-12">
-              <h2 className="font-display text-3xl md:text-4xl mb-6">PROBLEM</h2>
-              <p className="text-muted-foreground">
-                The brand had existed and served clients in and out of the UK but clients complained about poor packaging and presentation
-              </p>
+            <div className="space-y-16">
+              {[FINAL_A, FINAL_B, FINAL_C].map((src, i) => (
+                <div key={i} className="space-y-4">
+                  <h3 className="text-xl font-semibold">
+                    Signature Screen {i + 1}
+                  </h3>
+                  <div className={isAALuxury ? "relative w-full h-[85vh] overflow-hidden" : "relative w-full h-80 md:h-[28rem] rounded-2xl overflow-hidden"}>
+                    <img
+                      src={src}
+                      alt={`Screen ${i + 1}`}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        const t = e.target as HTMLImageElement;
+                        t.onerror = null;
+                        t.src = "https://placehold.co/1600x900";
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-            
-            <div>
-              <h2 className="font-display text-3xl md:text-4xl mb-6">KING</h2>
-              <p className="text-muted-foreground">
-                We had to use the information from our research to build three moodboards and let the client pick one which will shape our final decision. But that's not all
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* 5. Visual Gallery Section */}
-      <section className="py-16 md:py-24">
-        <div className="px-8 md:px-16">
-          <div className="grid md:grid-cols-3 gap-8 items-end">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="md:col-span-1"
-            >
+        {/* Results */}
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="font-display font-medium text-3xl md:text-4xl lg:text-5xl tracking-tight uppercase mb-12">
+              Results & Impact
+            </h2>
+            <div className="relative mx-auto mb-12 h-64 w-full max-w-4xl overflow-hidden rounded-2xl">
               <img
-                src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&h=800&fit=crop"
-                alt="Visual 1"
-                className="w-full rounded-lg"
+                src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2000&auto=format&fit=crop"
+                alt="Results visualization"
+                className="h-full w-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  const t = e.target as HTMLImageElement;
+                  t.onerror = null;
+                  t.src = "https://placehold.co/1200x600";
+                }}
               />
-            </motion.div>
-            
-            <div className="md:col-span-2 relative">
-              <motion.img
-                src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop"
-                alt="Visual 2"
-                className="w-full rounded-lg"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-              />
-              <motion.img
-                src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&h=400&fit=crop"
-                alt="Visual 3"
-                className="absolute -bottom-12 -right-8 w-2/3 rounded-lg shadow-lg"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              />
+            </div>
+            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
+              {[
+                { value: "75%", label: "Increase in engagement" },
+                { value: "40%", label: "Reduction in support tickets" },
+                { value: "4.8/5", label: "User satisfaction score" },
+              ].map((stat, idx) => (
+                <div key={idx}>
+                  <div className="font-display font-medium text-4xl text-blue-600">
+                    {stat.value}
+                  </div>
+                  <div className="mt-2 text-gray-600">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-14">
+              <Link
+                to="/portfolio"
+                className="inline-flex items-center justify-center rounded-full border border-gray-200 px-6 py-3 text-sm uppercase tracking-wider text-gray-700 hover:bg-gray-50"
+              >
+                Browse More Work
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 6. Solution Section */}
-      <section className="py-16 md:py-24">
-        <div className="px-8 md:px-16">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mb-12"
-          >
-            <h2 className="font-display text-3xl md:text-4xl mb-6">SOLUTION</h2>
-            <p className="text-muted-foreground max-w-2xl">
-              We used the information based on research and built a brand image that not just looks good but speaks directly to the customers and target audience
-            </p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&h=800&fit=crop"
-              alt="Solution showcase"
-              className="w-full rounded-lg"
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 7. Others Section */}
-      <section className="py-16 md:py-24">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center px-8 md:px-16">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="font-display text-3xl md:text-4xl mb-6">OTHERS</h2>
-            <p className="text-muted-foreground">
-              The brand asked for a more vibrant vibe and packaging for a wider audience which they decided to market as the norm while their luxury is kept for high end customers.
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop"
-              alt="Others showcase"
-              className="w-full rounded-lg"
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 8. Final Showcase Image */}
-      <section className="py-16 md:py-24">
-        <div className="px-8 md:px-16">
-          <motion.img
-            src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1400&h=800&fit=crop"
-            alt="Final showcase"
-            className="w-full rounded-lg"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          />
-        </div>
-      </section>
-
-      {/* 9. Next Case Study & CTA */}
-      <section className="py-16 md:py-24">
-        <div className="px-8 md:px-16">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="font-display text-2xl mb-4">NEXT CASE STUDY</h2>
-            <div className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-              <span>View Next Project</span>
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="max-w-4xl mx-auto text-center rounded-3xl border bg-card p-12"
-          >
-            <h2 className="font-display text-3xl md:text-4xl mb-4">
-              READY TO BUILD A BRAND WITH GRAVITY?
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Let's turn your vision into a decisive identity.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                <Link to="/onboarding">Start My Strategy</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/portfolio">My Portfolio</Link>
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      
-      <Footer />
-    </div>
+        </section>
+      </main>
+    </>
   );
 }

@@ -10,7 +10,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Portfolio from "./pages/Portfolio";
 import About from "./pages/About";
-import Browse from "./pages/Browse";
 import Services from "./pages/Services";
 import Onboarding from "./pages/Onboarding";
 import Contact from "./pages/Contact";
@@ -28,14 +27,13 @@ function AppShell() {
   const isHome = location.pathname === "/";
   return (
     <>
-      <CursorRing enabled size={56} />
+      <CursorRing enabled={false} size={56} />
       <Header />
       <main className={isHome ? "" : "pt-28 md:pt-32"}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:slug" element={<CaseStudy />} />
-          <Route path="/browse/:category" element={<Browse />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/onboarding" element={<Onboarding />} />
