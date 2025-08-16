@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   Radar,
   RadarChart,
@@ -33,7 +33,7 @@ const CustomPolarAngleAxis: React.FC<CustomPolarAngleAxisProps> = (props) => {
   if (!payload) return null;
   
   const words = payload.value.split(' ');
-  
+
   return (
     <RechartsText
       x={x}
@@ -42,11 +42,7 @@ const CustomPolarAngleAxis: React.FC<CustomPolarAngleAxisProps> = (props) => {
       verticalAnchor="middle"
       className="text-xs fill-muted-foreground"
     >
-      {words.map((word, i) => (
-        <tspan key={i} x={x} dy={i > 0 ? '1em' : 0}>
-          {word}
-        </tspan>
-      ))}
+      {words.join(' ')}
     </RechartsText>
   );
 };

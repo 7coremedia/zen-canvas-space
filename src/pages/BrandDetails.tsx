@@ -247,9 +247,7 @@ const BrandDetails = () => {
         <div className="bg-card rounded-lg border p-6">
           <BrandForm
             initialData={brand}
-            onSave={handleSave}
-            onCancel={() => setEditing(false)}
-            loading={saving}
+            onSuccess={() => setEditing(false)}
           />
         </div>
       ) : (
