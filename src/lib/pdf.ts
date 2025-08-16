@@ -7,7 +7,7 @@ export type BrandSnapshot = {
     link?: string;
     elevator?: string;
   };
-  sliders: Array<{ label: string; value: number; left: string; right: string }>;
+  sliders: Array<{ label: string; value: number; left?: string; right?: string }>;
   keyAnswers: Array<{ question: string; answer: string }>;
 };
 

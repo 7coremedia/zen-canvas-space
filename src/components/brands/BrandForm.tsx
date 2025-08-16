@@ -113,10 +113,10 @@ export function BrandForm({ initialData, onSuccess }: {
       setIsSubmitting(true);
       
       // Check if this is an update or create
-      if (initialData?.id) {
+      if (initialData && 'id' in initialData && initialData.id) {
         // Update existing brand
         const { error } = await supabase
-          .from('brands')
+          .from('onboarding_responses')
           .update({
             ...data,
             updated_at: new Date().toISOString(),
@@ -132,12 +132,11 @@ export function BrandForm({ initialData, onSuccess }: {
       } else {
         // Create new brand
         const { data: brand, error } = await supabase
-          .from('brands')
+          .from('onboarding_responses')
           .insert([
             {
               ...data,
               user_id: user.id,
-              is_primary: true, // Will be handled by the database function
             },
           ])
           .select()
@@ -150,9 +149,9 @@ export function BrandForm({ initialData, onSuccess }: {
           description: 'Your brand has been created.',
         });
         
-        // Redirect to the new brand's page
+        // Redirect to brand details page
         if (brand) {
-          navigate(`/brands/${brand.id}`);
+          navigate(`/brand-details`);
         }
       }
       
@@ -248,7 +247,7 @@ export function BrandForm({ initialData, onSuccess }: {
               ) : (
                 <>
                   <Check className="mr-2 h-4 w-4" />
-                  {initialData?.id ? 'Update Brand' : 'Create Brand'}
+                  {(initialData && 'id' in initialData && initialData.id) ? 'Update Brand' : 'Create Brand'}
                 </>
               )}
             </Button>

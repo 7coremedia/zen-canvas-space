@@ -1,0 +1,127 @@
+export type Database = {
+  public: {
+    Tables: {
+      onboarding_responses: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          session_id: string | null;
+          brand_name: string | null;
+          tagline: string | null;
+          online_link: string | null;
+          elevator_pitch: string | null;
+          industry: string | null;
+          offerings: string | null;
+          usp: string | null;
+          problem_solved: string | null;
+          primary_audience: string | null;
+          age_range: string | null;
+          gender_focus: string | null;
+          income_level: string | null;
+          brand_personality: any | null;
+          one_year_vision: string | null;
+          five_year_vision: string | null;
+          challenges: string | null;
+          competitors: string | null;
+          likes_dislikes: string | null;
+          launch_timing: string | null;
+          budget_range: string | null;
+          extra_notes: string | null;
+          inspiration_files: string[] | null;
+          brand_colors: string[] | null;
+          fonts: string[] | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          brand_name?: string | null;
+          tagline?: string | null;
+          online_link?: string | null;
+          elevator_pitch?: string | null;
+          industry?: string | null;
+          offerings?: string | null;
+          usp?: string | null;
+          problem_solved?: string | null;
+          primary_audience?: string | null;
+          age_range?: string | null;
+          gender_focus?: string | null;
+          income_level?: string | null;
+          brand_personality?: any | null;
+          one_year_vision?: string | null;
+          five_year_vision?: string | null;
+          challenges?: string | null;
+          competitors?: string | null;
+          likes_dislikes?: string | null;
+          launch_timing?: string | null;
+          budget_range?: string | null;
+          extra_notes?: string | null;
+          inspiration_files?: string[] | null;
+          brand_colors?: string[] | null;
+          fonts?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          brand_name?: string | null;
+          tagline?: string | null;
+          online_link?: string | null;
+          elevator_pitch?: string | null;
+          industry?: string | null;
+          offerings?: string | null;
+          usp?: string | null;
+          problem_solved?: string | null;
+          primary_audience?: string | null;
+          age_range?: string | null;
+          gender_focus?: string | null;
+          income_level?: string | null;
+          brand_personality?: any | null;
+          one_year_vision?: string | null;
+          five_year_vision?: string | null;
+          challenges?: string | null;
+          competitors?: string | null;
+          likes_dislikes?: string | null;
+          launch_timing?: string | null;
+          budget_range?: string | null;
+          extra_notes?: string | null;
+          inspiration_files?: string[] | null;
+          brand_colors?: string[] | null;
+          fonts?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          display_name: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          display_name?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          display_name?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+    };
+    Views: {};
+    Functions: {};
+    Enums: {};
+  };
+};

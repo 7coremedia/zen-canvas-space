@@ -154,25 +154,7 @@ const Index = () => {
         <img src="/home/alux-bento-vibe.png" alt="Full width image" className="w-full h-auto" />
       </section>
 
-      {/* Ready to build section */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto flex justify-center">
-          <div className="bg-[#f2f2f2] p-8 rounded-lg shadow-lg text-center max-w-2xl">
-            <h2 className="text-4xl font-bold mb-4 font-display">READY TO BUILD A BRAND WITH GRAVITY?</h2>
-            <p className="text-sm text-muted-foreground mb-8">
-              Let's turn your vision into a decisive identity.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Button variant="outline" className="px-6 py-3 text-lg">
-                My Portfolio
-              </Button>
-              <Button variant="default" className="px-6 py-3 text-lg bg-black text-white hover:bg-gray-800">
-                Start My Brand
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Cta />
 
     </main>
   );
