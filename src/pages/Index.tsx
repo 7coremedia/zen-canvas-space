@@ -60,7 +60,7 @@ const Index = () => {
             </div>
         </div>
         <div className="flex flex-col items-center">
-          <img src={aaluxuryBrandingPresentationHero} alt="Aaluxury Brand Presentation" className="max-w-full h-auto rounded-lg shadow-lg mb-4" />
+          <img src="/" alt="Aaluxury Brand Presentation" className="max-w-full h-auto rounded-lg shadow-lg mb-4" />
         </div>
       </section>
 
