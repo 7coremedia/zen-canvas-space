@@ -7,12 +7,13 @@ const About = () => {
       <Header />
       <main className="px-4 md:px-8 lg:px-16">
         <section className="py-16">
-          {/* Thumbnail Container */}
+          {/* Thumbnail Image */}
           <div className="relative mb-24">
             <img
               src="/public/home/about-tumb.png"
               alt="About Hero Thumbnail"
-              className="w-full h-auto object-cover aspect-video"
+              // The classes below make the image responsive
+              className="w-full h-auto max-w-full object-contain aspect-video"
             />
           </div>
 
