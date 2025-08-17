@@ -126,9 +126,13 @@ const Index = () => {
   {/* Left Column: Text */}
   <div>
     <h2 className="text-4xl font-bold mb-4 font-display">OTHERS</h2>
-    <p className="text-sm text-muted-foreground">
-      Content about other projects or aspects can go here.
-    </p>
+    <p className="text-sm text-muted-foreground">The brand asked fora
+more vibrant vibe and
+packaging for a wider audience
+which they decided to market as
+the norm while their luxury
+is kept for high end customers.
+So, we delivered. </p>
   </div>
   {/* Right Column: Image */}
   <img src="/home/alux-label.png" alt="Other Project Image" />
