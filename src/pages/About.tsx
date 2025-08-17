@@ -18,21 +18,7 @@ const About = () => {
           </div>
 
           <div className="relative -mt-40">
-            <div className="flex flex-col md:flex-row items-start justify-between">
-              {/* Left side: Profile Pic and Details */}
-              <div className="flex items-start space-x-4">
-                <img
-                  src="/public/home/the-king.png"
-                  alt="Edmund Chan"
-                  className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white object-cover"
-                />
-                <div className="pt-24 md:pt-32">
-                  <h1 className="text-2xl md:text-3xl font-bold">Edmund Chan</h1>
-                  <p className="text-muted-foreground">@KingEdmundChan</p>
-                  <p className="text-muted-foreground">Leader of The Forceful Company</p>
-                </div>
-              </div>
-
+            <div className="flex flex-col md:flex-row items-start justify-end">
               {/* Right side: CTA Buttons */}
               <div className="flex items-center space-x-4 mt-4 md:mt-32">
                 <a href="tel:+2349137145159">
