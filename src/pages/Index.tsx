@@ -17,24 +17,20 @@ import aaluxuryMoodboard from "@/assets/aaluxury-brand-pres.jpg";
 import aaluxResuInSea from "@/assets/aalux-resu-in-sea.png"; // Import the new image
 
 const Index = () => {
-  return (
-    <main className="bg-[#f2f2f2]">
+  return <main className="bg-[#f2f2f2]">
       <Helmet>
         <title>KING – Branding & Creative Portfolio</title>
         <meta name="description" content="Premium branding, logo design, and creative portfolio by KING. Explore work, services, and start your brand journey." />
         <link rel="canonical" href="/" />
         <script type="application/ld+json">
           {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: "KING Edmund",
-            url: "/",
-            jobTitle: "Brand Designer",
-            sameAs: [
-              "https://instagram.com/",
-              "https://www.linkedin.com/"
-            ]
-          })}
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "KING Edmund",
+          url: "/",
+          jobTitle: "Brand Designer",
+          sameAs: ["https://instagram.com/", "https://www.linkedin.com/"]
+        })}
         </script>
       </Helmet>
 
@@ -67,11 +63,7 @@ const Index = () => {
 
           {/* Right Column: Images */}
           <div className="flex flex-col items-center">
-            <img
-              src="/home/client-req-home.png"
-              alt="Aaluxury Brand Presentation"
-              className="w-full h-auto object-contain"
-            />
+            <img src="/home/client-req-home.png" alt="Aaluxury Brand Presentation" className="w-full h-auto object-contain" />
           </div>
         </div>
 
@@ -107,11 +99,7 @@ const Index = () => {
 
         {/* Left Column (Image) */}
         <div className="order-2 md:order-1 flex justify-center">
-          <img
-            src="/home/prob-king-sol.png"
-            alt="Aaluxury Intro Hero Mobile"
-            className="w-full h-auto object-contain"
-          />
+          <img src="/home/prob-king-sol.png" alt="Aaluxury Intro Hero Mobile" className="w-full h-auto object-contain" />
         </div>
       </section>
 
@@ -124,16 +112,12 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="mb-8">
             <h2 className="text-4xl font-bold mb-4 font-display">SOLUTION</h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground mx-0 my-0 px-0 py-0 text-sm text-left left text">
               Based on the chosen moodboard, we developed a comprehensive brand identity system. This included the final logo design, a refined color palette, typography guidelines, and imagery standards, all carefully crafted to elevate Aalux Labs' presence in the luxury market and support their goal of global expansion.
             </p>
           </div>
           <div className="w-full flex justify-center">
-            <img
-              src="/home/aalux-bento.png"
-              alt="Aaluxury Brand Presentation"
-              className="w-full max-w-4xl h-auto object-cover"
-            />
+            <img src="/home/aalux-bento.png" alt="Aaluxury Brand Presentation" className="w-full max-w-4xl h-auto object-cover" />
           </div>
         </div>
       </section>
@@ -148,7 +132,7 @@ const Index = () => {
   </div>
   {/* Right Column: Image */}
   <img src="/home/alux-label.png" alt="Other Project Image" />
-</section>
+    </section>
 
       <section className="py-15 py-4 px-4 bg-[#f2f2f2]">
         <img src="/home/alux-bento-vibe.png" alt="Full width image" className="w-full h-auto" />
@@ -156,8 +140,6 @@ const Index = () => {
 
       <Cta />
 
-    </main>
-  );
+    </main>;
 };
-
 export default Index;
