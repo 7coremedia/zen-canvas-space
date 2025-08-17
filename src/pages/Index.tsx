@@ -117,7 +117,7 @@ const Index = () => {
             </p>
           </div>
           <div className="w-full flex justify-center">
-            <img src="/home/aalux-bento.png" alt="Aaluxury Brand Presentation" className="w-full max-w-4xl h-auto object-cover" />
+            <img src="/home/aalux-bento.png" alt="Aaluxury Brand Presentation" className="w-full max-w-10xl h-auto object-cover" />
           </div>
         </div>
       </section>
