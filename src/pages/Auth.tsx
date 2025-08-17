@@ -20,8 +20,10 @@ export default function Auth() {
   const location = useLocation();
 
   useEffect(() => {
-    const savePendingBrand = async () => {
+    const handleUserRedirect = async () => {
       if (user) {
+        console.log("User authenticated, handling redirect...", user);
+        
         const pendingData = sessionStorage.getItem('pendingBrandData');
         if (pendingData) {
           try {
@@ -37,15 +39,20 @@ export default function Auth() {
             sessionStorage.removeItem('pendingBrandData');
             toast({ title: "Brand profile created!", description: "Your new brand has been saved." });
             navigate(`/brand/${data.id}`);
+            return; // Exit early if we're handling brand data
           } catch (error: any) {
+            console.error("Failed to save brand data:", error);
             toast({ title: "Save Failed", description: error.message || "Could not save your brand.", variant: "destructive" });
-            navigate('/dashboard'); // Navigate to dashboard even if save fails
           }
         }
+        
+        // If no pending brand data, redirect to dashboard or home
+        console.log("Redirecting authenticated user to dashboard");
+        navigate('/dashboard');
       }
     };
 
-    savePendingBrand();
+    handleUserRedirect();
   }, [user, navigate, toast]);
 
   const handleSignIn = async (e: React.FormEvent) => {
