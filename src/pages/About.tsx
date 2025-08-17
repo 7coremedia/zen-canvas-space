@@ -10,7 +10,7 @@ const About = () => {
           {/* Thumbnail Image */}
           <div className="relative mb-4">
             <img
-              src="/public/home/about-tumb.png"
+              src="/home/about-tumb.png"
               alt="About Hero Thumbnail"
               // The classes below make the image responsive
               className="w-full h-auto max-w-full object-contain aspect-video"
@@ -23,7 +23,7 @@ const About = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:+2349137145159">
               <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black flex items-center space-x-2">
-                <img src="/public/home/call-icon.png" alt="Call Icon" className="w-4 h-4" />
+                <img src="/home/call-icon.png" alt="Call Icon" className="w-4 h-4" />
                 <span>call now</span>
               </Button>
             </a>
@@ -48,7 +48,7 @@ const About = () => {
         {/* New Section with the Image */}
         <section className="pt-2 pb-4">
           <img
-            src="/public/home/about-cont.png"
+            src="/home/about-cont.png"
             alt="About Content Image"
             className="w-full h-auto object-contain"
           />
@@ -59,7 +59,7 @@ const About = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:+2349137145159">
               <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black flex items-center space-x-2">
-                <img src="/public/home/call-icon.png" alt="Call Icon" className="w-4 h-4" />
+                <img src="/home/call-icon.png" alt="Call Icon" className="w-4 h-4" />
                 <span>call now</span>
               </Button>
             </a>
