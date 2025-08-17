@@ -21,6 +21,7 @@ const buttonVariants = cva(
         premium: "bg-gradient-primary text-foreground shadow-elegant hover:opacity-90",
         hero: "border border-border bg-card/60 supports-[backdrop-filter]:bg-card/40 backdrop-blur text-foreground hover:bg-card/80",
         gold: "bg-[#e2a312] text-black hover:bg-[#cf9611]",
+        dashboard: "bg-transparent border border-border text-foreground hover:bg-accent hover:text-accent-foreground",
       },
       size: {
         default: "h-9 px-4 py-2",

@@ -196,7 +196,7 @@ export default function Header() {
           </NavLink>
           {user ? (
             <NavLink to="/dashboard">
-              <Button variant="outline" className="px-4 flex items-center gap-2">
+              <Button variant="dashboard" className="px-4 flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Dashboard
               </Button>
