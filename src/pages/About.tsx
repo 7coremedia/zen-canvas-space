@@ -37,7 +37,7 @@ const About = () => {
                 Instagram
               </Button>
             </a>
-            <a href="https://www.youtube.com/@KingEdmundChan" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/@KingEdmundChan" target="_blank" rel="noopener noreferrer" className="hidden md:block">
               <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
                 YouTube
               </Button>
@@ -73,7 +73,7 @@ const About = () => {
                 Instagram
               </Button>
             </a>
-            <a href="https://www.youtube.com/@KingEdmundChan" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/@KingEdmundChan" target="_blank" rel="noopener noreferrer" className="hidden md:block">
               <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
                 YouTube
               </Button>
