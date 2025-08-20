@@ -10,10 +10,7 @@ export default function Portfolio() {
         <meta name="description" content="Branding, logo design, and creative projects by KING." />
         <link rel="canonical" href="/portfolio" />
       </Helmet>
-      <header className="container mx-auto py-12">
-        <h1 className="font-display text-4xl">Portfolio</h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground">Categorized work across Branding, Logos, Graphic Design, Marketing Materials, and Special Projects.</p>
-      </header>
+      {/* The header content has been moved into PortfolioGrid for the Behance-inspired layout. */}
       <PortfolioGrid />
       <Cta />
     </main>

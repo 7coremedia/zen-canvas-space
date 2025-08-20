@@ -1,35 +1,105 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { caseStudies } from '@/data/caseStudies';
 import { cn } from '@/lib/utils';
+import PortfolioItem from '@/components/portfolio/PortfolioItem';
+import { Button } from '@/components/ui/button';
+import { Search, SlidersHorizontal } from 'lucide-react';
 
-const filters = ['All', 'Branding', 'Logo', 'Marketing'] as const;
+const filters = ['For You', 'Following', 'Best of KING', 'Graphic Design', 'Photography', 'Illustration', '3D Art', 'UI/UX', 'More'] as const;
 
 export default function PortfolioGrid() {
-  const [activeFilter, setActiveFilter] = React.useState<(typeof filters)[number]>('All');
+  const [activeFilter, setActiveFilter] = React.useState<(typeof filters)[number]>('For You');
+
+  // Placeholder data for portfolio items
+  const allPortfolioItems = React.useMemo(() => [
+    {
+      title: 'RingCentral - AI Expression',
+      category: 'Branding',
+      imageUrl: '/home/aalux-body-img.png', // Placeholder image
+      slug: 'periscope',
+    },
+    {
+      title: 'Foqui Sanduíches Artesanais I',
+      category: 'Graphic Design',
+      imageUrl: '/home/aalux-bento.png', // Placeholder image
+      slug: 'luxury-fashion',
+    },
+    {
+      title: "Open'er 2024",
+      category: 'Branding',
+      imageUrl: '/home/aalux-resu-in-sea.png', // Placeholder image
+      slug: 'minimalist-logo',
+    },
+    {
+      title: 'Kulture',
+      category: 'Graphic Design',
+      imageUrl: '/home/about-cont.png', // Placeholder image
+      slug: 'periscope',
+    },
+    {
+      title: 'Abstract Art',
+      category: 'Branding',
+      imageUrl: '/home/about-tumb.png', // Placeholder image
+      slug: 'luxury-fashion',
+    },
+    {
+      title: 'Digital Painting',
+      category: 'Graphic Design',
+      imageUrl: '/home/alux-bento-vibe.png', // Placeholder image
+      slug: 'minimalist-logo',
+    },
+    {
+      title: 'The People Pleaser',
+      category: 'Branding',
+      imageUrl: '/home/alux-label.png', // Placeholder image
+      slug: 'periscope',
+    },
+  ], []);
 
   const filteredItems = React.useMemo(() => {
-    if (activeFilter === 'All') return caseStudies;
-    return caseStudies.filter(item => {
-      if (activeFilter === 'Marketing') {
-        return item.category === 'Poster' || item.category === 'Other';
-      }
-      return item.category === activeFilter;
-    });
-  }, [activeFilter]);
+    if (activeFilter === 'For You' || activeFilter === 'Following' || activeFilter === 'Best of KING' || activeFilter === 'More') {
+      return allPortfolioItems;
+    }
+    return allPortfolioItems.filter(item => item.category === activeFilter);
+  }, [activeFilter, allPortfolioItems]);
 
   return (
-    <section className="container mx-auto py-12">
+    <section className="container mx-auto py-12 px-4">
+      {/* Search and Filter Bar */}
+      <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
+        <Button variant="outline" className="flex items-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
+          <SlidersHorizontal className="w-4 h-4" />
+          Filter
+        </Button>
+        <div className="relative flex-grow w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search KING..."
+            className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div className="hidden md:flex items-center gap-4 text-sm text-gray-700">
+          <span className="font-medium">Projects</span>
+          <span>People</span>
+          <span>Assets</span>
+          <span>Images</span>
+          <Button variant="outline" className="flex items-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
+            <SlidersHorizontal className="w-4 h-4 rotate-90" /> {/* Using SlidersHorizontal for recommended icon */}
+            Recommended
+          </Button>
+        </div>
+      </div>
+
       {/* Filter Pills */}
-      <div className="flex justify-center mb-12">
+      <div className="flex overflow-x-auto justify-start mb-8 pb-2 scrollbar-hide">
         <div className="flex items-center space-x-2 md:space-x-4 rounded-full p-1.5 bg-gray-100/80 backdrop-blur-sm">
           {filters.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={cn(
-                'relative rounded-full px-4 py-1.5 text-sm font-medium text-gray-600 transition-colors focus:outline-none',
+                'relative rounded-full px-4 py-1.5 text-sm font-medium text-gray-600 transition-colors focus:outline-none flex-shrink-0',
                 {
                   'text-black': activeFilter === filter,
                 }
@@ -49,34 +119,17 @@ export default function PortfolioGrid() {
       </div>
 
       {/* Portfolio Grid */}
-      <motion.div
-        layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16"
-      >
-        {filteredItems.map((item) => (
-          <motion.div
-            key={item.slug}
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="group"
-          >
-            <Link to={`/portfolio/${item.slug}`}>
-              <div className="overflow-hidden mb-4 bg-gray-100">
-                <img
-                  src={item.cover}
-                  alt={item.title}
-                  className="w-full h-auto object-cover aspect-[4/3] group-hover:scale-105 transition-transform duration-500 ease-in-out"
-                />
-              </div>
-              <h3 className="font-display text-xl font-medium">{item.title}</h3>
-              <p className="text-sm text-gray-500 mt-1">{item.category}</p>
-            </Link>
-          </motion.div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+        {filteredItems.map((item, index) => (
+          <PortfolioItem
+            key={index}
+            title={item.title}
+            category={item.category}
+            imageUrl={item.imageUrl}
+            slug={item.slug}
+          />
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }
