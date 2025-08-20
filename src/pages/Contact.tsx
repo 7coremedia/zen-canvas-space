@@ -14,7 +14,7 @@ type Values = z.infer<typeof Schema>;
 
 export default function Contact() {
   const form = useForm<Values>({ resolver: zodResolver(Schema) });
-  const whatsappNumber = "+1234567890"; // Replace with your actual WhatsApp number
+  const whatsappNumber = "2348160891799"; // Your WhatsApp number without + sign
 
   const sendToWhatsApp = (values: Values) => {
     const message = `Hi! I'm ${values.name}.
@@ -24,7 +24,7 @@ Email: ${values.email}
 Message: ${values.message}`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
     
     window.open(whatsappUrl, '_blank');
     
