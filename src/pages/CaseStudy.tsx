@@ -5,7 +5,6 @@ import { caseStudies } from "@/data/caseStudies";
 import CaseStudyHeader from "@/components/case-study/CaseStudyHeader";
 import CaseStudyMediaDisplay from "@/components/case-study/CaseStudyMediaDisplay";
 import PortfolioItem from "@/components/portfolio/PortfolioItem";
-import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Share2, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -100,6 +99,7 @@ export default function CaseStudy() {
                   title={item.title}
                   category={item.category}
                   imageUrl={item.cover}
+                  slug={item.slug}
                 />
               ))}
             </div>
@@ -126,8 +126,6 @@ export default function CaseStudy() {
           <ThumbsUp className="h-4 w-4" />
         </Button>
       </div>
-
-      <Footer />
     </div>
   );
 }

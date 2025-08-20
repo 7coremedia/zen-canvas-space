@@ -4,8 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import emailjs from '@emailjs/browser';
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"; // Added FormDescription
 import { toast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, ArrowRight, PartyPopper } from "lucide-react";
 
@@ -27,15 +26,17 @@ const FormSchema = z.object({
   // Step 1
   brandName: z.string().min(2, "Please enter a name with at least 2 characters."),
   elevator: z.string().min(10, "Your elevator pitch needs to be at least 10 characters."),
-  
+  senderName: z.string().min(2, "Please enter your name."), // New field
+  senderEmail: z.string().email("Please enter a valid email address."), // New field
+
   // Step 2
   industry: z.enum(industries, { required_error: "Please select your industry." }),
   offerings: z.string().min(10, "Describe your offerings in at least 10 characters."),
-  
+
   // Step 3
   audiencePrimary: z.array(z.enum(audienceOptions)).min(1, "Select at least one primary audience."),
   vision1y: z.string().min(10, "Share your 1-year vision (min. 10 characters)."),
-  
+
   // Step 4
   budget: z.enum(budgetOptions, { required_error: "Please select your budget range." }),
   launchTimeline: z.enum(launchTimelineOptions, { required_error: "Please select your launch timeline." }),
@@ -44,7 +45,7 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>;
 
 const formSteps = [
-  { id: 1, name: "Brand Basics", fields: ["brandName", "elevator"] },
+  { id: 1, name: "Brand & Contact Basics", fields: ["brandName", "elevator", "senderName", "senderEmail"] }, // Updated fields for Step 1
   { id: 2, name: "Business DNA", fields: ["industry", "offerings"] },
   { id: 3, name: "Vision & Goals", fields: ["audiencePrimary", "vision1y"] },
   { id: 4, name: "Project Details", fields: ["budget", "launchTimeline"] },
@@ -71,6 +72,24 @@ const Step1 = () => {
           <FormMessage />
         </FormItem>
       )} />
+      <div className="pt-4">
+        <h3 className="text-lg font-semibold mb-3">Your Contact Information</h3>
+        <FormField control={control} name="senderName" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Your Full Name *</FormLabel>
+            <FormControl><Input placeholder="John Doe" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={control} name="senderEmail" render={({ field }) => (
+          <FormItem className="mt-4">
+            <FormLabel>Your Email Address *</FormLabel>
+            <FormDescription>We will use this email to communicate about your onboarding.</FormDescription>
+            <FormControl><Input type="email" placeholder="john.doe@example.com" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+      </div>
     </motion.div>
   );
 };
@@ -106,10 +125,10 @@ const Step3 = () => {
   const { control, getValues } = useFormContext<FormValues>();
   return (
     <motion.div className="space-y-6" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
-       <FormField control={control} name="audiencePrimary" render={() => (
+      <FormField control={control} name="audiencePrimary" render={() => (
         <FormItem>
           <FormLabel>Who is your primary audience?</FormLabel>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {audienceOptions.map((item) => (
               <FormField key={item} control={control} name="audiencePrimary" render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -199,13 +218,13 @@ const Step4 = () => {
 };
 
 const FinalStep = () => (
-    <motion.div className="text-center" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
-        <PartyPopper className="mx-auto h-16 w-16 text-green-500" />
-        <h2 className="mt-4 text-2xl font-bold">You're All Set!</h2>
-        <p className="mt-2 text-muted-foreground">
-            You've laid the foundation. The final step is to create your account to save your progress and bring your brand to life.
-        </p>
-    </motion.div>
+  <motion.div className="text-center" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
+    <PartyPopper className="mx-auto h-16 w-16 text-green-500" />
+    <h2 className="mt-4 text-2xl font-bold">You're All Set!</h2>
+    <p className="mt-2 text-muted-foreground">
+      You've laid the foundation. Click 'Submit Onboarding' to send your brand details.
+    </p>
+  </motion.div>
 );
 
 
@@ -213,7 +232,6 @@ const FinalStep = () => (
 
 export default function OnboardingForm() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [step, setStep] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
 
@@ -222,6 +240,8 @@ export default function OnboardingForm() {
     defaultValues: {
       brandName: "",
       elevator: "",
+      senderName: "", // Default value for new field
+      senderEmail: "", // Default value for new field
       industry: undefined,
       offerings: "",
       audiencePrimary: [],
@@ -244,42 +264,31 @@ export default function OnboardingForm() {
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
     try {
-        const brandData = {
-            brand_name: values.brandName,
-            elevator_pitch: values.elevator,
-            industry: values.industry,
-            offerings: values.offerings,
-            primary_audience: values.audiencePrimary.join(', '),
-            one_year_vision: values.vision1y,
-            budget: values.budget,
-            launch_timing: values.launchTimeline,
-        };
+      const templateParams = {
+        brand_name: values.brandName,
+        elevator_pitch: values.elevator,
+        sender_name: values.senderName, // New template param
+        sender_email: values.senderEmail, // New template param
+        industry: values.industry,
+        offerings: values.offerings,
+        primary_audience: values.audiencePrimary.join(', '),
+        one_year_vision: values.vision1y,
+        budget: values.budget,
+        launch_timeline: values.launchTimeline,
+      };
 
-      if (user) {
-        // This case is for an already logged-in user, though the primary flow is for new users.
-        const { data: brand, error } = await supabase
-          .from('brands')
-          .insert({ ...brandData, user_id: user.id, is_primary: false })
-          .select()
-          .single();
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+      );
 
-        if (error) throw error;
-        toast({ title: "Brand profile created!", description: "Your new brand has been saved." });
-        navigate(`/brand/${brand.id}`);
-      } else {
-        // The main flow for new users
-        sessionStorage.setItem('pendingBrandData', JSON.stringify(brandData));
-        navigate('/auth', {
-          state: {
-            fromOnboarding: true,
-            brandName: values.brandName,
-            redirectTo: '/dashboard',
-          },
-        });
-      }
+      toast({ title: "Onboarding Submitted!", description: "Your brand details have been successfully sent." });
+      navigate('/'); // Redirect to home or a thank you page
     } catch (error: any) {
-      console.error('Submission error:', error);
-      toast({ title: "Submission Failed", description: error.message || "Could not save your brand. Please try again.", variant: "destructive" });
+      console.error('EmailJS submission error:', error);
+      toast({ title: "Submission Failed", description: error.message || "Could not send your brand details. Please try again.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -322,9 +331,9 @@ export default function OnboardingForm() {
               </Button>
             )}
             {step === totalSteps + 1 && (
-                <Button type="submit" variant="premium" disabled={loading} className="w-full">
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Create Account & Save Brand'}
-                </Button>
+              <Button type="submit" variant="premium" disabled={loading} className="w-full">
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Submit Onboarding'}
+              </Button>
             )}
           </div>
         </form>
