@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 
 const Schema = z.object({ name: z.string().min(2), email: z.string().email(), message: z.string().min(10) });
 
@@ -16,26 +14,30 @@ type Values = z.infer<typeof Schema>;
 
 export default function Contact() {
   const form = useForm<Values>({ resolver: zodResolver(Schema) });
+  const whatsappNumber = "+1234567890"; // Replace with your actual WhatsApp number
 
-  const sendMessage = useMutation({
-    mutationKey: ["contact:send"],
-    mutationFn: async (values: Values) =>
-      api.post<{
-        ok: boolean;
-      }>("/contact", values),
-    onSuccess: () => {
-      toast({ title: "Message sent", description: "I’ll get back to you soon." });
-      form.reset();
-    },
-    onError: (err: unknown) => {
-      const message =
-        (err as any)?.payload?.message || (err as Error)?.message || "Something went wrong";
-      toast({ title: "Failed to send", description: String(message) });
-    },
-  });
+  const sendToWhatsApp = (values: Values) => {
+    const message = `Hi! I'm ${values.name}.
+
+Email: ${values.email}
+
+Message: ${values.message}`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    toast({ 
+      title: "Redirecting to WhatsApp", 
+      description: "Opening WhatsApp with your message." 
+    });
+    
+    form.reset();
+  };
 
   const onSubmit = (v: Values) => {
-    sendMessage.mutate(v);
+    sendToWhatsApp(v);
   };
 
   return (
@@ -70,7 +72,7 @@ export default function Contact() {
                 <FormMessage />
               </FormItem>
             )} />
-            <div className="pt-2"><Button variant="premium" disabled={sendMessage.isPending}>{sendMessage.isPending ? "Sending..." : "Send"}</Button></div>
+            <div className="pt-2"><Button variant="premium" type="submit">Send to WhatsApp</Button></div>
           </form>
         </Form>
       </div>
