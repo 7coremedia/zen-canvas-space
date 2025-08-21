@@ -1,9 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/sections/Hero";
 import { Button } from "@/components/ui/button";
-import CategoryStrip from "@/components/sections/CategoryStrip";
 import Testimonials from "@/components/sections/Testimonials";
-import Cta from "@/components/sections/Cta";
+
 import aaluxuryBrandingPresentationHero from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
 import aaluxuryFull from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
 import aaluxuryBrandPres from "@/assets/aaluxury-brand-pres.jpg";
@@ -17,29 +16,27 @@ import aaluxuryMoodboard from "@/assets/aaluxury-brand-pres.jpg";
 import aaluxResuInSea from "@/assets/aalux-resu-in-sea.png"; // Import the new image
 
 const Index = () => {
-  return <main className="bg-[#f2f2f2]">
+  return (
+    <main className="bg-[#f2f2f2]">
       <Helmet>
         <title>KING – Branding & Creative Portfolio</title>
         <meta name="description" content="Premium branding, logo design, and creative portfolio by KING. Explore work, services, and start your brand journey." />
         <link rel="canonical" href="/" />
         <script type="application/ld+json">
           {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Person",
-          name: "KING Edmund",
-          url: "/",
-          jobTitle: "Brand Designer",
-          sameAs: ["https://instagram.com/", "https://www.linkedin.com/"]
-        })}
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "KING Edmund",
+            url: "/",
+            jobTitle: "Brand Designer",
+            sameAs: ["https://instagram.com/", "https://www.linkedin.com/"]
+          })}
         </script>
       </Helmet>
 
       <Hero />
-      <CategoryStrip />
-      <Testimonials />
-      <Cta />
-      <FullScreenImage imageSrc={aaluxuryBrandPres} />
 
+      {/* Existing CTA buttons */}
       <section className="py-16 px-4 bg-[#f2f2f2]">
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 items-start">
           {/* Left Column: All Text */}
@@ -141,9 +138,7 @@ So, we delivered. </p>
       <section className="py-15 py-4 px-4 bg-[#f2f2f2]">
         <img src="/home/alux-bento-vibe.png" alt="Full width image" className="w-full h-auto" />
       </section>
-
-      <Cta />
-
-    </main>;
+    </main>
+  );
 };
 export default Index;
