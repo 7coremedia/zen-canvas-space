@@ -3,6 +3,7 @@ import heroImage from "@/assets/hero-king.jpg";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
 import { Briefcase } from "lucide-react";
+import GlowingInput from "./GlowingInput";
 
 export default function Hero() {
   return (
@@ -19,11 +20,16 @@ export default function Hero() {
         className="absolute inset-0 h-full w-full object-cover"
       />
 
+      {/* Glowing Input Component */}
+      <div className="absolute inset-x-0 bottom-32 flex justify-center px-4">
+        <GlowingInput />
+      </div>
+
       {/* Bottom CTA buttons (white text per design) */}
       <div className="pointer-events-none absolute inset-x-0 bottom-8 flex items-center justify-center px-6 text-white">
         <div className="pointer-events-auto mx-auto flex w-full max-w-xl items-center justify-center gap-4">
           <NavLink to="/onboarding">
-            <Button variant="gold" className="px-6 py-4 text-sm">Start My Brand</Button>
+            <Button variant="gold" className="px-6 py-4 text-sm">Start With KING</Button>
           </NavLink>
 
           <NavLink to="/portfolio">
