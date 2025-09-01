@@ -4,6 +4,14 @@ import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
 
+export type Partner = {
+  id: string;
+  name: string;
+  socialName: string;
+  imageUrl?: string;
+  socialLink?: string;
+};
+
 export type CaseStudy = {
   slug: string;
   title: string;
@@ -13,6 +21,14 @@ export type CaseStudy = {
   cover: string;
   year: string;
   sections: CaseBlock[];
+  // Partner information
+  isMultiplePartners?: boolean;
+  brandName?: string; // For multiple partners, this is the brand name (e.g., "Periscope")
+  partners?: Partner[]; // For multiple partners
+  singlePartner?: {
+    name: string;
+    type?: string; // e.g., "By KING"
+  }; // For single partner
 };
 
 // Sample case studies with proper image imports
@@ -25,6 +41,29 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     tagline: "A beautiful and simple financial dashboard that educates while reporting.",
     cover: portfolio1,
+    // Multiple partners example
+    isMultiplePartners: true,
+    brandName: "Periscope", // Same as title
+    partners: [
+      {
+        id: "1",
+        name: "Brand Name",
+        socialName: "Social name",
+        socialLink: "https://instagram.com/thedrawingboard.ng",
+      },
+      {
+        id: "2", 
+        name: "Brand Name",
+        socialName: "Social name",
+        socialLink: "https://instagram.com/thedrawingboard.ng",
+      },
+      {
+        id: "3",
+        name: "Brand Name", 
+        socialName: "Social name",
+        socialLink: "https://instagram.com/thedrawingboard.ng",
+      },
+    ],
     sections: [
       { 
         type: "breakdown", 
@@ -87,12 +126,18 @@ export const caseStudies: CaseStudy[] = [
   // Add more case studies as needed
   {
     slug: "luxury-fashion",
-    title: "Luxury Fashion",
+    title: "Reflection",
     client: "Elegance Couture",
     category: "Branding",
     year: "2023",
     tagline: "Redefining luxury fashion with timeless elegance and modern aesthetics.",
     cover: portfolio2,
+    // Single partner example
+    isMultiplePartners: false,
+    singlePartner: {
+      name: "Reflection", // Same as title
+      type: "By KING",
+    },
     sections: [],
   },
   {
@@ -103,6 +148,12 @@ export const caseStudies: CaseStudy[] = [
     year: "2023",
     tagline: "Simplicity meets impact in this clean and versatile logo design.",
     cover: portfolio3,
+    // Single partner example
+    isMultiplePartners: false,
+    singlePartner: {
+      name: "Minimalist Logo", // Same as title
+      type: "By KING",
+    },
     sections: [],
   },
 ];

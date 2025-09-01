@@ -13,7 +13,7 @@ Build the **frontend flow** that lets any business starter go from **idea → na
 * **Local-first** state: persist progress in `localStorage` pre-auth; on signup, **migrate** to backend.
 * **PDF export** of the mini brand guide (client-side first; server export optional later).
 * **CTA:** “Refine with Human Experts (Discount)” opens a modal → proceed to Contact with **unique view link** (not file).
-* **Mock data mode**: all AI outputs and APIs must have deterministic fallbacks to feel real during demos.
+* **AI integration**: all AI outputs and APIs must connect to real AI services for production use.
 
 ---
 
@@ -43,7 +43,7 @@ Build the **frontend flow** that lets any business starter go from **idea → na
 
 * If **not signed in** and user enters `/wizard`, allow **Steps 1–3**; on **Continue Brand Development**, show **signup modal**.
 * After auth success, **migrate local draft** → user account; continue to Step 4+.
-* “Save Brand Data” should **create brand** (mock ID) and route to `/brand/:id`.
+* “Save Brand Data” should **create brand** (real ID) and route to `/brand/:id`.
 
 ---
 
@@ -58,12 +58,12 @@ Use a **stepper**: *Idea → Name → Logo → Colors/Type → Strategy → Comp
   * **Business Idea** (textarea)
   * **Industry** (dropdown + free-text)
 * Actions: Next, Save Draft.
-* AI placeholder: suggest **brand directions** & **tone options** (mock).
+* AI placeholder: suggest **brand directions** & **tone options** (real AI).
 * UX: side panel preview of tone/direction chips.
 
 ### Step 2: Business Name Generator (Pre-Auth)
 
-* Show **5–10 AI name suggestions** with **domain availability** indicators (mock API).
+* Show **5–10 AI name suggestions** with **domain availability** indicators (real API).
 * Actions: **Pick** one, **Regenerate**, or **Use my own**.
 * Store chosen `brandName` and `domainStatus` in state.
 
@@ -93,7 +93,7 @@ Use a **stepper**: *Idea → Name → Logo → Colors/Type → Strategy → Comp
 
 ### Step 6: Competitor Research
 
-* Display **top 3–5 competitors** (name, site, strengths, gaps) — mocked.
+* Display **top 3–5 competitors** (name, site, strengths, gaps) — real data.
 * Actions: **Mark as relevant/irrelevant**, add custom competitor, Next.
 
 ### Step 7: Brand Guide Preview
@@ -119,8 +119,8 @@ Use a **stepper**: *Idea → Name → Logo → Colors/Type → Strategy → Comp
 ## 5) State & Persistence
 
 * **Wizard State** (pre-auth): keep in `localStorage` under `brandDraft_v1`.
-* **On Signup**: call migration function to create a draft on backend (mock) and swap to `brandId`.
-* **Post-auth**: persist to backend (mock service) on step changes and major actions.
+* **On Signup**: call migration function to create a draft on backend (real) and swap to `brandId`.
+* **Post-auth**: persist to backend (real service) on step changes and major actions.
 * **Recovery**: if a draft exists, prompt **Continue where you left off?**
 
 State shape (frontend):
@@ -181,7 +181,7 @@ State shape (frontend):
 
 ---
 
-## 10) Mock Data & AI Placeholders
+## 10) AI Integration & Data Management
 
 * **Name suggestions**: deterministic array from seed `{idea, industry}`.
 * **Domain availability**: simple hash → true/false for demo.
@@ -207,7 +207,7 @@ State shape (frontend):
 * ✅ Brand Details shows tabs and both CTAs (Export, Refine).
 * ✅ Export produces a **valid PDF** and a **public preview link**.
 * ✅ Refine CTA routes to Contact with `brandLink` param populated.
-* ✅ All AI features have mock outputs that feel real and are easy to swap for live APIs.
+* ✅ All AI features have real outputs that integrate with live APIs.
 
 ---
 
@@ -224,7 +224,7 @@ State shape (frontend):
 ## 14) Deliverables for This Sprint
 
 * Implement `/start`, `/wizard`, `/auth` (modal + page), `/brand/:id`, `/brand/:id/preview`, `/contact` integration for `brandLink`.
-* Wizard steps with mocks; `localStorage` draft + migration stub.
+* Wizard steps with AI integration; `localStorage` draft + migration stub.
 * PDF export and preview link generation (frontend-only stub).
 * Refine modal with redirect.
 * Sample seed data for 2 industries to demo end-to-end.
@@ -233,14 +233,14 @@ State shape (frontend):
 
 ## 15) One‑Shot Prompt (Paste into AI IDE)
 
-**Instruction:** Build the frontend described below using **React + Tailwind + Framer Motion** with mock services. Create routes, components, and state per spec. Implement pre-auth Steps 1–3, auth modal gate, post-auth Steps 4–7, Brand Details, PDF export, Refine modal → Contact with `brandLink` param. Use deterministic mock data.
+**Instruction:** Build the frontend described below using **React + Tailwind + Framer Motion** with AI services. Create routes, components, and state per spec. Implement pre-auth Steps 1–3, auth modal gate, post-auth Steps 4–7, Brand Details, PDF export, Refine modal → Contact with `brandLink` param. Use real AI integration.
 
 **Artifacts to produce:**
 
 * Pages: `/start`, `/wizard`, `/auth`, `/brands` (stub), `/brand/:id`, `/brand/:id/preview`, `/contact` hookup.
 * Components: Stepper, WizardStepCard, SignupModal, NameSuggestionCard, LogoCard, PalettePicker, FontPicker, StrategyEditor, CompetitorList, BrandGuidePreview, PDFExportModal, RefineModal.
 * State: `useWizardStore` (Zustand or Context), `localStorage` persistence, migration stub.
-* Utils: `pdfExport()`, `createPublicPreviewLink()`, `seededRandom()`, `domainCheckMock()`.
+* Utils: `pdfExport()`, `createPublicPreviewLink()`, `seededRandom()`, `domainCheck()`.
 * Style: Tailwind config for premium palette; rounded-2xl; shadow-xl; backdrop-blur for modals.
 
 **Wizard Steps:**
@@ -256,7 +256,7 @@ State shape (frontend):
    Brand Details: Export PDF, Refine CTA → `/contact?brandLink=<encoded>`.
    Public Preview: read-only brand view for sharing.
 
-**Mock Rules:**
+**AI Integration Rules:**
 
 * Names from seeded list; domain check via hash.
 * Logos from local placeholders.

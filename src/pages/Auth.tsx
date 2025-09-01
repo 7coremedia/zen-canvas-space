@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import emailjs from '@emailjs/browser';
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,92 @@ export default function Auth() {
       if (user) {
         console.log("User authenticated, handling redirect...", user);
         
+        // Handle pending wizard data first
+        const pendingWizardData = sessionStorage.getItem('pendingWizardData');
+        if (pendingWizardData) {
+          try {
+            const wizardData = JSON.parse(pendingWizardData);
+            
+            // Save brand data to database
+            const { data: brand, error } = await supabase
+              .from('brands')
+              .insert({
+                brand_name: wizardData.name,
+                description: wizardData.description,
+                colors: wizardData.colors,
+                typography: wizardData.typography,
+                logo_url: wizardData.logo?.url,
+                logo_alt: wizardData.logo?.alt,
+                user_id: user.id,
+                is_primary: false,
+              })
+              .select()
+              .single();
+
+            if (error) throw error;
+
+            sessionStorage.removeItem('pendingWizardData');
+            toast({ 
+              title: "Brand Created!", 
+              description: "Your brand has been successfully saved. Welcome!" 
+            });
+            navigate(`/brand/${brand.id}`);
+            return; // Exit early if we're handling wizard data
+          } catch (error: any) {
+            console.error("Failed to save wizard data:", error);
+            toast({ 
+              title: "Save Failed", 
+              description: error.message || "Could not save your brand. Please try again.", 
+              variant: "destructive" 
+            });
+          }
+        }
+
+        // Handle pending onboarding data
+        const pendingOnboardingData = sessionStorage.getItem('pendingOnboardingData');
+        if (pendingOnboardingData) {
+          try {
+            const onboardingData = JSON.parse(pendingOnboardingData);
+            
+            // Send email with onboarding data
+            const templateParams = {
+              brand_name: onboardingData.brand_name,
+              elevator_pitch: onboardingData.elevator_pitch,
+              sender_name: onboardingData.sender_name,
+              sender_email: onboardingData.sender_email,
+              industry: onboardingData.industry,
+              offerings: onboardingData.offerings,
+              primary_audience: onboardingData.primary_audience,
+              one_year_vision: onboardingData.one_year_vision,
+              budget: onboardingData.budget,
+              launch_timeline: onboardingData.launch_timeline,
+            };
+
+            await emailjs.send(
+              import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+              import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
+              templateParams,
+              import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+            );
+
+            sessionStorage.removeItem('pendingOnboardingData');
+            toast({ 
+              title: "Onboarding Completed!", 
+              description: "Your brand details have been successfully submitted. Welcome!" 
+            });
+            navigate('/dashboard');
+            return; // Exit early if we're handling onboarding data
+          } catch (error: any) {
+            console.error("Failed to submit onboarding data:", error);
+            toast({ 
+              title: "Submission Failed", 
+              description: error.message || "Could not submit your onboarding data. Please try again.", 
+              variant: "destructive" 
+            });
+          }
+        }
+        
+        // Handle pending brand data
         const pendingData = sessionStorage.getItem('pendingBrandData');
         if (pendingData) {
           try {
@@ -46,7 +133,7 @@ export default function Auth() {
           }
         }
         
-        // If no pending brand data, redirect to dashboard or home
+        // If no pending data, redirect to dashboard or home
         console.log("Redirecting authenticated user to dashboard");
         navigate('/dashboard');
       }
@@ -127,7 +214,19 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="font-display text-2xl">Welcome to KING</CardTitle>
-          <CardDescription>Sign in to access your brand strategy</CardDescription>
+          <CardDescription>
+            {location.state?.fromOnboarding 
+              ? "Please sign up or sign in to complete your onboarding." 
+              : location.state?.fromWizard
+              ? "Please sign up or sign in to save your brand."
+              : "Sign in to access your brand strategy"
+            }
+          </CardDescription>
+          {location.state?.message && (
+            <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800">{location.state.message}</p>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">

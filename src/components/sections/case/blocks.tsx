@@ -268,8 +268,20 @@ export function CTABlock({ headline = "Let’s build your brand", sub = "Book yo
         <h3 className="font-display text-2xl md:text-3xl">{headline}</h3>
         {sub && <p className="mt-2 text-muted-foreground">{sub}</p>}
         <div className="mt-6 flex justify-center gap-3">
-          <Button asChild variant="premium"><Link to={primaryHref}>{primaryLabel}</Link></Button>
-          <Button asChild variant="outline"><Link to={secondaryHref}>{secondaryLabel}</Link></Button>
+          <Button 
+            asChild 
+            variant="premium" 
+            className="transition-all duration-300 hover:scale-105 hover:shadow-xl"
+          >
+            <Link to={primaryHref}>{primaryLabel}</Link>
+          </Button>
+          <Button 
+            asChild 
+            variant="outline" 
+            className="transition-all duration-300 hover:scale-105"
+          >
+            <Link to={secondaryHref}>{secondaryLabel}</Link>
+          </Button>
         </div>
       </div>
     </section>

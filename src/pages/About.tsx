@@ -22,23 +22,23 @@ const About = () => {
         <section className="py-2 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:+2349137145159">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black flex items-center space-x-2">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black flex items-center space-x-2 transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <img src="/home/call-icon.png" alt="Call Icon" className="w-4 h-4" />
                 <span>call now</span>
               </Button>
             </a>
             <a href="https://wa.me/2348160891799" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 WhatsApp
               </Button>
             </a>
             <a href="https://www.instagram.com/kingedmundau" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 Instagram
               </Button>
             </a>
             <a href="https://www.youtube.com/@KingEdmundChan" target="_blank" rel="noopener noreferrer" className="hidden md:block">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 YouTube
               </Button>
             </a>
@@ -58,23 +58,23 @@ const About = () => {
         <section className="pt-2 pb-16 flex justify-center">
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:+2349137145159">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black flex items-center space-x-2">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black flex items-center space-x-2 transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 <img src="/home/call-icon.png" alt="Call Icon" className="w-4 h-4" />
                 <span>call now</span>
               </Button>
             </a>
             <a href="https://wa.me/2348160891799" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 WhatsApp
               </Button>
             </a>
             <a href="https://www.instagram.com/kingedmundau" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 Instagram
               </Button>
             </a>
             <a href="https://www.youtube.com/@KingEdmundChan" target="_blank" rel="noopener noreferrer" className="hidden md:block">
-              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black">
+              <Button className="bg-[#e0a113] hover:bg-[#e0a113]/90 text-black transition-all duration-300 hover:scale-105 hover:shadow-lg">
                 YouTube
               </Button>
             </a>

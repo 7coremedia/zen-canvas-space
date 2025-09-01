@@ -105,6 +105,18 @@ export default {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(100%)" },
         },
+        "typewriter": {
+          "0%": { width: "0" },
+          "100%": { width: "100%" },
+        },
+        "blink": {
+          "0%, 50%": { borderColor: "transparent" },
+          "51%, 100%": { borderColor: "currentColor" },
+        },
+        "gradient": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -115,6 +127,9 @@ export default {
         "scale-out": "scale-out 0.2s ease-out",
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "slide-out-right": "slide-out-right 0.3s ease-out",
+        "typewriter": "typewriter 2s steps(40) 1s 1 normal both",
+        "blink": "blink 1s infinite",
+        "gradient": "gradient 8s ease infinite",
         enter: "fade-in 0.3s ease-out, scale-in 0.2s ease-out",
         exit: "fade-out 0.3s ease-out, scale-out 0.2s ease-out",
       },

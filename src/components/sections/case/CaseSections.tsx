@@ -76,8 +76,20 @@ export function CaseCTASection() {
       <h3 className="font-display text-2xl md:text-3xl">Let’s build your brand</h3>
       <p className="mt-2 text-muted-foreground">Book your strategy session — I’ll walk you through your personalized plan.</p>
       <div className="mt-6 flex justify-center gap-3">
-        <Button asChild variant="premium"><Link to="/onboarding">Start My Transformation</Link></Button>
-        <Button asChild variant="outline"><Link to="/portfolio">Back to Portfolio</Link></Button>
+        <Button 
+          asChild 
+          variant="premium" 
+          className="transition-all duration-300 hover:scale-105 hover:shadow-xl"
+        >
+          <Link to="/onboarding">Start My Transformation</Link>
+        </Button>
+        <Button 
+          asChild 
+          variant="outline" 
+          className="transition-all duration-300 hover:scale-105"
+        >
+          <Link to="/portfolio">Back to Portfolio</Link>
+        </Button>
       </div>
     </section>
   );

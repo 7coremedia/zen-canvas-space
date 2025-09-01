@@ -3,10 +3,12 @@ import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
 import { caseStudies } from "@/data/caseStudies";
 import CaseStudyHeader from "@/components/case-study/CaseStudyHeader";
+import MultiplePartnersHeader from "@/components/case-study/MultiplePartnersHeader";
+import SinglePartnerHeader from "@/components/case-study/SinglePartnerHeader";
 import CaseStudyMediaDisplay from "@/components/case-study/CaseStudyMediaDisplay";
 import PortfolioItem from "@/components/portfolio/PortfolioItem";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Share2, ThumbsUp } from 'lucide-react';
+import { Bookmark, Share2, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function CaseStudy() {
@@ -47,10 +49,25 @@ export default function CaseStudy() {
         <link rel="canonical" href={`/portfolio/${slug}`} />
       </Helmet>
 
-      <CaseStudyHeader
-        title={currentCaseStudy.title}
-        owner={currentCaseStudy.client || "KING Team"}
-      />
+             {/* Conditional Header Rendering */}
+       {currentCaseStudy.isMultiplePartners ? (
+         <MultiplePartnersHeader
+           title={currentCaseStudy.title}
+           brandName={currentCaseStudy.title} // Use title as brand name
+           partners={currentCaseStudy.partners || []}
+         />
+       ) : currentCaseStudy.singlePartner ? (
+         <SinglePartnerHeader
+           title={currentCaseStudy.title}
+           partnerName={currentCaseStudy.title} // Use title as partner name
+           partnerType={currentCaseStudy.singlePartner.type}
+         />
+       ) : (
+         <CaseStudyHeader
+           title={currentCaseStudy.title}
+           owner={currentCaseStudy.client || "KING Team"}
+         />
+       )}
 
       {/* Main Media Section - No Container for full-width */} 
       <section className="w-full pt-4 pb-8">
@@ -109,22 +126,12 @@ export default function CaseStudy() {
       </section>
 
       {/* Bottom Buttons/Navigation (similar to header buttons) */}
-      <div className="w-full bg-white border-t border-gray-200 py-4 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-center gap-4 shadow-sm mt-8">
-        <Button variant="secondary" className="bg-white/90 text-black hover:bg-white text-sm px-4 py-2 h-auto">
-          Request for this
+      <div className="w-full bg-white border-t border-gray-200 py-4 px-4 sm:px-6 lg:px-8 flex flex-row items-center justify-center gap-3 shadow-sm mt-8 overflow-x-auto">
+        <Button asChild variant="secondary" className="gold-shimmer text-black hover:bg-yellow-500 text-sm px-4 py-2 h-auto flex-shrink-0 font-semibold transition-all duration-300 hover:scale-105">
+          <Link to="/contact">Request for this</Link>
         </Button>
-        <Button variant="secondary" className="bg-white/90 text-black hover:bg-white text-sm px-4 py-2 h-auto">
-          Get started
-        </Button>
-        <Button variant="secondary" size="icon" className="bg-white/90 text-black hover:bg-white w-9 h-9 rounded-full">
-          <Bookmark className="h-4 w-4" />
-        </Button>
-        <Button variant="secondary" size="icon" className="bg-white/90 text-black hover:bg-white w-9 h-9 rounded-full">
-          <Share2 className="h-4 w-4" />
-        </Button>
-        <Button variant="secondary" size="icon" className="bg-blue-500 text-white hover:bg-blue-600 w-9 h-9 rounded-full">
-          <ThumbsUp className="h-4 w-4" />
-        </Button>
+
+
       </div>
     </div>
   );

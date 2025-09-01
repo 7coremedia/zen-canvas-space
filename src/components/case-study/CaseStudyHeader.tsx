@@ -1,5 +1,6 @@
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Share2, ThumbsUp, Plus } from 'lucide-react';
+import { Bookmark, Share2, Send, Plus } from 'lucide-react';
 
 interface CaseStudyHeaderProps {
   title: string;
@@ -38,8 +39,10 @@ export default function CaseStudyHeader({
         <Button variant="outline" size="sm" className="flex items-center gap-1 border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50">
           <Share2 className="w-3 h-3" /> Share
         </Button>
-        <Button variant="secondary" size="sm" className="bg-blue-500 text-white hover:bg-blue-600 px-3 py-1.5 text-xs">
-          <ThumbsUp className="w-3 h-3 mr-1" /> Appreciate
+        <Button asChild variant="secondary" size="sm" className="gold-shimmer text-black px-3 py-1.5 text-xs font-semibold transition-all duration-300 hover:scale-105">
+          <Link to="/contact">
+            <Send className="w-3 h-3 mr-1 animate-pulse" /> Request
+          </Link>
         </Button>
       </div>
     </div>

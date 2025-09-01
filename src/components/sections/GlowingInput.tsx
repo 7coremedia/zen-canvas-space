@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AudioLines, SendHorizontal, Plus } from 'lucide-react';
 import './glowing-input.css';
 
 const GlowingInput = () => {
@@ -8,44 +9,77 @@ const GlowingInput = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // You can do something with the 'idea' state here, like storing it in localStorage
-    navigate('/wizard');
+    // Navigate directly to chat without storing anything in localStorage
+    navigate('/branding-chat');
   };
 
   return (
-    <form onSubmit={handleSubmit} className="glowing-container relative w-full max-w-4xl p-1 rounded-full glow">
-      <div className="relative flex items-center w-full">
-        {/* "Start With AI" Button */}
-        <button type="submit" className="absolute left-2 flex items-center gap-1.5 px-4 py-2 rounded-full text-black font-semibold bg-yellow-500 hover:bg-yellow-600 transition-colors text-sm">
-          <span>Start With AI</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-24.32-13.51V40.86a16,16,0,0,1,24.32-13.51L232.4,114.49A15.74,15.74,0,0,1,240,128Z"></path>
-          </svg>
-        </button>
-
+    <form onSubmit={handleSubmit} className="glowing-container relative z-20 w-full max-w-4xl p-1 rounded-[2.5rem] glow">
+      <div className="relative flex flex-col w-full min-h-[108px]">
         {/* Text Input */}
-        <input
-          type="text"
+        <textarea
           value={idea}
           onChange={(e) => setIdea(e.target.value)}
-          placeholder="Enter your business idea and name to start building your brand for free..."
-          className="w-full h-14 bg-transparent text-white pl-40 pr-28 py-2 border-none outline-none focus:ring-0 placeholder-gray-400 text-center"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e as any);
+            }
+          }}
+          placeholder="Ask any question about branding..."
+          className="relative z-5 w-full bg-transparent text-white pl-8 pr-4 pt-5 pb-16 border-none outline-none focus:ring-0 placeholder-gray-400 placeholder-italic text-left text-sm md:text-base rounded-[2.5rem] resize-none overflow-hidden"
+          style={{
+            minHeight: '108px',
+            height: 'auto',
+            lineHeight: '1.5'
+          }}
+          onInput={(e) => {
+            const target = e.target as HTMLTextAreaElement;
+            target.style.height = 'auto';
+            const newHeight = Math.max(108, target.scrollHeight);
+            target.style.height = newHeight + 'px';
+            
+            // Update container height
+            const container = target.closest('.glowing-container') as HTMLElement;
+            if (container) {
+              container.style.height = (newHeight + 8) + 'px';
+            }
+          }}
+          required
         />
 
-        {/* Right-side Icons */}
-        <div className="absolute right-2 flex items-center gap-2">
-          {/* Plus Icon */}
-          <button type="button" className="p-2 rounded-full text-yellow-500">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
-              <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
-            </svg>
-          </button>
-          {/* Microphone Icon */}
-          <button type="button" className="p-3 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-              <path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,151.6V240a8,8,0,0,1-16,0V215.6A80.07,80.07,0,0,1,48,128a8,8,0,0,1,16,0a64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.07,80.07,0,0,1,136,215.6Z"></path>
-            </svg>
-          </button>
+        {/* Bottom Icons Container */}
+        <div className="absolute bottom-3 left-4 right-4 flex justify-between items-center z-10">
+          {/* Plus Icon - Left side */}
+                     <button 
+             type="button" 
+             className="p-3 rounded-full text-yellow-500 hover:bg-yellow-500/20 transition-all duration-300 hover:scale-110 touch-manipulation"
+             onClick={() => setIdea('')}
+           >
+             <Plus size={24} fill="currentColor" />
+           </button>
+
+          {/* Right-side Dynamic Button */}
+          <div className="flex items-center">
+            {idea.trim() ? (
+              /* Send Button with AI text - when user is typing */
+                             <button 
+                 type="submit" 
+                 className="send-button flex items-center gap-2 px-4 py-3 rounded-full text-black font-semibold bg-yellow-500 hover:bg-yellow-600 transition-all duration-300 hover:scale-105 text-sm cursor-pointer touch-manipulation overflow-hidden"
+               >
+                 <span className="ai-text whitespace-nowrap">AI</span>
+                 <SendHorizontal size={16} fill="currentColor" />
+               </button>
+            ) : (
+              /* Microphone Button - when no text */
+                             <button 
+                 type="button" 
+                 className="mic-button p-3 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300 hover:scale-110 touch-manipulation"
+               >
+                 <AudioLines size={20} />
+               </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 text-xs text-gray-400 whitespace-nowrap">

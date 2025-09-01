@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"; // Added FormDescription
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2, ArrowLeft, ArrowRight, PartyPopper } from "lucide-react";
 
 // --- FORM SCHEMA AND TYPES ---
@@ -232,6 +233,7 @@ const FinalStep = () => (
 
 export default function OnboardingForm() {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [step, setStep] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
 
@@ -262,13 +264,47 @@ export default function OnboardingForm() {
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const onSubmit = async (values: FormValues) => {
+    // Wait for auth to finish loading
+    if (authLoading) {
+      return;
+    }
+    
+    // Check if user is authenticated
+    if (!user) {
+      // Save onboarding data to session storage
+      const onboardingData = {
+        brand_name: values.brandName,
+        elevator_pitch: values.elevator,
+        sender_name: values.senderName,
+        sender_email: values.senderEmail,
+        industry: values.industry,
+        offerings: values.offerings,
+        primary_audience: values.audiencePrimary.join(', '),
+        one_year_vision: values.vision1y,
+        budget: values.budget,
+        launch_timeline: values.launchTimeline,
+      };
+      
+      sessionStorage.setItem('pendingOnboardingData', JSON.stringify(onboardingData));
+      
+      // Redirect to auth page
+      navigate('/auth', { 
+        state: { 
+          fromOnboarding: true,
+          message: "Please sign up or sign in to complete your onboarding." 
+        } 
+      });
+      return;
+    }
+
+    // User is authenticated, proceed with submission
     setLoading(true);
     try {
       const templateParams = {
         brand_name: values.brandName,
         elevator_pitch: values.elevator,
-        sender_name: values.senderName, // New template param
-        sender_email: values.senderEmail, // New template param
+        sender_name: values.senderName,
+        sender_email: values.senderEmail,
         industry: values.industry,
         offerings: values.offerings,
         primary_audience: values.audiencePrimary.join(', '),
@@ -331,8 +367,8 @@ export default function OnboardingForm() {
               </Button>
             )}
             {step === totalSteps + 1 && (
-              <Button type="submit" variant="premium" disabled={loading} className="w-full">
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Submit Onboarding'}
+              <Button type="submit" variant="premium" disabled={loading || authLoading} className="w-full">
+                {loading || authLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Submit Onboarding'}
               </Button>
             )}
           </div>

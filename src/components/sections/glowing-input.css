@@ -6,14 +6,16 @@
   -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .glowing-container::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 1.5rem; /* Matches the container's rounded corners */
-  padding: 1px;
+  border-radius: 2.5rem; /* Between 4xl and 5xl rounded to match the container */
+  padding: 1px; /* Back to original thickness */
   background: linear-gradient(45deg, rgba(255, 255, 255, 0.5), rgba(255, 215, 0, 0.5));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -23,4 +25,61 @@
 
 .glow {
   box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.3);
+  border-radius: 2.5rem; /* Ensure the glow also has rounded corners */
+}
+
+/* Ensure buttons are interactive */
+.glowing-container button {
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.glowing-container input {
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.glowing-container input::placeholder {
+  font-style: italic;
+}
+
+/* Dynamic button animations */
+.glowing-container .dynamic-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glowing-container .send-button {
+  animation: slideIn 0.3s ease-out;
+}
+
+.glowing-container .mic-button {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+/* AI text animation */
+.glowing-container .ai-text {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

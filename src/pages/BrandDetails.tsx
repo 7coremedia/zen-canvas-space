@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { BrandChat } from '@/components/brand-wizard/BrandChat';
+// BrandChat import removed - will be replaced with new AI chat system
 import { MessageSquare, Sparkles, Download, Copy, Edit, Share2, MoreVertical, ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -89,7 +90,7 @@ const BrandDetails = () => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
               },
-              // Add more mock elements as needed
+              // Add more elements as needed
             ],
           });
           setIsLoading(false);

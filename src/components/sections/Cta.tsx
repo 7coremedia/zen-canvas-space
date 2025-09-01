@@ -6,7 +6,15 @@ export default function Cta() {
         <h2 className="font-display text-2xl md:text-3xl">Ready to build a brand with gravity?</h2>
         <p className="mt-2 text-muted-foreground">Let’s turn your vision into a decisive identity.</p>
         <div className="mt-6">
-          <NavLink to="/onboarding"><Button variant="premium" size="lg">Work With Me</Button></NavLink>
+          <NavLink to="/onboarding">
+            <Button 
+              variant="premium" 
+              size="lg" 
+              className="transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
+              Work With Me
+            </Button>
+          </NavLink>
         </div>
       </div>
     </section>;

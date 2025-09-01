@@ -2,6 +2,9 @@ import { Helmet } from "react-helmet-async";
 import Hero from "@/components/sections/Hero";
 import { Button } from "@/components/ui/button";
 import Testimonials from "@/components/sections/Testimonials";
+import Cta from "@/components/sections/Cta";
+import ProcessTabs from "@/components/sections/ProcessTabs";
+import { CornerRightDown } from 'lucide-react';
 
 import aaluxuryBrandingPresentationHero from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
 import aaluxuryFull from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
@@ -35,6 +38,19 @@ const Index = () => {
       </Helmet>
 
       <Hero />
+
+      {/* See Our Process */}
+      <section className="py-16 px-4 bg-[#f2f2f2]">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-center gap-3">
+            <h2 className="font-display text-2xl md:text-4xl font-medium">See Our Process</h2>
+            <CornerRightDown className="w-12 h-12 md:w-16 md:h-16" style={{ color: '#16181d', transform: 'translateY(18px)' }} />
+          </div>
+        </div>
+      </section>
+
+      {/* Process Tabs */}
+      <ProcessTabs />
 
       {/* Existing CTA buttons */}
       <section className="py-16 px-4 bg-[#f2f2f2]">
@@ -138,6 +154,8 @@ So, we delivered. </p>
       <section className="py-15 py-4 px-4 bg-[#f2f2f2]">
         <img src="/home/alux-bento-vibe.png" alt="Full width image" className="w-full h-auto" />
       </section>
+
+      <Cta />
     </main>
   );
 };

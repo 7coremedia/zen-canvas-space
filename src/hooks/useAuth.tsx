@@ -2,6 +2,7 @@ import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import { toast } from "@/hooks/use-toast";
+import emailjs from '@emailjs/browser';
 
 export type AuthContextValue = {
   session: Session | null;
@@ -28,8 +29,92 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // --- Save pending brand data after sign-in ---
+        // --- Save pending data after sign-in ---
         if (event === "SIGNED_IN" && session?.user) {
+          // Handle pending wizard data first
+          const pendingWizardData = sessionStorage.getItem('pendingWizardData');
+          if (pendingWizardData) {
+            try {
+              const wizardData = JSON.parse(pendingWizardData);
+              
+              // Save brand data to database
+              const { data: brand, error } = await supabase
+                .from('brands')
+                .insert({
+                  brand_name: wizardData.name,
+                  description: wizardData.description,
+                  colors: wizardData.colors,
+                  typography: wizardData.typography,
+                  logo_url: wizardData.logo?.url,
+                  logo_alt: wizardData.logo?.alt,
+                  user_id: session.user.id,
+                  is_primary: false,
+                })
+                .select()
+                .single();
+
+              if (error) throw error;
+
+              sessionStorage.removeItem('pendingWizardData');
+              toast({
+                title: "Welcome!",
+                description: "Your brand has been successfully saved.",
+              });
+
+            } catch (error: any) {
+              console.error("Failed to save pending wizard data:", error);
+              toast({
+                title: "Save Failed",
+                description: "We couldn't save your brand data. Please contact support.",
+                variant: "destructive",
+              });
+            }
+          }
+
+          // Handle pending onboarding data
+          const pendingOnboardingData = sessionStorage.getItem('pendingOnboardingData');
+          if (pendingOnboardingData) {
+            try {
+              const onboardingData = JSON.parse(pendingOnboardingData);
+              
+              // Send email with onboarding data
+              const templateParams = {
+                brand_name: onboardingData.brand_name,
+                elevator_pitch: onboardingData.elevator_pitch,
+                sender_name: onboardingData.sender_name,
+                sender_email: onboardingData.sender_email,
+                industry: onboardingData.industry,
+                offerings: onboardingData.offerings,
+                primary_audience: onboardingData.primary_audience,
+                one_year_vision: onboardingData.one_year_vision,
+                budget: onboardingData.budget,
+                launch_timeline: onboardingData.launch_timeline,
+              };
+
+              await emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
+                templateParams,
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+              );
+
+              sessionStorage.removeItem('pendingOnboardingData');
+              toast({
+                title: "Welcome!",
+                description: "Your onboarding has been completed successfully.",
+              });
+
+            } catch (error: any) {
+              console.error("Failed to submit pending onboarding data:", error);
+              toast({
+                title: "Submission Failed",
+                description: "We couldn't submit your onboarding data. Please contact support.",
+                variant: "destructive",
+              });
+            }
+          }
+
+          // Handle pending brand data
           const pendingDataString = sessionStorage.getItem('pendingBrandData');
           if (pendingDataString) {
             try {
