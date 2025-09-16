@@ -18,6 +18,7 @@ import Auth from "./pages/Auth";
 import BrandDetails from "./pages/BrandDetails";
 import Dashboard from "./pages/Dashboard";
 import BrandingChat from "./pages/BrandingChat";
+import BrandProfileDetails from "./pages/BrandProfileDetails";
 
 import { AuthProvider } from "@/hooks/useAuth";
 import CursorRing from "@/components/ui/CursorRing";
@@ -43,6 +44,7 @@ function AppShell() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/brand/:id" element={<BrandDetails />} />
+          <Route path="/brand-profile/:id" element={<BrandProfileDetails />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/branding-chat" element={<BrandingChat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

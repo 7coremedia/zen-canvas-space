@@ -82,10 +82,16 @@ export default function Dashboard() {
               <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground line-clamp-2">{brand.elevator_pitch}</p>
               </CardContent>
-              <div className="p-6 pt-0">
-                <Button variant="outline" asChild className="w-full">
+              <div className="p-6 pt-0 flex gap-2">
+                <Button variant="outline" asChild className="flex-1">
                   <Link to={`/brand/${brand.id}`}>
-                    View Details
+                    Brand Details
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Link>
+                </Button>
+                <Button variant="default" asChild className="flex-1">
+                  <Link to={`/brand-profile/${brand.id}`}>
+                    Full Profile
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>
