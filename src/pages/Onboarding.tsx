@@ -1514,40 +1514,125 @@ export default function OnboardingForm() {
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const onSubmit = async (values: FormValues) => {
-    // For now, save brand data to sessionStorage and show on dashboard, no login required
+    // Wait for auth to finish loading
+    if (authLoading) {
+      return;
+    }
+    
+    // Prepare onboarding data
+    const onboardingData: any = {
+      brand_name: values.brandName,
+      elevator_pitch: values.corePromise,
+      sender_name: values.senderName,
+      sender_email: values.senderEmail,
+      industry: values.industry,
+      offerings: values.offerings,
+      primary_audience: null,
+      one_year_vision: null,
+      budget: null,
+      launch_timeline: null,
+      // Add visual direction fields
+      logo_style: values.logoStyle,
+      color_palette: values.colorPalette,
+      typography: values.typographyFeel,
+      imagery_style: values.imageryStyle,
+      // Add session ID for non-authenticated users
+      session_id: !user ? crypto.randomUUID() : null,
+    };
+    
+    // Check if user is authenticated
+    if (!user) {
+      // Save onboarding data to session storage
+      sessionStorage.setItem('pendingOnboardingData', JSON.stringify(onboardingData));
+      
+      // Redirect to auth page
+      navigate('/auth', { 
+        state: { 
+          fromOnboarding: true,
+          message: "Please sign up or sign in to complete your onboarding." 
+        } 
+      });
+      return;
+    }
+
+    // User is authenticated, proceed with submission
+    setLoading(true);
     try {
-      // Prepare a temp brand object
-      const tempBrand = {
-        id: crypto.randomUUID(),
-        brand_name: values.brandName,
-        tagline: values.tagline,
-        elevator_pitch: values.corePromise,
-        sender_name: values.senderName,
-        sender_email: values.senderEmail,
-        industry: values.industry,
-        offerings: values.offerings?.length ? values.offerings.join(", ") : "",
-        competitors: values.competitors?.length ? values.competitors.join(", ") : "",
-        primary_audience: values.primaryAudience?.length ? values.primaryAudience.join(", ") : "",
+      // Transform form data to match Supabase schema
+      const insertData: OnboardingInsert = {
+        user_id: user.id,
+        brand_name: values.brandName || null,
+        tagline: values.tagline || null,
+        elevator_pitch: values.corePromise || null,
+        industry: values.industry || null,
+        usp: values.usp || null,
+        online_link: values.hasNoWebsite ? null : (values.domain || null),
+        offerings: values.offerings?.length ? values.offerings.join(", ") : null,
+        competitors: values.competitors.join(", "),
+        primary_audience: values.primaryAudience?.join(", ") || values.primaryAudienceNotes || null,
         age_range: `${values.audienceAgeRangeMin}-${values.audienceAgeRangeMax}`,
         gender_focus: values.audienceGender,
         income_level: `${values.audienceIncomeMin}-${values.audienceIncomeMax}`,
-        launch_timeline: values.launchTiming || "",
-        budget: values.budgetRange || "",
-        logo_style: values.logoStyle || "",
-        color_palette: values.colorPalette || "",
-        typography: values.typographyFeel || "",
-        imagery_style: values.imageryStyle || "",
-        one_year_vision: values.oneYearVision || "",
-        notes: values.notes || "",
-        created_at: new Date().toISOString(),
+        launch_timing: values.launchTiming || null,
+        budget_range: values.budgetRange || null,
+        brand_personality: {
+          masculineFeminine: values.personalityMasculineFeminine,
+          playfulSerious: values.personalityPlayfulSerious,
+          luxuryAffordable: values.personalityLuxuryAffordable,
+          classicModern: values.personalityClassicModern,
+          boldSubtle: values.personalityBoldSubtle,
+          localGlobal: values.personalityLocalGlobal,
+          meta: {
+            hasNoWebsite: values.hasNoWebsite === true
+          },
+          likes: values.likes,
+          dislikes: values.dislikes,
+          oneYearVision: values.oneYearVision,
+          fiveYearVision: values.fiveYearVision,
+          challenges: values.challenges
+        }
       };
-      // Save to sessionStorage (append to array)
-      const existing = JSON.parse(sessionStorage.getItem('tempBrandData') || '[]');
-      sessionStorage.setItem('tempBrandData', JSON.stringify([...existing, tempBrand]));
-      toast({ title: "Onboarding Submitted!", description: "Your brand details have been temporarily saved." });
+
+      // Save to Supabase with type assertion
+      const supabaseResponse = await supabase
+        .from('onboarding_responses')
+        .insert<OnboardingInsert>([insertData] as OnboardingInsert[])
+        .select()
+        .single();
+      
+      const { data, error } = supabaseResponse;
+        
+      if (error) throw error;
+      
+      // Also send email notification if configured
+      try {
+        await emailjs.send(
+          import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
+          onboardingData,
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+        );
+      } catch (emailError) {
+        console.error('EmailJS notification error:', emailError);
+        // Continue even if email fails
+      }
+
+      toast({ 
+        title: "Onboarding Submitted!", 
+        description: "Your brand details have been successfully saved." 
+      });
+      
+      // Redirect to dashboard or brand details page
       navigate('/dashboard');
-    } catch (err) {
-      toast({ title: "Submission Failed", description: "Could not save your brand details. Please try again.", variant: "destructive" });
+    } catch (error: any) {
+      console.error('Supabase submission error:', error);
+      toast({ 
+        title: "Submission Failed", 
+        description: error.message || "Could not save your brand details. Please try again.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -48,21 +48,14 @@ const BrandProfileDetails = () => {
           return;
         }
 
-        // Try to fetch from DB first
-        let data = null;
-        try {
-          const resp = await supabase
-            .from('onboarding_responses')
-            .select('*')
-            .eq('id', id)
-            .single();
-          if (resp && resp.data) data = resp.data;
-        } catch {}
+        const { data, error } = await supabase
+          .from('onboarding_responses')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-        // If not found, try sessionStorage
-        if (!data) {
-          const tempBrands = JSON.parse(sessionStorage.getItem('tempBrandData') || '[]');
-          data = tempBrands.find((b: any) => b.id === id);
+        if (error) {
+          throw error;
         }
 
         if (!data) {
