@@ -8,6 +8,9 @@ import { ArrowLeft, Download, Edit, Share2, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
+import { colorPalettes } from '@/config/brandOptions';
+import ColorPalettePreview from '@/components/ui/ColorPalettePreview';
+import { useNavigate } from 'react-router-dom';
 
 // Define the type for onboarding responses from Supabase
 type OnboardingResponse = {
@@ -45,14 +48,21 @@ const BrandProfileDetails = () => {
           return;
         }
 
-        const { data, error } = await supabase
-          .from('onboarding_responses')
-          .select('*')
-          .eq('id', id)
-          .single();
+        // Try to fetch from DB first
+        let data = null;
+        try {
+          const resp = await supabase
+            .from('onboarding_responses')
+            .select('*')
+            .eq('id', id)
+            .single();
+          if (resp && resp.data) data = resp.data;
+        } catch {}
 
-        if (error) {
-          throw error;
+        // If not found, try sessionStorage
+        if (!data) {
+          const tempBrands = JSON.parse(sessionStorage.getItem('tempBrandData') || '[]');
+          data = tempBrands.find((b: any) => b.id === id);
         }
 
         if (!data) {
@@ -116,7 +126,7 @@ const BrandProfileDetails = () => {
             <Share2 className="mr-2 h-4 w-4" />
             Share
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => navigate('/onboarding', { state: { editOnboardingId: id } })}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
           </Button>
@@ -150,12 +160,47 @@ const BrandProfileDetails = () => {
               
               <div>
                 <h3 className="font-medium text-sm text-muted-foreground">Offerings</h3>
-                <p>{brandProfile.offerings || 'Not specified'}</p>
+                {brandProfile.offerings ? (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {brandProfile.offerings.split(',').map((o) => (
+                      <Badge key={o.trim()} variant="outline">{o.trim()}</Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <p>{'Not specified'}</p>
+                )}
               </div>
               
               <div>
                 <h3 className="font-medium text-sm text-muted-foreground">One Year Vision</h3>
                 <p>{brandProfile.one_year_vision || 'Not specified'}</p>
+              </div>
+              {/* Audience summary quick view */}
+              <div>
+                <h3 className="font-medium text-sm text-muted-foreground">Audience</h3>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {/* Age Range */}
+                  {brandProfile.age_range ? (
+                    <Badge variant="outline">Age: {brandProfile.age_range}</Badge>
+                  ) : null}
+                  {/* Gender Focus */}
+                  {brandProfile.gender_focus ? (
+                    <Badge variant="outline">Gender: {brandProfile.gender_focus}</Badge>
+                  ) : null}
+                  {/* Income Level */}
+                  {brandProfile.income_level ? (
+                    <Badge variant="outline">Income: {brandProfile.income_level}</Badge>
+                  ) : null}
+                  {/* Geographic Focus */}
+                  {brandProfile.geographic_focus ? (
+                    <Badge variant="outline">Geo: {brandProfile.geographic_focus}</Badge>
+                  ) : null}
+                </div>
+              </div>
+              {/* Audience pain points */}
+              <div>
+                <h3 className="font-medium text-sm text-muted-foreground">Audience Pain Points</h3>
+                <p>{brandProfile.audience_pain_points || 'Not specified'}</p>
               </div>
             </CardContent>
           </Card>
@@ -177,7 +222,19 @@ const BrandProfileDetails = () => {
               
               <div>
                 <h3 className="font-medium mb-2">Color Palette</h3>
-                <Badge variant="outline">{brandProfile.color_palette || 'Not specified'}</Badge>
+                {/* If the onboarding stored a palette id that matches our config, render a swatch preview */}
+                {brandProfile.color_palette ? (
+                  (() => {
+                    const palette = colorPalettes.find(p => p.id === brandProfile.color_palette);
+                    if (palette) {
+                      return <ColorPalettePreview colors={palette.colors} label={palette.label} />;
+                    }
+                    // If no matching palette id, fallback to simple badge showing raw value
+                    return <Badge variant="outline">{brandProfile.color_palette}</Badge>;
+                  })()
+                ) : (
+                  <Badge variant="outline">Not specified</Badge>
+                )}
               </div>
               
               <Separator />
@@ -204,9 +261,32 @@ const BrandProfileDetails = () => {
               <CardDescription>Who your brand is designed to reach</CardDescription>
             </CardHeader>
             <CardContent>
-              <div>
-                <h3 className="font-medium text-sm text-muted-foreground">Primary Audience</h3>
-                <p>{brandProfile.primary_audience || 'Not specified'}</p>
+              <div className="space-y-3">
+                <div>
+                  <h3 className="font-medium text-sm text-muted-foreground">Primary Audience</h3>
+                  {brandProfile.primary_audience ? (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {brandProfile.primary_audience.split(',').map((a) => (
+                        <Badge key={a.trim()} variant="outline">{a.trim()}</Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>{'Not specified'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-sm text-muted-foreground">Competitors</h3>
+                  {brandProfile.competitors ? (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {brandProfile.competitors.split(',').map((c) => (
+                        <Badge key={c.trim()} variant="outline">{c.trim()}</Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>{'Not specified'}</p>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -236,13 +316,25 @@ const BrandProfileDetails = () => {
                   <span>Launch</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2.5">
-                  <div className="bg-primary h-2.5 rounded-full" style={{ width: '45%' }}></div>
+                  <div className="bg-primary h-2.5 rounded-full" style={{ width: (brandProfile.launch_timeline === 'ASAP' ? '80%' : brandProfile.launch_timeline ? '45%' : '0%') }}></div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Notes section in overview area - show if notes exist */}
+      {brandProfile && brandProfile.notes ? (
+        <div className="container max-w-6xl py-2">
+          <Card>
+            <CardContent>
+              <h3 className="font-medium mb-2">Notes</h3>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{brandProfile.notes}</p>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
     </div>
   );
 };

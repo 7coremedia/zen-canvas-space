@@ -15,27 +15,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      if (!user) return;
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('brands')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        if (data) setBrands(data);
-      } catch (error) {
-        console.error('Error fetching brands:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBrands();
-  }, [user]);
+    // For testing, read brands from sessionStorage
+    setLoading(true);
+    try {
+      const tempBrands = JSON.parse(sessionStorage.getItem('tempBrandData') || '[]');
+      setBrands(tempBrands);
+    } catch {
+      setBrands([]);
+    }
+    setLoading(false);
+  }, []);
 
   return (
     <main className="container mx-auto py-12">
@@ -81,17 +70,12 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground line-clamp-2">{brand.elevator_pitch}</p>
+                <p className="text-xs text-muted-foreground">Industry: {brand.industry}</p>
               </CardContent>
               <div className="p-6 pt-0 flex gap-2">
                 <Button variant="outline" asChild className="flex-1">
-                  <Link to={`/brand/${brand.id}`}>
-                    Brand Details
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </Button>
-                <Button variant="default" asChild className="flex-1">
                   <Link to={`/brand-profile/${brand.id}`}>
-                    Full Profile
+                    Brand Details
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>

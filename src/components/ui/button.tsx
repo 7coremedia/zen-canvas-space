@@ -29,10 +29,16 @@ const buttonVariants = cva(
         lg: "h-10 px-7",
         icon: "h-10 w-10",
       },
+      shape: {
+        pill: "rounded-2xl",
+        rounded: "rounded-md",
+        square: "rounded-none",
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      shape: "pill",
     },
   }
 )
