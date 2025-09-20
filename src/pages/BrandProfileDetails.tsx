@@ -10,6 +10,8 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
 import { colorPalettes, logoStyles, typographyPairings, imageryStyles } from '@/config/brandOptions';
 import ColorPalettePreview from '@/components/ui/ColorPalettePreview';
+import ProposalGenerator from '@/components/powerups/ProposalGenerator';
+import InvoiceGenerator from '@/components/powerups/InvoiceGenerator';
 
 // Define the type for onboarding responses from Supabase
 type OnboardingResponse = {
@@ -694,41 +696,19 @@ const BrandProfileDetails = () => {
         </div>
       ) : null}
 
-      {/* Proposal Modal Placeholder */}
-      {showProposalModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h2 className="text-2xl font-bold mb-4">Generate Proposal</h2>
-            <p className="text-muted-foreground mb-4">
-              Proposal generation feature coming soon! This will create a professional proposal 
-              based on your brand data and selected package.
-            </p>
-            <div className="flex gap-2">
-              <Button onClick={() => setShowProposalModal(false)}>
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Proposal Generator Modal */}
+      <ProposalGenerator
+        isOpen={showProposalModal}
+        onClose={() => setShowProposalModal(false)}
+        brandData={brandProfile}
+      />
 
-      {/* Invoice Modal Placeholder */}
-      {showInvoiceModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h2 className="text-2xl font-bold mb-4">Generate Invoice</h2>
-            <p className="text-muted-foreground mb-4">
-              Invoice generation feature coming soon! This will create a professional invoice 
-              based on your brand data and selected package with smart pricing.
-            </p>
-            <div className="flex gap-2">
-              <Button onClick={() => setShowInvoiceModal(false)}>
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Invoice Generator Modal */}
+      <InvoiceGenerator
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        brandData={brandProfile}
+      />
     </div>
   );
 };
