@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Download, Edit, Share2, Loader2, RotateCw, CircleX } from 'lucide-react';
+import { ArrowLeft, Download, Edit, Share2, Loader2, RotateCw, CircleX, FileText, Receipt } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
@@ -66,6 +66,8 @@ const BrandProfileDetails = () => {
   const [brandProfile, setBrandProfile] = useState<OnboardingResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showProposalModal, setShowProposalModal] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   useEffect(() => {
     const fetchBrandProfile = async () => {
@@ -149,6 +151,14 @@ const BrandProfileDetails = () => {
           <Button variant="outline" size="sm">
             <Share2 className="mr-2 h-4 w-4" />
             Share
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowProposalModal(true)}>
+            <FileText className="mr-2 h-4 w-4" />
+            Proposal
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowInvoiceModal(true)}>
+            <Receipt className="mr-2 h-4 w-4" />
+            Invoice
           </Button>
           <Button size="sm" onClick={() => navigate('/onboarding', { state: { editOnboardingId: id } })}>
             <Edit className="mr-2 h-4 w-4" />
@@ -683,6 +693,42 @@ const BrandProfileDetails = () => {
           </Card>
         </div>
       ) : null}
+
+      {/* Proposal Modal Placeholder */}
+      {showProposalModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h2 className="text-2xl font-bold mb-4">Generate Proposal</h2>
+            <p className="text-muted-foreground mb-4">
+              Proposal generation feature coming soon! This will create a professional proposal 
+              based on your brand data and selected package.
+            </p>
+            <div className="flex gap-2">
+              <Button onClick={() => setShowProposalModal(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Invoice Modal Placeholder */}
+      {showInvoiceModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <h2 className="text-2xl font-bold mb-4">Generate Invoice</h2>
+            <p className="text-muted-foreground mb-4">
+              Invoice generation feature coming soon! This will create a professional invoice 
+              based on your brand data and selected package with smart pricing.
+            </p>
+            <div className="flex gap-2">
+              <Button onClick={() => setShowInvoiceModal(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
