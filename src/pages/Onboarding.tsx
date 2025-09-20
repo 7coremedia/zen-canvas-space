@@ -1636,7 +1636,12 @@ export default function OnboardingForm() {
       
       const { data, error } = supabaseResponse;
         
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
+      
+      console.log('Successfully saved onboarding data:', data);
       
       // Also send email notification if configured
       try {

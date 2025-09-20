@@ -6,12 +6,38 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, ArrowRight } from 'lucide-react';
-import { Brand } from '@/types/brand';
+// Define the type for onboarding responses from Supabase
+type OnboardingResponse = {
+  id: string;
+  user_id: string | null;
+  brand_name: string | null;
+  tagline: string | null;
+  elevator_pitch: string | null;
+  industry: string | null;
+  offerings: string | null;
+  primary_audience: string | null;
+  one_year_vision: string | null;
+  five_year_vision: string | null;
+  budget_range: string | null;
+  launch_timing: string | null;
+  usp: string | null;
+  competitors: string | null;
+  age_range: string | null;
+  gender_focus: string | null;
+  income_level: string | null;
+  challenges: string | null;
+  likes_dislikes: string | null;
+  extra_notes: string | null;
+  online_link: string | null;
+  brand_personality: any;
+  created_at: string;
+  updated_at: string;
+};
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brands, setBrands] = useState<OnboardingResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,13 +46,16 @@ export default function Dashboard() {
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .from('brands')
+          .from('onboarding_responses')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        if (data) setBrands(data);
+        if (data) {
+          console.log('Fetched brands from onboarding_responses:', data);
+          setBrands(data);
+        }
       } catch (error) {
         console.error('Error fetching brands:', error);
       } finally {

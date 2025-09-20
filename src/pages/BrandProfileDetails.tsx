@@ -83,12 +83,15 @@ const BrandProfileDetails = () => {
           .single();
 
         if (error) {
+          console.error('Supabase error:', error);
           throw error;
         }
 
         if (!data) {
+          console.log('No data found for brand ID:', id);
           setError('Brand profile not found');
         } else {
+          console.log('Fetched brand profile data:', data);
           setBrandProfile(data as OnboardingResponse);
         }
       } catch (err) {
