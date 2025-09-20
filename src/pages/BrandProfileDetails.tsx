@@ -215,19 +215,19 @@ const BrandProfileDetails = () => {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="w-full flex items-center gap-2 justify-between">
-          <div className="flex items-center gap-2">
+        <div className="w-full flex items-center justify-between gap-3">
+          <TabsList className="flex items-center gap-2">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="brand-identity">Brand Identity</TabsTrigger>
             <TabsTrigger value="audience">Audience</TabsTrigger>
             <TabsTrigger value="business">Business</TabsTrigger>
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="planning">Planning</TabsTrigger>
-          </div>
-          <div className="ml-auto">
-            <TabsTrigger value="settings">Brand Settings</TabsTrigger>
-          </div>
-        </TabsList>
+          </TabsList>
+          <Button variant="ghost" size="sm" onClick={() => setShowSettings((s) => !s)}>
+            Brand Settings
+          </Button>
+        </div>
 
         <TabsContent value="overview" className="space-y-6">
           <Card>
@@ -761,7 +761,10 @@ const BrandProfileDetails = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6">
+      </Tabs>
+
+      {showSettings && (
+        <div className="mt-4 space-y-6">
           <Card className="border-destructive/30">
             <CardHeader>
               <CardTitle className="text-destructive">Danger Zone</CardTitle>
@@ -798,8 +801,8 @@ const BrandProfileDetails = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      )}
       
       {/* Notes section in overview area - show if notes exist */}
       {brandProfile && brandProfile.extra_notes ? (
