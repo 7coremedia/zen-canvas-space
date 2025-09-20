@@ -1,4 +1,3 @@
-import { OnboardingResponse } from '@/types/supabase';
 import { PackageType, PACKAGES } from '@/config/packages';
 import { calculatePaymentBreakdown } from '@/lib/pricing/calculator';
 
@@ -23,7 +22,7 @@ export interface InvoiceData {
 }
 
 export interface InvoiceContext {
-  brandData: OnboardingResponse;
+  brandData: any;
   invoiceData: InvoiceData;
   invoiceNumber: string;
   dueDate: string;
@@ -151,8 +150,10 @@ export const generateInvoice = (context: InvoiceContext): string => {
 
   // Replace template variables
   let invoice = INVOICE_TEMPLATE;
+  const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   Object.entries(templateVariables).forEach(([placeholder, value]) => {
-    invoice = invoice.replace(new RegExp(placeholder, 'g'), value);
+    const safePlaceholder = new RegExp(escapeRegExp(placeholder), 'g');
+    invoice = invoice.replace(safePlaceholder, value);
   });
 
   return invoice;
@@ -232,7 +233,7 @@ After payment, please send proof of payment to:
  * Generate invoice context from brand data and invoice data
  */
 export const createInvoiceContext = (
-  brandData: OnboardingResponse,
+  brandData: any,
   invoiceData: InvoiceData
 ): InvoiceContext => {
   return {
@@ -247,7 +248,7 @@ export const createInvoiceContext = (
  * Generate proposal context from brand data and proposal data
  */
 export const createProposalContext = (
-  brandData: OnboardingResponse,
+  brandData: any,
   proposalData: any,
   totalPrice: number
 ): any => {

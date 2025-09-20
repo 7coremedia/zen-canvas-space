@@ -1,4 +1,3 @@
-import { OnboardingResponse } from '@/types/supabase';
 import { PackageType, PACKAGES } from '@/config/packages';
 import { calculatePaymentBreakdown } from '@/lib/pricing/calculator';
 
@@ -18,7 +17,7 @@ export interface ProposalData {
 }
 
 export interface ProposalContext {
-  brandData: OnboardingResponse;
+  brandData: any;
   proposalData: ProposalData;
   totalPrice: number;
   upfrontPayment: number;
@@ -157,8 +156,10 @@ export const generateProposal = (context: ProposalContext): string => {
 
   // Replace template variables
   let proposal = PROPOSAL_TEMPLATE;
+  const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   Object.entries(templateVariables).forEach(([placeholder, value]) => {
-    proposal = proposal.replace(new RegExp(placeholder, 'g'), value);
+    const safePlaceholder = new RegExp(escapeRegExp(placeholder), 'g');
+    proposal = proposal.replace(safePlaceholder, value);
   });
 
   return proposal;
