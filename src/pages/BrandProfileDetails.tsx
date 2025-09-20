@@ -218,12 +218,42 @@ const BrandProfileDetails = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <div className="w-full flex items-center justify-between gap-3">
           <TabsList className="flex items-center gap-1 rounded-full bg-muted/60 p-1">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="brand-identity">Brand Identity</TabsTrigger>
-            <TabsTrigger value="audience">Audience</TabsTrigger>
-            <TabsTrigger value="business">Business</TabsTrigger>
-            <TabsTrigger value="marketing">Marketing</TabsTrigger>
-            <TabsTrigger value="planning">Planning</TabsTrigger>
+            <TabsTrigger
+              value="overview"
+              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="brand-identity"
+              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+            >
+              Brand Identity
+            </TabsTrigger>
+            <TabsTrigger
+              value="audience"
+              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+            >
+              Audience
+            </TabsTrigger>
+            <TabsTrigger
+              value="business"
+              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+            >
+              Business
+            </TabsTrigger>
+            <TabsTrigger
+              value="marketing"
+              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+            >
+              Marketing
+            </TabsTrigger>
+            <TabsTrigger
+              value="planning"
+              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+            >
+              Planning
+            </TabsTrigger>
           </TabsList>
           <Button 
             variant={activeTab === 'settings' ? 'default' : 'outline'} 
