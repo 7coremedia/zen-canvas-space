@@ -86,6 +86,7 @@ const BrandProfileDetails = () => {
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleDeleteBrand = async () => {
     if (!id) return;
