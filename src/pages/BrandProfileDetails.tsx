@@ -23,6 +23,7 @@ import { colorPalettes, logoStyles, typographyPairings, imageryStyles } from '@/
 import ColorPalettePreview from '@/components/ui/ColorPalettePreview';
 import ProposalGenerator from '@/components/powerups/ProposalGenerator';
 import InvoiceGenerator from '@/components/powerups/InvoiceGenerator';
+import { useAuth } from '@/hooks/useAuth';
 
 // Define the type for onboarding responses from Supabase
 type OnboardingResponse = {
@@ -78,6 +79,7 @@ const getImageryStyle = (id: string | undefined) => {
 const BrandProfileDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [brandProfile, setBrandProfile] = useState<OnboardingResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,13 +89,22 @@ const BrandProfileDetails = () => {
 
   const handleDeleteBrand = async () => {
     if (!id) return;
+    if (!user) {
+      toast({ title: 'Not signed in', description: 'Please sign in to delete this brand.', variant: 'destructive' });
+      return;
+    }
     try {
       setDeleting(true);
-      const { error } = await supabase
+      const { data, error, status } = await supabase
         .from('onboarding_responses')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select('id');
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('No matching brand found or you do not have permission to delete this brand.');
+      }
 
       toast({ title: 'Brand Deleted', description: 'The brand and its data have been removed.' });
       navigate('/dashboard');
