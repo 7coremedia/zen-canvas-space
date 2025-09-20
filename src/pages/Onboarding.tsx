@@ -1318,7 +1318,7 @@ export default function OnboardingForm() {
       // Step 4
       audienceAgeRangeMin: 18,
       audienceAgeRangeMax: 65,
-      audienceGender: 50,
+      audienceGender: "Mixed",
       audienceIncomeMin: undefined,
       audienceIncomeMax: undefined,
       currency: "NGN",
@@ -1380,24 +1380,63 @@ export default function OnboardingForm() {
         if (error) throw error;
         if (!data) return;
 
-        // Map DB fields to form values safely
+        // Map DB fields to form values safely (cover all fields)
         const mapped: Partial<FormValues> = {
+          // Step 1: Basic Brand Info
           brandName: data.brand_name || "",
           tagline: data.tagline || "",
           corePromise: data.elevator_pitch || "",
-          industry: (data.industry as any) || undefined,
-          offerings: data.offerings ? String(data.offerings).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
-          // audience
+          senderName: (data as any).sender_name || "",
+          senderEmail: (data as any).sender_email || "",
+
+          // Step 3: Visual Direction (from brand_personality)
+          logoStyle: (data as any).brand_personality?.logoStyle || undefined,
+          colorPalette: (data as any).brand_personality?.colorPalette || undefined,
+          typographyFeel: (data as any).brand_personality?.typographyFeel || undefined,
+          imageryStyle: (data as any).brand_personality?.imageryStyle || undefined,
+
+          // Step 4: Audience & Market
+          geographicFocus: (data as any).brand_personality?.geographicFocus || undefined,
+          audiencePainPoints: (data as any).brand_personality?.audiencePainPoints || "",
+          competitors: (data as any).competitors ? String((data as any).competitors).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
           primaryAudience: data.primary_audience ? String(data.primary_audience).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
-          oneYearVision: (data.one_year_vision as any) || "",
-          // planning
-          budgetRange: (data.budget_range as any) || undefined,
-          launchTiming: (data.launch_timing as any) || undefined,
-          // visual direction
-          logoStyle: (data.brand_personality as any)?.logoStyle || undefined,
-          colorPalette: (data.brand_personality as any)?.colorPalette || undefined,
-          typographyFeel: (data.brand_personality as any)?.typographyFeel || undefined,
-          imageryStyle: (data.brand_personality as any)?.imageryStyle || undefined,
+          audienceGender: (data as any).gender_focus || "Mixed",
+
+          // Step 5: Positioning & Business
+          industry: (data.industry as any) || undefined,
+          usp: (data as any).usp || "",
+          differentiation: (data as any).brand_personality?.differentiation || [],
+          coreValues: (data as any).brand_personality?.coreValues || [],
+          visionMission: (data as any).brand_personality?.visionMission || "",
+          oneYearVision: (data as any).one_year_vision || "",
+          fiveYearVision: (data as any).five_year_vision || "",
+          challenges: (data as any).challenges || "",
+          likes: (data as any).brand_personality?.likes || [],
+          dislikes: (data as any).brand_personality?.dislikes || [],
+
+          // Step 6: Products & Services
+          offerings: data.offerings ? String(data.offerings).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+          pricePositioning: (data as any).brand_personality?.pricePositioning ?? 50,
+          distributionChannels: (data as any).brand_personality?.distributionChannels || [],
+          businessModel: (data as any).brand_personality?.businessModel || undefined,
+
+          // Step 7: Marketing & Communication
+          toneOfVoiceFriendlyFormal: (data as any).brand_personality?.toneFriendlyFormal ?? 50,
+          toneOfVoiceInspirationalPractical: (data as any).brand_personality?.toneInspirationalPractical ?? 50,
+          preferredPlatforms: (data as any).brand_personality?.preferredPlatforms || [],
+          marketingGoals: (data as any).brand_personality?.marketingGoals || [],
+          brandStory: (data as any).brand_personality?.brandStory || "",
+
+          // Step 8: Technical & Legal
+          domain: (data as any).online_link || "",
+          hasNoWebsite: !!(data as any).brand_personality?.meta?.hasNoWebsite,
+          socialHandles: (data as any).brand_personality?.socialHandles || [],
+          trademarkStatus: !!(data as any).brand_personality?.trademarkStatus,
+          launchTiming: (data as any).launch_timing || undefined,
+          budgetRange: (data as any).budget_range || undefined,
+
+          // Notes
+          notes: (data as any).extra_notes || "",
         };
 
         // If brand_personality object exists, map personality fields
@@ -1409,11 +1448,29 @@ export default function OnboardingForm() {
           mapped.personalityClassicModern = bp.classicModern ?? mapped.personalityClassicModern;
           mapped.personalityBoldSubtle = bp.boldSubtle ?? mapped.personalityBoldSubtle;
           mapped.personalityLocalGlobal = bp.localGlobal ?? mapped.personalityLocalGlobal;
-          mapped.likes = bp.likes ?? [];
-          mapped.dislikes = bp.dislikes ?? [];
-          mapped.oneYearVision = bp.oneYearVision ?? mapped.oneYearVision;
-          mapped.fiveYearVision = bp.fiveYearVision ?? mapped.fiveYearVision;
-          mapped.challenges = bp.challenges ?? mapped.challenges;
+          mapped.likes = bp.likes ?? mapped.likes;
+          mapped.dislikes = bp.dislikes ?? mapped.dislikes;
+          // Prefer explicit top-level values if present; otherwise fall back to bp meta
+          mapped.oneYearVision = mapped.oneYearVision || bp.oneYearVision || "";
+          mapped.fiveYearVision = mapped.fiveYearVision || bp.fiveYearVision || "";
+          mapped.challenges = mapped.challenges || bp.challenges || "";
+          // Currency in meta
+          if (bp.meta && bp.meta.currency) mapped.currency = bp.meta.currency;
+        }
+
+        // Fallback: parse legacy likes_dislikes string if arrays are missing
+        const legacyLikesDislikes = (data as any).likes_dislikes as string | null | undefined;
+        if (legacyLikesDislikes && (!mapped.likes || mapped.likes.length === 0) && (!mapped.dislikes || mapped.dislikes.length === 0)) {
+          try {
+            const likesMatch = legacyLikesDislikes.match(/Likes:\s*([^;]+)/i);
+            const dislikesMatch = legacyLikesDislikes.match(/Dislikes:\s*([^;]+)/i);
+            if (likesMatch?.[1]) {
+              mapped.likes = likesMatch[1].split(',').map((s: string) => s.trim()).filter(Boolean);
+            }
+            if (dislikesMatch?.[1]) {
+              mapped.dislikes = dislikesMatch[1].split(',').map((s: string) => s.trim()).filter(Boolean);
+            }
+          } catch {}
         }
 
         // Competitors may be stored in different field names
@@ -1431,9 +1488,6 @@ export default function OnboardingForm() {
           if (!Number.isNaN(min)) (mapped as any).audienceIncomeMin = min;
           if (!Number.isNaN(max)) (mapped as any).audienceIncomeMax = max;
         }
-
-        // Notes
-        if ((data as any).notes) mapped.notes = (data as any).notes;
 
         methods.reset({ ...methods.getValues(), ...mapped });
         // set step to 1 so user starts from beginning when editing
