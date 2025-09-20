@@ -135,7 +135,13 @@ export default function Header() {
             Contact Us <Heart className="ml-2 h-4 w-4" />
           </NavLink>
           {user ? <NavLink to="/dashboard">
-              <Button variant="dashboard" className="px-4 flex items-center gap-2 text-base text-slate-50">
+              <Button 
+                variant="dashboard" 
+                className={cn(
+                  "px-4 flex items-center gap-2 text-base",
+                  isLight ? "text-black border-black hover:text-black/80 hover:border-black/80" : "text-slate-50 border-slate-50 hover:text-slate-50/90 hover:border-slate-50/90"
+                )}
+              >
                 <User className="h-4 w-4" />
                 Dashboard
               </Button>
