@@ -30,6 +30,8 @@ export type Database = {
           inspiration_files: string[] | null;
           brand_colors: string[] | null;
           fonts: string[] | null;
+          sender_name: string | null;
+          sender_email: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -38,6 +40,8 @@ export type Database = {
           user_id?: string | null;
           session_id?: string | null;
           brand_name?: string | null;
+          sender_name?: string | null;
+          sender_email?: string | null;
           tagline?: string | null;
           online_link?: string | null;
           elevator_pitch?: string | null;

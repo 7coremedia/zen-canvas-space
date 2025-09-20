@@ -40,9 +40,9 @@ interface ProposalFormData {
 const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProps) => {
   const [formData, setFormData] = useState<ProposalFormData>({
     clientInfo: {
-      name: '',
-      contact: '',
-      email: '',
+      name: brandData.sender_name || '',
+      contact: brandData.sender_name || '',
+      email: brandData.sender_email || '',
       company: brandData.brand_name || ''
     },
     selectedPackage: null,

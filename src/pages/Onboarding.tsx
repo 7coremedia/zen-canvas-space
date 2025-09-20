@@ -1672,6 +1672,8 @@ export default function OnboardingForm() {
         extra_notes: values.notes || null,
         likes_dislikes: values.likes?.length || values.dislikes?.length ? 
           `Likes: ${values.likes?.join(", ") || "None"}; Dislikes: ${values.dislikes?.join(", ") || "None"}` : null,
+        sender_name: values.senderName || null,
+        sender_email: values.senderEmail || null,
         brand_personality: {
           // Personality sliders
           masculineFeminine: values.personalityMasculineFeminine,

@@ -37,6 +37,8 @@ type OnboardingResponse = {
   extra_notes: string | null;
   online_link: string | null;
   brand_personality: any;
+  sender_name: string | null;
+  sender_email: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -225,6 +227,34 @@ const BrandProfileDetails = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Contact Information Card */}
+          {(brandProfile.sender_name || brandProfile.sender_email) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Information</CardTitle>
+                <CardDescription>Primary contact details for this brand</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {brandProfile.sender_name && (
+                  <div>
+                    <h3 className="font-medium text-sm text-muted-foreground">Contact Name</h3>
+                    <p>{brandProfile.sender_name}</p>
+                  </div>
+                )}
+                {brandProfile.sender_email && (
+                  <div>
+                    <h3 className="font-medium text-sm text-muted-foreground">Email Address</h3>
+                    <p className="text-blue-600 hover:text-blue-800">
+                      <a href={`mailto:${brandProfile.sender_email}`}>
+                        {brandProfile.sender_email}
+                      </a>
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="brand-identity" className="space-y-6">

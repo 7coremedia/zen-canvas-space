@@ -45,9 +45,9 @@ interface InvoiceFormData {
 const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps) => {
   const [formData, setFormData] = useState<InvoiceFormData>({
     clientInfo: {
-      name: '',
-      contact: '',
-      email: '',
+      name: brandData.sender_name || '',
+      contact: brandData.sender_name || '',
+      email: brandData.sender_email || '',
       company: brandData.brand_name || '',
       address: ''
     },
