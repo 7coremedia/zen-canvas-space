@@ -63,7 +63,7 @@ Email: [CLIENT_EMAIL]
 ## 🧾 Payment Details
 
 - **Bank Name:** [BANK_NAME]
-- **Account Name:** SevenCore Media
+- **Account Name:** KING
 - **Account Number:** [ACCOUNT_NUMBER]
 - **Currency:** Nigerian Naira (₦)
 
@@ -86,7 +86,7 @@ Email: [CLIENT_EMAIL]
 
 ---
 
-**SevenCore Media**  
+**KING**  
 _We don't build brands. We crown kings._`;
 
 /**
@@ -212,7 +212,7 @@ export const generatePaymentInstructions = (): string => {
 
 ### Bank Transfer
 - **Bank:** [Your Bank Name]
-- **Account Name:** SevenCore Media
+- **Account Name:** KING
 - **Account Number:** [Your Account Number]
 - **Reference:** [Invoice Number]
 

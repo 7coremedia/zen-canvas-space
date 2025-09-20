@@ -121,7 +121,7 @@ To maintain focus, these boundaries define the battlefield:
 
 ---
 
-**SevenCore Media**  
+**KING**  
 _We don't build brands. We crown kings._`;
 
 /**
@@ -135,7 +135,7 @@ export const generateProposal = (context: ProposalContext): string => {
   // Map brand data to template variables
   const templateVariables = {
     '[CLIENT_PROJECT_NAME]': proposalData.clientInfo.company || brandData.brand_name || 'Brand Project',
-    '[VENDOR_NAME]': 'SevenCore Media',
+    '[VENDOR_NAME]': 'KING',
     '[TIMELINE]': proposalData.customizations.timeline || packageInfo.timeline,
     '[DATE]': new Date().toLocaleDateString('en-US', { 
       year: 'numeric', 

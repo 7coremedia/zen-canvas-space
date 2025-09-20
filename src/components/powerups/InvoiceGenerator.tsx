@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X, Check, Crown, Shield, Zap, Target, Receipt, Download, Eye, Calculator } from 'lucide-react';
 import { OnboardingResponse } from '@/types/supabase';
 import { PackageType, PACKAGES, BUDGET_RANGES } from '@/config/packages';
-import { calculateBrandPricing, getBestPackageRecommendation, formatCurrency, calculatePaymentBreakdown } from '@/lib/pricing/calculator';
+import { getBestPackageRecommendation, formatCurrency, calculatePaymentBreakdown } from '@/lib/pricing/calculator';
 import { generateInvoice, generateInvoiceSummary, createInvoiceContext } from '@/lib/templates/invoiceTemplate';
 import { toast } from '@/hooks/use-toast';
 
@@ -63,7 +63,7 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
   const [recommendedPackage, setRecommendedPackage] = useState<PackageType | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [generatedInvoice, setGeneratedInvoice] = useState<string>('');
-  const [availableAdjustments, setAvailableAdjustments] = useState<any[]>([]);
+  // Adjustments removed for simplicity
 
   // Get package recommendations based on brand budget
   useEffect(() => {
@@ -87,26 +87,18 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
 
   // Calculate pricing when package changes
   useEffect(() => {
-    if (formData.selectedPackage && brandData.budget_range) {
-      const analysis = calculateBrandPricing({
-        budgetRange: brandData.budget_range,
-        industry: brandData.industry || 'Other',
-        businessModel: brandData.businessModel || 'B2C',
-        pricePositioning: brandData.pricePositioning || 50,
-        launchTiming: brandData.launch_timing || '2-3 months',
-        primaryAudience: brandData.primary_audience?.split(',') || ['Consumers']
-      }, formData.selectedPackage);
-
-      setPricingAnalysis(analysis);
+    if (formData.selectedPackage) {
+      // Use straightforward package pricing: take the max price as the project fee
+      const basePrice = PACKAGES[formData.selectedPackage].priceRange[1];
       setFormData(prev => ({
         ...prev,
         customizations: {
           ...prev.customizations,
-          finalPrice: analysis.adjustedPrice,
-          adjustments: analysis.adjustments
+          finalPrice: basePrice,
+          adjustments: []
         }
       }));
-      setAvailableAdjustments(analysis.adjustments);
+      setPricingAnalysis(null);
     }
   }, [formData.selectedPackage, brandData]);
 
@@ -134,37 +126,7 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
     }));
   };
 
-  const toggleAdjustment = (adjustment: any) => {
-    setFormData(prev => {
-      const isSelected = prev.customizations.adjustments.some(adj => adj.feature === adjustment.feature);
-      
-      if (isSelected) {
-        // Remove adjustment
-        const newAdjustments = prev.customizations.adjustments.filter(adj => adj.feature !== adjustment.feature);
-        const newPrice = prev.customizations.finalPrice + adjustment.reduction;
-        return {
-          ...prev,
-          customizations: {
-            ...prev.customizations,
-            adjustments: newAdjustments,
-            finalPrice: newPrice
-          }
-        };
-      } else {
-        // Add adjustment
-        const newAdjustments = [...prev.customizations.adjustments, adjustment];
-        const newPrice = prev.customizations.finalPrice - adjustment.reduction;
-        return {
-          ...prev,
-          customizations: {
-            ...prev.customizations,
-            adjustments: newAdjustments,
-            finalPrice: Math.max(newPrice, PACKAGES[packageType].priceRange[0])
-          }
-        };
-      }
-    });
-  };
+  // Adjustments removed
 
   const generateInvoicePreview = () => {
     if (!formData.selectedPackage) return;
@@ -225,10 +187,9 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
 
         {!previewMode ? (
           <Tabs defaultValue="client" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="client">Client Info</TabsTrigger>
               <TabsTrigger value="package">Package & Pricing</TabsTrigger>
-              <TabsTrigger value="adjustments">Adjustments</TabsTrigger>
             </TabsList>
 
             <TabsContent value="client" className="space-y-4">
@@ -363,17 +324,6 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
                         <span>Package Price:</span>
                         <span className="font-medium">{formatCurrency(PACKAGES[formData.selectedPackage].priceRange[1])}</span>
                       </div>
-                      {formData.customizations.adjustments.length > 0 && (
-                        <>
-                          <div className="text-sm text-muted-foreground">Adjustments:</div>
-                          {formData.customizations.adjustments.map((adj, index) => (
-                            <div key={index} className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">- {adj.feature}</span>
-                              <span className="text-green-600">-{formatCurrency(adj.reduction)}</span>
-                            </div>
-                          ))}
-                        </>
-                      )}
                       <Separator />
                       <div className="flex justify-between text-lg font-bold">
                         <span>Total Amount:</span>
@@ -395,59 +345,7 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
               )}
             </TabsContent>
 
-            <TabsContent value="adjustments" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Package Adjustments</CardTitle>
-                  <CardDescription>
-                    Select adjustments to customize the package and pricing
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {availableAdjustments.length > 0 ? (
-                    <div className="space-y-3">
-                      {availableAdjustments.map((adjustment, index) => {
-                        const isSelected = formData.customizations.adjustments.some(adj => adj.feature === adjustment.feature);
-                        return (
-                          <div
-                            key={index}
-                            className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                              isSelected
-                                ? 'border-primary bg-primary/5'
-                                : 'border-muted hover:border-primary/50'
-                            }`}
-                            onClick={() => toggleAdjustment(adjustment)}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                                  isSelected
-                                    ? 'border-primary bg-primary'
-                                    : 'border-muted'
-                                }`}>
-                                  {isSelected && <Check className="h-3 w-3 text-white" />}
-                                </div>
-                                <div>
-                                  <div className="font-medium">{adjustment.feature}</div>
-                                  <div className="text-sm text-muted-foreground">{adjustment.description}</div>
-                                </div>
-                              </div>
-                              <div className="text-green-600 font-medium">
-                                -{formatCurrency(adjustment.reduction)}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No adjustments available for this package
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+            {/* Adjustments tab removed */}
           </Tabs>
         ) : (
           <div className="space-y-4">
