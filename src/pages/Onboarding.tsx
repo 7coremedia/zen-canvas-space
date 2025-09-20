@@ -1391,13 +1391,13 @@ export default function OnboardingForm() {
           primaryAudience: data.primary_audience ? String(data.primary_audience).split(',').map((s: string) => s.trim()).filter(Boolean) : [],
           oneYearVision: (data.one_year_vision as any) || "",
           // planning
-          budgetRange: (data.budget as any) || undefined,
-          launchTiming: (data.launch_timeline as any) || undefined,
+          budgetRange: (data.budget_range as any) || undefined,
+          launchTiming: (data.launch_timing as any) || undefined,
           // visual direction
-          logoStyle: (data.logo_style as any) || undefined,
-          colorPalette: (data.color_palette as any) || undefined,
-          typographyFeel: (data.typography as any) || undefined,
-          imageryStyle: (data.imagery_style as any) || undefined,
+          logoStyle: (data.brand_personality as any)?.logoStyle || undefined,
+          colorPalette: (data.brand_personality as any)?.colorPalette || undefined,
+          typographyFeel: (data.brand_personality as any)?.typographyFeel || undefined,
+          imageryStyle: (data.brand_personality as any)?.imageryStyle || undefined,
         };
 
         // If brand_personality object exists, map personality fields
@@ -1572,24 +1572,58 @@ export default function OnboardingForm() {
         primary_audience: values.primaryAudience?.join(", ") || values.primaryAudienceNotes || null,
         age_range: `${values.audienceAgeRangeMin}-${values.audienceAgeRangeMax}`,
         gender_focus: values.audienceGender,
-        income_level: `${values.audienceIncomeMin}-${values.audienceIncomeMax}`,
+        income_level: values.audienceIncomeMin && values.audienceIncomeMax ? `${values.audienceIncomeMin}-${values.audienceIncomeMax}` : null,
         launch_timing: values.launchTiming || null,
         budget_range: values.budgetRange || null,
+        one_year_vision: values.oneYearVision || null,
+        five_year_vision: values.fiveYearVision || null,
+        challenges: values.challenges || null,
+        extra_notes: values.notes || null,
+        likes_dislikes: values.likes?.length || values.dislikes?.length ? 
+          `Likes: ${values.likes?.join(", ") || "None"}; Dislikes: ${values.dislikes?.join(", ") || "None"}` : null,
         brand_personality: {
+          // Personality sliders
           masculineFeminine: values.personalityMasculineFeminine,
           playfulSerious: values.personalityPlayfulSerious,
           luxuryAffordable: values.personalityLuxuryAffordable,
           classicModern: values.personalityClassicModern,
           boldSubtle: values.personalityBoldSubtle,
           localGlobal: values.personalityLocalGlobal,
+          
+          // Visual direction
+          logoStyle: values.logoStyle,
+          colorPalette: values.colorPalette,
+          typographyFeel: values.typographyFeel,
+          imageryStyle: values.imageryStyle,
+          
+          // Audience details
+          geographicFocus: values.geographicFocus,
+          audiencePainPoints: values.audiencePainPoints,
+          
+          // Business details
+          visionMission: values.visionMission,
+          differentiation: values.differentiation,
+          coreValues: values.coreValues,
+          pricePositioning: values.pricePositioning,
+          distributionChannels: values.distributionChannels,
+          businessModel: values.businessModel,
+          
+          // Marketing & Communication
+          toneFriendlyFormal: values.toneOfVoiceFriendlyFormal,
+          toneInspirationalPractical: values.toneOfVoiceInspirationalPractical,
+          preferredPlatforms: values.preferredPlatforms,
+          marketingGoals: values.marketingGoals,
+          brandStory: values.brandStory,
+          
+          // Technical & Legal
+          socialHandles: values.socialHandles,
+          trademarkStatus: values.trademarkStatus,
+          
+          // Meta
           meta: {
-            hasNoWebsite: values.hasNoWebsite === true
-          },
-          likes: values.likes,
-          dislikes: values.dislikes,
-          oneYearVision: values.oneYearVision,
-          fiveYearVision: values.fiveYearVision,
-          challenges: values.challenges
+            hasNoWebsite: values.hasNoWebsite === true,
+            currency: values.currency
+          }
         }
       };
 
