@@ -86,7 +86,7 @@ const BrandProfileDetails = () => {
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('overview');
 
   const handleDeleteBrand = async () => {
     if (!id) return;
@@ -215,9 +215,9 @@ const BrandProfileDetails = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <div className="w-full flex items-center justify-between gap-3">
-          <TabsList className="flex items-center gap-2">
+          <TabsList className="flex items-center gap-1 rounded-full bg-muted/60 p-1">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="brand-identity">Brand Identity</TabsTrigger>
             <TabsTrigger value="audience">Audience</TabsTrigger>
@@ -225,7 +225,12 @@ const BrandProfileDetails = () => {
             <TabsTrigger value="marketing">Marketing</TabsTrigger>
             <TabsTrigger value="planning">Planning</TabsTrigger>
           </TabsList>
-          <Button variant="ghost" size="sm" onClick={() => setShowSettings((s) => !s)}>
+          <Button 
+            variant={activeTab === 'settings' ? 'default' : 'outline'} 
+            size="sm" 
+            className="rounded-full"
+            onClick={() => setActiveTab('settings')}
+          >
             Brand Settings
           </Button>
         </div>
@@ -762,10 +767,7 @@ const BrandProfileDetails = () => {
           </Card>
         </TabsContent>
 
-      </Tabs>
-
-      {showSettings && (
-        <div className="mt-4 space-y-6">
+        <TabsContent value="settings" className="space-y-6">
           <Card className="border-destructive/30">
             <CardHeader>
               <CardTitle className="text-destructive">Danger Zone</CardTitle>
@@ -802,8 +804,8 @@ const BrandProfileDetails = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
-      )}
+        </TabsContent>
+      </Tabs>
       
       {/* Notes section in overview area - show if notes exist */}
       {brandProfile && brandProfile.extra_notes ? (
