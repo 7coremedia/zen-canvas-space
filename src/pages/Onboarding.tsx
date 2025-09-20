@@ -1263,6 +1263,7 @@ export default function OnboardingForm() {
   const [loading, setLoading] = React.useState(false);
   const [autoSaveEnabled, setAutoSaveEnabled] = React.useState(true);
   const [showNotesPanel, setShowNotesPanel] = React.useState(true);
+  const [editOnboardingId, setEditOnboardingId] = React.useState<string | undefined>(undefined);
   
   // Load saved form data from session storage on initial render
   const loadSavedFormData = () => {
@@ -1367,6 +1368,7 @@ export default function OnboardingForm() {
   // If navigated with editOnboardingId in location.state, load onboarding response and populate the form
   React.useEffect(() => {
     const editId = (location.state as any)?.editOnboardingId;
+    if (editId) setEditOnboardingId(editId);
     if (!editId) return;
 
     const fetchAndPopulate = async () => {
@@ -1774,12 +1776,22 @@ export default function OnboardingForm() {
         }
       };
 
-      // Save to Supabase with type assertion
-      const supabaseResponse = await supabase
-        .from('onboarding_responses')
-        .insert<OnboardingInsert>([insertData] as OnboardingInsert[])
-        .select()
-        .single();
+      // Save to Supabase: update if editing, otherwise insert
+      let supabaseResponse;
+      if (editOnboardingId) {
+        supabaseResponse = await supabase
+          .from('onboarding_responses')
+          .update(insertData)
+          .eq('id', editOnboardingId)
+          .select()
+          .single();
+      } else {
+        supabaseResponse = await supabase
+          .from('onboarding_responses')
+          .insert<OnboardingInsert>([insertData] as OnboardingInsert[])
+          .select()
+          .single();
+      }
       
       const { data, error } = supabaseResponse;
         
@@ -1804,11 +1816,11 @@ export default function OnboardingForm() {
       }
 
       toast({ 
-        title: "Onboarding Submitted!", 
-        description: "Your brand details have been successfully saved." 
+        title: editOnboardingId ? "Brand Updated" : "Onboarding Submitted!", 
+        description: editOnboardingId ? "Your brand details have been updated." : "Your brand details have been successfully saved." 
       });
       
-      // Redirect to dashboard or brand details page
+      // Redirect to dashboard (or to details page if you prefer)
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Supabase submission error:', error);
