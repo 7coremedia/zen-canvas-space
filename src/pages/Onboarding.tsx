@@ -25,7 +25,7 @@ import { Slider } from "@/components/ui/slider";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"; // Added FormDescription
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, ArrowLeft, ArrowRight, CircleCheckBig, CircleX } from "lucide-react";
+import { Loader2, ArrowLeft, ArrowRight, CircleCheckBig, CircleX, RotateCw } from "lucide-react";
 
 // --- FORM SCHEMA AND TYPES ---
 import { 
@@ -1513,6 +1513,97 @@ export default function OnboardingForm() {
 
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
+  const clearForm = () => {
+    // Reset form to default values
+    methods.reset({
+      // Step 1
+      brandName: "",
+      corePromise: "",
+      tagline: "",
+      archetype: null,
+      senderName: "", 
+      senderEmail: "",
+      
+      // Step 2
+      personalityMasculineFeminine: 50,
+      personalityPlayfulSerious: 50,
+      personalityLuxuryAffordable: 50,
+      personalityClassicModern: 50,
+      personalityBoldSubtle: 50,
+      personalityLocalGlobal: 50,
+      
+      // Step 3
+      logoStyle: undefined,
+      colorPalette: undefined,
+      typographyFeel: undefined,
+      imageryStyle: undefined,
+      moodboardUpload: undefined,
+      
+      // Step 4
+      audienceAgeRangeMin: 18,
+      audienceAgeRangeMax: 65,
+      audienceGender: "Mixed",
+      audienceIncomeMin: undefined,
+      audienceIncomeMax: undefined,
+      currency: "NGN",
+      geographicFocus: undefined,
+      audiencePainPoints: "",
+      competitors: [],
+      primaryAudience: [],
+      primaryAudienceNotes: "",
+      
+      // Step 5
+      industry: undefined,
+      usp: "",
+      differentiation: [],
+      coreValues: [],
+      visionMission: "",
+      oneYearVision: "",
+      fiveYearVision: "",
+      challenges: "",
+      likes: [],
+      dislikes: [],
+      
+      // Step 6
+      offerings: [],
+      pricePositioning: 50,
+      distributionChannels: [],
+      businessModel: undefined,
+      
+      // Step 7
+      toneOfVoiceFriendlyFormal: 50,
+      toneOfVoiceInspirationalPractical: 50,
+      preferredPlatforms: [],
+      marketingGoals: [],
+      brandStory: "",
+      
+      // Step 8
+      domain: "",
+      hasNoWebsite: false,
+      socialHandles: [],
+      trademarkStatus: false,
+      registrationDocsUpload: undefined,
+      launchTiming: "",
+      budgetRange: "",
+      
+      // Notes
+      notes: "",
+    });
+    
+    // Clear session storage
+    sessionStorage.removeItem('onboardingFormData');
+    sessionStorage.removeItem('onboardingFormStep');
+    
+    // Go back to step 1
+    setStep(1);
+    
+    // Show confirmation toast
+    toast({
+      title: "Form Cleared",
+      description: "All form data has been cleared. You can start fresh.",
+    });
+  };
+
   const onSubmit = async (values: FormValues) => {
     // Wait for auth to finish loading
     if (authLoading) {
@@ -1700,8 +1791,20 @@ export default function OnboardingForm() {
             </div>
           </div>
 
-          {/* Notes Panel Toggle */}
-          <div className="flex justify-end mb-4">
+          {/* Notes Panel Toggle and Clear Form */}
+          <div className="flex justify-between mb-4">
+            {step === totalSteps + 1 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={clearForm}
+                className="text-destructive hover:text-destructive"
+              >
+                <RotateCw className="h-4 w-4 mr-2" />
+                Clear Form
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
