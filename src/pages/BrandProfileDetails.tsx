@@ -229,25 +229,25 @@ const BrandProfileDetails = () => {
           </Card>
 
           {/* Contact Information Card */}
-          {(brandProfile.sender_name || brandProfile.sender_email) && (
+          {(brandProfile.sender_name || brandProfile.sender_email || brandProfile.brand_personality?.meta?.contactName || brandProfile.brand_personality?.meta?.contactEmail) && (
             <Card>
               <CardHeader>
                 <CardTitle>Contact Information</CardTitle>
                 <CardDescription>Primary contact details for this brand</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {brandProfile.sender_name && (
+                {(brandProfile.sender_name || brandProfile.brand_personality?.meta?.contactName) && (
                   <div>
                     <h3 className="font-medium text-sm text-muted-foreground">Contact Name</h3>
-                    <p>{brandProfile.sender_name}</p>
+                    <p>{brandProfile.sender_name || brandProfile.brand_personality?.meta?.contactName}</p>
                   </div>
                 )}
-                {brandProfile.sender_email && (
+                {(brandProfile.sender_email || brandProfile.brand_personality?.meta?.contactEmail) && (
                   <div>
                     <h3 className="font-medium text-sm text-muted-foreground">Email Address</h3>
                     <p className="text-blue-600 hover:text-blue-800">
-                      <a href={`mailto:${brandProfile.sender_email}`}>
-                        {brandProfile.sender_email}
+                      <a href={`mailto:${brandProfile.sender_email || brandProfile.brand_personality?.meta?.contactEmail}`}>
+                        {brandProfile.sender_email || brandProfile.brand_personality?.meta?.contactEmail}
                       </a>
                     </p>
                   </div>

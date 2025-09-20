@@ -38,6 +38,8 @@ export type Database = {
           offerings: string | null
           one_year_vision: string | null
           online_link: string | null
+          sender_email: string | null
+          sender_name: string | null
           primary_audience: string | null
           problem_solved: string | null
           session_id: string | null
@@ -69,6 +71,8 @@ export type Database = {
           offerings?: string | null
           one_year_vision?: string | null
           online_link?: string | null
+          sender_email?: string | null
+          sender_name?: string | null
           primary_audience?: string | null
           problem_solved?: string | null
           session_id?: string | null
@@ -100,6 +104,8 @@ export type Database = {
           offerings?: string | null
           one_year_vision?: string | null
           online_link?: string | null
+          sender_email?: string | null
+          sender_name?: string | null
           primary_audience?: string | null
           problem_solved?: string | null
           session_id?: string | null

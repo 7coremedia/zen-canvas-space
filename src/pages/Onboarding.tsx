@@ -1356,8 +1356,8 @@ export default function OnboardingForm() {
       socialHandles: [],
       trademarkStatus: false,
       registrationDocsUpload: undefined,
-      launchTiming: "",
-      budgetRange: "",
+      launchTiming: undefined,
+      budgetRange: undefined,
       
       // Notes
       notes: "",
@@ -1386,8 +1386,8 @@ export default function OnboardingForm() {
           brandName: data.brand_name || "",
           tagline: data.tagline || "",
           corePromise: data.elevator_pitch || "",
-          senderName: (data as any).sender_name || "",
-          senderEmail: (data as any).sender_email || "",
+          senderName: (data as any).sender_name || (data as any).brand_personality?.meta?.contactName || "",
+          senderEmail: (data as any).sender_email || (data as any).brand_personality?.meta?.contactEmail || "",
 
           // Step 3: Visual Direction (from brand_personality)
           logoStyle: (data as any).brand_personality?.logoStyle || undefined,
@@ -1637,8 +1637,8 @@ export default function OnboardingForm() {
       socialHandles: [],
       trademarkStatus: false,
       registrationDocsUpload: undefined,
-      launchTiming: "",
-      budgetRange: "",
+      launchTiming: undefined,
+      budgetRange: undefined,
       
       // Notes
       notes: "",
@@ -1668,8 +1668,6 @@ export default function OnboardingForm() {
     const onboardingData: any = {
       brand_name: values.brandName,
       elevator_pitch: values.corePromise,
-      sender_name: values.senderName,
-      sender_email: values.senderEmail,
       industry: values.industry,
       offerings: values.offerings,
       primary_audience: null,
@@ -1769,7 +1767,9 @@ export default function OnboardingForm() {
           // Meta
           meta: {
             hasNoWebsite: values.hasNoWebsite === true,
-            currency: values.currency
+            currency: values.currency,
+            contactName: values.senderName || null,
+            contactEmail: values.senderEmail || null
           }
         }
       };
