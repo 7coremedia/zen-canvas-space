@@ -139,15 +139,31 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
     const purpose = brandData.challenges 
       || brandData.brand_personality?.audiencePainPoints 
       || 'We aim to solve visibility and growth challenges.';
-    const outcomesList = [
+    const visionMissionText = brandData.brand_personality?.visionMission 
+      || brandData.visionMission 
+      || brandData.one_year_vision 
+      || brandData.five_year_vision 
+      || null;
+    const marketingGoalsArray: string[] = brandData.brand_personality?.marketingGoals 
+      || brandData.marketingGoals 
+      || [];
+
+    const outcomesBullets: string[] = [
       `**Specific:** ${brandData.usp || 'Clear differentiation in your market'}`,
       `**Measurable:** ${formData.customizations.specificNeeds || 'KPIs to be finalized during strategy'}`,
       `**Achievable:** Within ${formData.customizations.timeline || pkg.timeline}`,
       `**Realistic:** Calibrated to ${brandData.industry || 'your market'}`,
       '**Timely:** Delivered on schedule',
-    ]
-      .map(item => `<li>${item}</li>`) 
-      .join('');
+    ];
+
+    if (visionMissionText) {
+      outcomesBullets.push(`**Vision & Mission:** ${visionMissionText}`);
+    }
+    if (Array.isArray(marketingGoalsArray) && marketingGoalsArray.length > 0) {
+      outcomesBullets.push(`**Marketing Goals:** ${marketingGoalsArray.join(', ')}`);
+    }
+
+    const outcomesList = outcomesBullets.map(item => `<li>${item}</li>`).join('');
     const solution = `We will leverage your offerings (${brandData.offerings || 'core offerings'}) across distribution (${brandData.brand_personality?.distributionChannels?.join(', ') || 'relevant channels'}) and platforms (${brandData.brand_personality?.preferredPlatforms?.join(', ') || 'priority platforms'}) to scale your brand.`;
     const scope = `Deliverables include assets defined under the <strong>${pkg.name}</strong> package.`;
 
