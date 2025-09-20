@@ -4,10 +4,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Download, Edit, Share2, Loader2, RotateCw, CircleX, FileText, Receipt } from 'lucide-react';
+import { ArrowLeft, Download, Edit, Share2, Loader2, RotateCw, CircleX, FileText, Receipt, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { colorPalettes, logoStyles, typographyPairings, imageryStyles } from '@/config/brandOptions';
 import ColorPalettePreview from '@/components/ui/ColorPalettePreview';
 import ProposalGenerator from '@/components/powerups/ProposalGenerator';
@@ -72,6 +83,27 @@ const BrandProfileDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteBrand = async () => {
+    if (!id) return;
+    try {
+      setDeleting(true);
+      const { error } = await supabase
+        .from('onboarding_responses')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+
+      toast({ title: 'Brand Deleted', description: 'The brand and its data have been removed.' });
+      navigate('/dashboard');
+    } catch (err: any) {
+      console.error('Delete brand error:', err);
+      toast({ title: 'Delete Failed', description: err.message || 'Could not delete brand.', variant: 'destructive' });
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchBrandProfile = async () => {
@@ -172,13 +204,18 @@ const BrandProfileDetails = () => {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="brand-identity">Brand Identity</TabsTrigger>
-          <TabsTrigger value="audience">Audience</TabsTrigger>
-          <TabsTrigger value="business">Business</TabsTrigger>
-          <TabsTrigger value="marketing">Marketing</TabsTrigger>
-          <TabsTrigger value="planning">Planning</TabsTrigger>
+        <TabsList className="w-full flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="brand-identity">Brand Identity</TabsTrigger>
+            <TabsTrigger value="audience">Audience</TabsTrigger>
+            <TabsTrigger value="business">Business</TabsTrigger>
+            <TabsTrigger value="marketing">Marketing</TabsTrigger>
+            <TabsTrigger value="planning">Planning</TabsTrigger>
+          </div>
+          <div className="ml-auto">
+            <TabsTrigger value="settings">Brand Settings</TabsTrigger>
+          </div>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -709,6 +746,45 @@ const BrandProfileDetails = () => {
                 </div>
               </div>
 
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-6">
+          <Card className="border-destructive/30">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>Actions here are irreversible. Proceed with caution.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start justify-between gap-4 p-4 rounded-md bg-destructive/5 border border-destructive/20">
+                <div>
+                  <h3 className="font-medium">Delete Brand</h3>
+                  <p className="text-sm text-muted-foreground">This will permanently remove this brand and all associated data. This action cannot be undone.</p>
+                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm" disabled={deleting}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      {deleting ? 'Deleting...' : 'Delete Brand'}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete this brand?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the brand "{brandProfile.brand_name}" and remove its data from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteBrand} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Confirm Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
