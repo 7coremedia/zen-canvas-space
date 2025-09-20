@@ -14,6 +14,9 @@ import { OnboardingResponse } from '@/types/supabase';
 import { PackageType, PACKAGES, BUDGET_RANGES } from '@/config/packages';
 import { getBestPackageRecommendation, formatCurrency, calculatePaymentBreakdown } from '@/lib/pricing/calculator';
 import { generateInvoice, generateInvoiceSummary, createInvoiceContext } from '@/lib/templates/invoiceTemplate';
+import DocsEditor from '@/components/editor/DocsEditor';
+import { exportHtmlToPdf } from '@/lib/pdf/export';
+import { EDITOR_TEMPLATES } from '@/config/editorTemplates';
 import { toast } from '@/hooks/use-toast';
 
 interface InvoiceGeneratorProps {
@@ -137,8 +140,30 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
       customizations: formData.customizations
     });
 
-    const invoice = generateInvoice(invoiceContext);
-    setGeneratedInvoice(invoice);
+    // Build rich HTML using editor template
+    const pkg = PACKAGES[formData.selectedPackage];
+    const total = formData.customizations.finalPrice;
+    const upfront = Math.round(total * 0.5);
+    const balance = total - upfront;
+    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    let html = EDITOR_TEMPLATES.invoice
+      .replace('[[INVOICE_NUMBER]]', invoiceContext.invoiceNumber)
+      .replace('[[DATE]]', dateStr)
+      .replace('[[CLIENT_COMPANY]]', formData.clientInfo.company || brandData.brand_name || 'Client Company')
+      .replace('[[CLIENT_CONTACT]]', formData.clientInfo.contact || 'Contact')
+      .replace('[[CLIENT_EMAIL]]', formData.clientInfo.email || 'client@email.com')
+      .replace('[[PACKAGE_NAME]]', pkg.name)
+      .replace('[[PACKAGE_DESCRIPTION]]', pkg.description)
+      .replace('[[TOTAL_FEE]]', `₦${total.toLocaleString()}`)
+      .replace('[[UPFRONT_FEE]]', `₦${upfront.toLocaleString()}`)
+      .replace('[[BALANCE_FEE]]', `₦${balance.toLocaleString()}`)
+      .replace('[[BANK_NAME]]', 'Bank Name')
+      .replace('[[ACCOUNT_NAME]]', 'KING')
+      .replace('[[ACCOUNT_NUMBER]]', 'Account Number')
+      .replaceAll('[[VENDOR]]', 'KING');
+
+    setGeneratedInvoice(html);
     setPreviewMode(true);
   };
 
@@ -356,15 +381,13 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
                   <X className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button onClick={downloadInvoice}>
+                <Button onClick={() => exportHtmlToPdf(generatedInvoice, 'invoice.pdf')}>
                   <Download className="h-4 w-4 mr-2" />
-                  Download PDF
+                  Export PDF
                 </Button>
               </div>
             </div>
-            <div className="border rounded-lg p-4 max-h-96 overflow-y-auto">
-              <pre className="whitespace-pre-wrap text-sm">{generatedInvoice}</pre>
-            </div>
+            <DocsEditor initialContent={generatedInvoice} onExport={(html) => exportHtmlToPdf(html, 'invoice.pdf')} />
           </div>
         )}
 

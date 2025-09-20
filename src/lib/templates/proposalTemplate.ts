@@ -168,66 +168,101 @@ export const generateProposal = (context: ProposalContext): string => {
 /**
  * Generate specific outcomes based on brand data and package
  */
-const generateSpecificOutcomes = (brandData: OnboardingResponse, packageInfo: any): string => {
-  const outcomes = [];
-  
+const generateSpecificOutcomes = (brandData: any, packageInfo: any): string => {
+  const outcomes: string[] = [];
+
+  // Strategic anchor points from onboarding
+  const usp = brandData.usp || brandData.uniqueValue || null;
+  const marketingGoals = brandData.marketingGoals || brandData.goals || null;
+  const visionMission = brandData.visionMission || brandData.vision || brandData.mission || null;
+
+  if (usp) {
+    outcomes.push(`Leverage your unique value proposition to achieve clear market differentiation`);
+  }
+  if (marketingGoals) {
+    outcomes.push(`Align creative and delivery with stated marketing goals to drive measurable impact`);
+  }
+  if (visionMission) {
+    outcomes.push(`Ensure all brand outputs are consistent with your long-term vision and mission`);
+  }
+
   // Industry-specific outcomes
-  if (brandData.industry === 'Technology') {
-    outcomes.push('Modern, tech-forward brand identity that appeals to your target audience');
-    outcomes.push('Professional digital presence that builds trust and credibility');
-  } else if (brandData.industry === 'E-commerce') {
-    outcomes.push('Conversion-optimized brand identity that drives sales');
-    outcomes.push('Cohesive visual system across all customer touchpoints');
-  } else if (brandData.industry === 'Fashion') {
-    outcomes.push('Trend-setting brand identity that stands out in the fashion market');
-    outcomes.push('Instagram-ready visual assets that drive engagement');
-  } else {
-    outcomes.push('Professional brand identity that differentiates you from competitors');
-    outcomes.push('Cohesive visual system that builds brand recognition');
+  switch (brandData.industry) {
+    case 'Technology':
+      outcomes.push('Modern, tech-forward identity and experience that builds credibility');
+      break;
+    case 'E-commerce':
+      outcomes.push('Conversion-optimized brand system across product, cart, and post-purchase touchpoints');
+      break;
+    case 'Fashion':
+      outcomes.push('Trend-aware visual language and social assets that drive engagement');
+      break;
+    default:
+      outcomes.push('Professional identity and cohesive system that build brand recognition');
   }
 
-  // Package-specific outcomes
+  // Channel/platform alignment
+  const channels = brandData.brand_personality?.distributionChannels || brandData.distributionChannels;
+  const platforms = brandData.brand_personality?.preferredPlatforms || brandData.preferredPlatforms;
+  if (Array.isArray(channels) && channels.length > 0) {
+    outcomes.push(`Consistent execution across key distribution channels (${channels.join(', ')})`);
+  }
+  if (Array.isArray(platforms) && platforms.length > 0) {
+    outcomes.push(`Platform-native creative for (${platforms.join(', ')}) to maximize reach and retention`);
+  }
+
+  // Package-specific outcomes (kept concise)
   if (packageInfo.id === 'crest') {
-    outcomes.push('Essential brand foundation with logo and basic guidelines');
+    outcomes.push('Solid brand foundation with logo and essential guidelines');
   } else if (packageInfo.id === 'arsenal') {
-    outcomes.push('Complete brand system with strategy and digital assets');
+    outcomes.push('Complete brand system with strategy, assets, and rollout kit');
   } else if (packageInfo.id === 'throne') {
-    outcomes.push('Comprehensive brand empire with offline and online presence');
+    outcomes.push('Enterprise-grade brand system with comprehensive brand book');
   } else if (packageInfo.id === 'conquest') {
-    outcomes.push('Market-dominating brand system with launch support');
+    outcomes.push('Go-to-market readiness with launch support and content system');
   }
 
+  // Return as a clean, comma-separated sentence
   return outcomes.join(', ');
 };
 
 /**
  * Generate measurable metrics based on brand data and package
  */
-const generateMeasurableMetrics = (brandData: OnboardingResponse, packageInfo: any): string => {
-  const metrics = [];
-  
-  // Brand awareness metrics
+const generateMeasurableMetrics = (brandData: any, packageInfo: any): string => {
+  const metrics: string[] = [];
+
+  // Always include awareness/engagement baselines
   metrics.push('Brand recognition increase (baseline to be established)');
   metrics.push('Social media engagement improvement');
-  
-  // Business metrics
-  if (brandData.businessModel === 'B2B') {
-    metrics.push('Lead generation improvement');
-    metrics.push('Client conversion rate increase');
-  } else if (brandData.businessModel === 'B2C') {
-    metrics.push('Customer acquisition cost reduction');
-    metrics.push('Brand loyalty metrics improvement');
+
+  // Map to marketing goals if available
+  const goalsText: string = Array.isArray(brandData.marketingGoals)
+    ? brandData.marketingGoals.join(', ')
+    : (brandData.marketingGoals || '');
+  if (goalsText) {
+    metrics.push(`Progress against marketing goals (${goalsText})`);
   }
 
-  // Package-specific metrics
-  if (packageInfo.features.includes('Website')) {
-    metrics.push('Website conversion rate improvement');
-    metrics.push('User engagement metrics');
+  // Business-model specific
+  if (brandData.businessModel === 'B2B') {
+    metrics.push('Lead generation and pipeline velocity improvement');
+    metrics.push('Sales enablement asset utilization');
+  } else if (brandData.businessModel === 'B2C') {
+    metrics.push('Customer acquisition cost reduction');
+    metrics.push('Repeat purchase and retention uplift');
   }
-  
-  if (packageInfo.features.includes('Social Media')) {
-    metrics.push('Social media follower growth');
-    metrics.push('Content engagement rates');
+
+  // Package and channel specifics
+  const hasWebsite = packageInfo.features.some((f: string) => /website/i.test(f));
+  const hasSocial = packageInfo.features.some((f: string) => /social/i.test(f));
+  if (hasWebsite) {
+    metrics.push('Website conversion rate and funnel completion');
+    metrics.push('Time on site and bounce rate improvements');
+  }
+  if (hasSocial) {
+    metrics.push('Content reach, saves, and share rates');
+    metrics.push('Follower growth and click-through rates');
   }
 
   return metrics.join(', ');
