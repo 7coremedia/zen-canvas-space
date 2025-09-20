@@ -667,15 +667,6 @@ const BrandProfileDetails = () => {
                 </div>
               </div>
 
-              {/* Debug section - show raw brand_personality data */}
-              <div className="mt-6">
-                <h3 className="font-medium text-sm text-muted-foreground mb-2">Debug: Brand Personality Data (JSONB)</h3>
-                <div className="bg-muted/50 rounded-lg p-4">
-                  <pre className="text-xs overflow-auto max-h-40">
-                    {JSON.stringify(brandProfile.brand_personality, null, 2)}
-                  </pre>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </TabsContent>
