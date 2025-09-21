@@ -3,6 +3,7 @@ import type EditorJS from '@editorjs/editorjs';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { exportHtmlToPdf } from '@/lib/pdf/export';
+import { openPrintWindow } from '@/lib/pdf/export';
 import { blocksToHtml } from '@/lib/editor/blocksToHtml';
 
 export type BlocksData = {
@@ -16,9 +17,10 @@ interface BlocksEditorProps {
   onChange?: (data: BlocksData) => void;
   onExportPdf?: (html: string) => void;
   title?: string;
+  singlePageDefault?: boolean;
 }
 
-const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onExportPdf, title }) => {
+const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onExportPdf, title, singlePageDefault = true }) => {
   const editorRef = useRef<EditorJS | null>(null);
   const holderId = useMemo(() => `editorjs-${Math.random().toString(36).slice(2)}`, []);
   const [ready, setReady] = useState(false);
@@ -117,8 +119,8 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
     const data = (await (editorRef.current as any).save()) as BlocksData;
     const html = blocksToHtml(data);
     if (onExportPdf) onExportPdf(html);
-    else exportHtmlToPdf(html, { filename: (title ? `${title}.pdf` : 'document.pdf'), pageSize: page, singlePage: true });
-  }, [title, onExportPdf]);
+    else exportHtmlToPdf(html, { filename: (title ? `${title}.pdf` : 'document.pdf'), pageSize: page, singlePage: singlePageDefault });
+  }, [title, onExportPdf, singlePageDefault]);
 
   const handleExportHtml = useCallback(async () => {
     if (!editorRef.current) return;
@@ -131,6 +133,13 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
     a.download = (title ? `${title}.html` : 'document.html');
     a.click();
     URL.revokeObjectURL(url);
+  }, [title]);
+
+  const handlePrint = useCallback(async () => {
+    if (!editorRef.current) return;
+    const data = (await (editorRef.current as any).save()) as BlocksData;
+    const html = blocksToHtml(data);
+    openPrintWindow(html, title || 'Document');
   }, [title]);
 
   const handleExportDoc = useCallback(async () => {
@@ -194,6 +203,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
                 <DropdownMenuItem onClick={() => handleExportPdf('letter')}>PDF (Letter)</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleExportHtml}>HTML (.html)</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleExportDoc}>Word (.doc)</DropdownMenuItem>
+                <DropdownMenuItem onClick={handlePrint}>Print (System PDF)</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

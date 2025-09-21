@@ -83,5 +83,5 @@ export const blocksToHtml = (data: BlocksData): string => {
 
   // wrap with a simple article container
   // Add prose class for better default typography during PDF capture
-  return `<article class="prose prose-neutral max-w-none">${html}</article>`;
+  return `<article class="prose prose-neutral max-w-none" style="padding:18mm;">${html}</article>`;
 };

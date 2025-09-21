@@ -18,46 +18,39 @@ export const generateInvoiceBlocks = (ctx: InvoiceContextLike): BlocksData => {
   const total = invoiceData.customizations.finalPrice;
   const upfront = Math.round(total * 0.5);
   const balance = total - upfront;
+  const phone = (brandData as any)?.brand_personality?.meta?.contactPhone || (brandData as any)?.sender_phone || '';
 
   const blocks: BlocksData = {
     time: Date.now(),
     version: '2.29.0',
     blocks: [
-      { type: 'header', data: { text: '🧾 Invoice', level: 1 } },
-      { type: 'paragraph', data: { text: `Invoice No: <b>${invoiceNumber}</b>` } },
-      { type: 'paragraph', data: { text: `Date Issued: ${new Date().toLocaleDateString()}` } },
-      { type: 'paragraph', data: { text: `Due Date: ${dueDate}` } },
+      // Header
+      { type: 'paragraph', data: { text: '<strong>KING Branding & Creative Agency</strong>' } },
+      { type: 'paragraph', data: { text: '<strong style="float:right;">KING</strong>' } },
+      { type: 'header', data: { text: 'INVOICE', level: 2 } },
 
-      { type: 'header', data: { text: 'Bill To', level: 2 } },
-      { type: 'paragraph', data: { text: `Client: <b>${invoiceData.clientInfo.company || brandData.brand_name || 'Client'}</b>` } },
-      { type: 'paragraph', data: { text: `Contact: ${invoiceData.clientInfo.contact || ''}` } },
-      { type: 'paragraph', data: { text: `Email: ${invoiceData.clientInfo.email || ''}` } },
+      // Two-column info simulated as paragraphs
+      { type: 'paragraph', data: { text: `<strong>Bill To</strong> Invoice # ${invoiceNumber}` } },
+      { type: 'paragraph', data: { text: `${invoiceData.clientInfo.company || brandData.brand_name || 'Client'} <span style="float:right;"><strong>Invoice Date</strong> ${new Date().toLocaleDateString()}</span>` } },
+      { type: 'paragraph', data: { text: `${invoiceData.clientInfo.contact || ''}${phone ? ' — ' + phone : ''}` } },
+      { type: 'paragraph', data: { text: `${invoiceData.clientInfo.email || ''}` } },
 
-      { type: 'header', data: { text: '⚔️ Selected Package', level: 2 } },
-      { type: 'paragraph', data: { text: `Package: <b>${pkg.name}</b>` } },
-      { type: 'paragraph', data: { text: `Description: ${pkg.description}` } },
-
-      { type: 'header', data: { text: '💰 Investment', level: 2 } },
+      // Description/Amount table
       { type: 'table', data: { content: [
-        ['Total Project Fee', `₦${total.toLocaleString()}`],
-        ['Upfront (50%)', `₦${upfront.toLocaleString()}`],
-        ['Balance (50%)', `₦${balance.toLocaleString()}`],
+        ['<strong>DESCRIPTION</strong>', '<strong>AMOUNT</strong>'],
+        [`First Investment:\n₦${upfront.toLocaleString()}\nTimeline:\n${pkg.timeline}\nKey Features:\n• ${pkg.features[0]}\n• ${pkg.features[1]}\n• ${pkg.features[2] || ''}`, `${upfront.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
+        [`Package Selection\nRecommended: ${pkg.name} based on your budget\n\n${pkg.name}\n${pkg.description}\n\nInvestment:\n${PACKAGES[invoiceData.selectedPackage].priceRange ? `₦${PACKAGES[invoiceData.selectedPackage].priceRange[0].toLocaleString()} - ₦${PACKAGES[invoiceData.selectedPackage].priceRange[1].toLocaleString()}` : ''}\nTimeline:\n${pkg.timeline}\nKey Features:\n${pkg.features.map(f => '• ' + f).join('\n')}`, `${(total - upfront).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
+        ['<strong style="text-align:right; display:block;">TOTAL</strong>', `<strong>₦${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>`],
       ] } },
 
-      { type: 'header', data: { text: '🧾 Payment Details', level: 2 } },
-      { type: 'list', data: { style: 'unordered', items: [
-        'Bank Name: [Your Bank Name]',
-        'Account Name: KING',
-        'Account Number: [Your Account Number]',
-        'Currency: Nigerian Naira (₦)'
-      ] } },
+      // Terms and Account
+      { type: 'header', data: { text: 'Terms and Conditions & Account Information', level: 3 } },
+      { type: 'paragraph', data: { text: 'First Investment is due within 15 days. If payment has not been made, the order will be automatically cancelled. The next payment will be due 5 weeks after the 1st payment. We also accept full payment upfront.' } },
+      { type: 'paragraph', data: { text: '<strong>Account No.</strong> 610 853 8494' } },
+      { type: 'paragraph', data: { text: '<strong>Bank:</strong> OPay' } },
+      { type: 'paragraph', data: { text: '<strong>Name:</strong> EDMOND ODEY' } },
 
-      { type: 'header', data: { text: '📜 Terms', level: 2 } },
-      { type: 'list', data: { style: 'unordered', items: [
-        '50% deposit required before project kickoff',
-        'Remaining 50% due upon completion & before asset transfer',
-        'Timeline based on package selection',
-      ] } },
+      { type: 'paragraph', data: { text: '<em>Thank you!</em>' } },
     ],
   };
 

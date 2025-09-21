@@ -43,7 +43,7 @@ export const exportHtmlToPdf = async (html: string, filenameOrOptions?: string |
   document.body.appendChild(container);
 
   const canvas = await html2canvas(container, {
-    scale: 2,
+    scale: 1.5,
     useCORS: true,
     backgroundColor: '#ffffff',
     windowWidth: container.scrollWidth,
@@ -66,19 +66,36 @@ export const exportHtmlToPdf = async (html: string, filenameOrOptions?: string |
     const offsetY = (pageHeight - drawH) / 2;
     pdf.addImage(imgData, 'PNG', offsetX, offsetY, drawW, drawH);
   } else {
-    // Multi-page flow if needed (rare for our use-case)
+    // Multi-page flow: shift the image up on each page to simulate slicing
+    let heightLeft = imgH;
     let position = 0;
-    let remainingHeight = imgH;
-    while (remainingHeight > 0) {
-      pdf.addImage(imgData, 'PNG', 0, position, imgW, imgH);
-      remainingHeight -= pageHeight;
-      if (remainingHeight > 0) {
-        pdf.addPage([pageWidth, pageHeight]);
-        position = 0;
-      }
+    // First page
+    pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH, undefined, 'FAST');
+    heightLeft -= pageHeight;
+    while (heightLeft > 0) {
+      pdf.addPage([pageWidth, pageHeight]);
+      position = position - pageHeight; // shift image upwards
+      pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH, undefined, 'FAST');
+      heightLeft -= pageHeight;
     }
   }
 
   pdf.save(filename);
   document.body.removeChild(container);
+};
+
+export const openPrintWindow = (html: string, title: string = 'Document') => {
+  const printWin = window.open('', '_blank');
+  if (!printWin) return;
+  printWin.document.open();
+  printWin.document.write(`<!doctype html><html><head><meta charset="utf-8" /><title>${title}</title>
+  <style>
+    @page { size: A4; margin: 18mm; }
+    body { font-family: Inter, system-ui, sans-serif; line-height: 1.35; }
+    .prose { max-width: 100%; }
+  </style>
+  </head><body>${html}</body></html>`);
+  printWin.document.close();
+  printWin.focus();
+  printWin.print();
 };

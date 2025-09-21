@@ -416,7 +416,7 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
               </div>
             </div>
             {generatedProposalBlocks && (
-              <BlocksEditor initialData={generatedProposalBlocks} title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`} />
+              <BlocksEditor initialData={generatedProposalBlocks} title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`} singlePageDefault={false} />
             )}
           </div>
         )}
