@@ -8,23 +8,47 @@ const escapeHtml = (str: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
-const renderParagraph = (data: any) => `<p>${data.text || ''}</p>`;
+const formatInline = (text: string): string => {
+  if (!text) return '';
+  // basic replacements for markdown-like inline styling
+  // bold **text** or __text__
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+  // italic *text* or _text_
+  text = text.replace(/(^|\W)\*([^*]+)\*(?=\W|$)/g, '$1<em>$2</em>');
+  text = text.replace(/(^|\W)_([^_]+)_(?=\W|$)/g, '$1<em>$2</em>');
+  // inline code `code`
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  return text;
+};
+
+const renderParagraph = (data: any) => `<p>${formatInline(data.text || '')}</p>`;
 const renderHeader = (data: any) => {
   const level = Math.min(Math.max(Number(data.level || 2), 1), 6);
-  return `<h${level}>${data.text || ''}</h${level}>`;
+  return `<h${level}>${formatInline(data.text || '')}</h${level}>`;
 };
+const normalizeItem = (i: any): string => {
+  if (i == null) return '';
+  if (typeof i === 'string') return i;
+  if (typeof i === 'object') {
+    // common shapes from tools
+    return i.text || i.content || i.title || String(i);
+  }
+  return String(i);
+};
+
 const renderList = (data: any) => {
   const tag = data.style === 'ordered' ? 'ol' : 'ul';
-  const items = (data.items || []).map((i: string) => `<li>${i}</li>`).join('');
+  const items = (data.items || []).map((i: any) => `<li>${formatInline(normalizeItem(i))}</li>`).join('');
   return `<${tag}>${items}</${tag}>`;
 };
 const renderQuote = (data: any) => {
-  const text = data.text || '';
+  const text = formatInline(data.text || '');
   const caption = data.caption ? `<cite>${escapeHtml(data.caption)}</cite>` : '';
   return `<blockquote><p>${text}</p>${caption}</blockquote>`;
 };
 const renderChecklist = (data: any) => {
-  const items = (data.items || []).map((i: any) => `<li>${i.text || ''} ${i.checked ? '☑' : '☐'}</li>`).join('');
+  const items = (data.items || []).map((i: any) => `<li>${i.checked ? '☑' : '☐'} ${formatInline(i.text || '')}</li>`).join('');
   return `<ul>${items}</ul>`;
 };
 const renderTable = (data: any) => {
@@ -58,5 +82,6 @@ export const blocksToHtml = (data: BlocksData): string => {
     .join('\n');
 
   // wrap with a simple article container
-  return `<article>${html}</article>`;
+  // Add prose class for better default typography during PDF capture
+  return `<article class="prose prose-neutral max-w-none">${html}</article>`;
 };

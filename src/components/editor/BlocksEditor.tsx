@@ -21,6 +21,8 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
   const editorRef = useRef<EditorJS | null>(null);
   const holderId = useMemo(() => `editorjs-${Math.random().toString(36).slice(2)}`, []);
   const [ready, setReady] = useState(false);
+  const [history, setHistory] = useState<BlocksData[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number>(-1);
 
   // Initialize Editor.js only on client
   useEffect(() => {
@@ -71,11 +73,28 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
             },
           },
         },
-        onReady: () => setReady(true),
+        onReady: async () => {
+          setReady(true);
+          const first = (await instance.save()) as BlocksData;
+          setHistory([first]);
+          setHistoryIndex(0);
+        },
         onChange: async () => {
-          if (!onChange) return;
           const data = (await instance.save()) as BlocksData;
-          onChange(data);
+          // Update external listener
+          onChange?.(data);
+          // Push into history if content changed
+          setHistory(prev => {
+            const next = prev.slice(0, historyIndex + 1);
+            const last = next[next.length - 1];
+            const changed = JSON.stringify(last?.blocks) !== JSON.stringify(data.blocks);
+            return changed ? [...next, data] : next;
+          });
+          setHistoryIndex(idx => {
+            const prevData = history[idx];
+            const changed = JSON.stringify(prevData?.blocks) !== JSON.stringify(data.blocks);
+            return changed ? idx + 1 : idx;
+          });
         },
       });
 
@@ -100,13 +119,38 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
     else exportHtmlToPdf(html, (title ? `${title}.pdf` : 'document.pdf'));
   }, [title, onExportPdf]);
 
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex >= 0 && historyIndex < history.length - 1;
+
+  const handleUndo = useCallback(async () => {
+    if (!editorRef.current || !canUndo) return;
+    const targetIndex = historyIndex - 1;
+    const target = history[targetIndex];
+    if (target) {
+      await (editorRef.current as any).render(target);
+      setHistoryIndex(targetIndex);
+    }
+  }, [canUndo, historyIndex, history]);
+
+  const handleRedo = useCallback(async () => {
+    if (!editorRef.current || !canRedo) return;
+    const targetIndex = historyIndex + 1;
+    const target = history[targetIndex];
+    if (target) {
+      await (editorRef.current as any).render(target);
+      setHistoryIndex(targetIndex);
+    }
+  }, [canRedo, historyIndex, history]);
+
   return (
     <div className="bg-muted/40 p-4 rounded-lg">
-      <div className="mx-auto max-w-3xl bg-white rounded-xl shadow-xl ring-1 ring-black/5 overflow-hidden">
+      <div className="mx-auto max-w-3xl bg-white rounded-xl border overflow-hidden">
         <div className="sticky top-0 z-10 border-b bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60">
           <div className="flex items-center gap-2 p-2">
             <div className="text-sm font-medium truncate pl-1">{title || 'Editor'}</div>
             <div className="ml-auto" />
+            <Button size="sm" variant="outline" onClick={handleUndo} disabled={!canUndo}>Undo</Button>
+            <Button size="sm" variant="outline" onClick={handleRedo} disabled={!canRedo}>Redo</Button>
             <Button size="sm" onClick={handleExport}>Export PDF</Button>
           </div>
         </div>
