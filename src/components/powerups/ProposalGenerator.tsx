@@ -15,9 +15,8 @@ import { PackageType, PACKAGES, BUDGET_RANGES } from '@/config/packages';
 import { calculateBrandPricing, getBestPackageRecommendation, formatCurrency, calculatePaymentBreakdown } from '@/lib/pricing/calculator';
 import { generateProposal, generateProposalSummary } from '@/lib/templates/proposalTemplate';
 import { toast } from '@/hooks/use-toast';
-import DocsEditor from '@/components/editor/DocsEditor';
-import { exportHtmlToPdf } from '@/lib/pdf/export';
-import { EDITOR_TEMPLATES } from '@/config/editorTemplates';
+import BlocksEditor, { BlocksData } from '@/components/editor/BlocksEditor';
+import { generateProposalBlocks } from '@/lib/templates/proposalBlocks';
 
 interface ProposalGeneratorProps {
   isOpen: boolean;
@@ -59,7 +58,7 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
   const [pricingAnalysis, setPricingAnalysis] = useState<any>(null);
   const [recommendedPackage, setRecommendedPackage] = useState<PackageType | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
-  const [generatedProposal, setGeneratedProposal] = useState<string>('');
+  const [generatedProposalBlocks, setGeneratedProposalBlocks] = useState<BlocksData | null>(null);
 
   // Get package recommendations based on brand budget
   useEffect(() => {
@@ -132,55 +131,12 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
       balanceDue: pricingAnalysis.adjustedPrice - Math.round(pricingAnalysis.adjustedPrice * 0.5)
     };
 
-    // Build rich HTML using editor template
-    const pkg = PACKAGES[formData.selectedPackage];
-    const payment = calculatePaymentBreakdown(proposalContext.totalPrice);
-    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const purpose = brandData.challenges 
-      || brandData.brand_personality?.audiencePainPoints 
-      || 'We aim to solve visibility and growth challenges.';
-    const visionMissionText = brandData.brand_personality?.visionMission 
-      || brandData.visionMission 
-      || brandData.one_year_vision 
-      || brandData.five_year_vision 
-      || null;
-    const marketingGoalsArray: string[] = brandData.brand_personality?.marketingGoals 
-      || brandData.marketingGoals 
-      || [];
-
-    const outcomesBullets: string[] = [
-      `**Specific:** ${brandData.usp || 'Clear differentiation in your market'}`,
-      `**Measurable:** ${formData.customizations.specificNeeds || 'KPIs to be finalized during strategy'}`,
-      `**Achievable:** Within ${formData.customizations.timeline || pkg.timeline}`,
-      `**Realistic:** Calibrated to ${brandData.industry || 'your market'}`,
-      '**Timely:** Delivered on schedule',
-    ];
-
-    if (visionMissionText) {
-      outcomesBullets.push(`**Vision & Mission:** ${visionMissionText}`);
-    }
-    if (Array.isArray(marketingGoalsArray) && marketingGoalsArray.length > 0) {
-      outcomesBullets.push(`**Marketing Goals:** ${marketingGoalsArray.join(', ')}`);
-    }
-
-    const outcomesList = outcomesBullets.map(item => `<li>${item}</li>`).join('');
-    const solution = `We will leverage your offerings (${brandData.offerings || 'core offerings'}) across distribution (${brandData.brand_personality?.distributionChannels?.join(', ') || 'relevant channels'}) and platforms (${brandData.brand_personality?.preferredPlatforms?.join(', ') || 'priority platforms'}) to scale your brand.`;
-    const scope = `Deliverables include assets defined under the <strong>${pkg.name}</strong> package.`;
-
-    let html = EDITOR_TEMPLATES.proposal
-      .replace('[[CLIENT]]', formData.clientInfo.company || brandData.brand_name || 'Client')
-      .replaceAll('[[VENDOR]]', 'KING')
-      .replace('[[DATE]]', dateStr)
-      .replace('[[TIMELINE]]', formData.customizations.timeline || pkg.timeline)
-      .replace('[[PURPOSE]]', purpose)
-      .replace('[[OUTCOMES_LIST]]', outcomesList)
-      .replace('[[SOLUTION]]', solution)
-      .replace('[[SCOPE]]', scope)
-      .replace('[[TOTAL_PRICE]]', payment.totalFormatted)
-      .replace('[[UPFRONT_PAYMENT]]', payment.upfrontFormatted)
-      .replace('[[BALANCE_DUE]]', payment.balanceFormatted);
-
-    setGeneratedProposal(html);
+    const blocks = generateProposalBlocks({
+      brandData,
+      proposalData: formData,
+      totalPrice: proposalContext.totalPrice,
+    });
+    setGeneratedProposalBlocks(blocks);
     setPreviewMode(true);
   };
 
@@ -457,13 +413,11 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
                   <X className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button onClick={() => exportHtmlToPdf(generatedProposal, 'proposal.pdf')}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Export PDF
-                </Button>
               </div>
             </div>
-            <DocsEditor initialContent={generatedProposal} onExport={(html) => exportHtmlToPdf(html, 'proposal.pdf')} />
+            {generatedProposalBlocks && (
+              <BlocksEditor initialData={generatedProposalBlocks} title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`} />
+            )}
           </div>
         )}
 
