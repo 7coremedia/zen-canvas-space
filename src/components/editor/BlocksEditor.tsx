@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type EditorJS from '@editorjs/editorjs';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { exportHtmlToPdf } from '@/lib/pdf/export';
 import { blocksToHtml } from '@/lib/editor/blocksToHtml';
 
@@ -111,47 +112,90 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
     };
   }, [holderId, initialData, onChange]);
 
-  const handleExport = useCallback(async () => {
+  const handleExportPdf = useCallback(async (page: 'a4' | 'letter') => {
     if (!editorRef.current) return;
     const data = (await (editorRef.current as any).save()) as BlocksData;
     const html = blocksToHtml(data);
     if (onExportPdf) onExportPdf(html);
-    else exportHtmlToPdf(html, (title ? `${title}.pdf` : 'document.pdf'));
+    else exportHtmlToPdf(html, { filename: (title ? `${title}.pdf` : 'document.pdf'), pageSize: page, singlePage: true });
   }, [title, onExportPdf]);
+
+  const handleExportHtml = useCallback(async () => {
+    if (!editorRef.current) return;
+    const data = (await (editorRef.current as any).save()) as BlocksData;
+    const html = blocksToHtml(data);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (title ? `${title}.html` : 'document.html');
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [title]);
+
+  const handleExportDoc = useCallback(async () => {
+    if (!editorRef.current) return;
+    const data = (await (editorRef.current as any).save()) as BlocksData;
+    const html = blocksToHtml(data);
+    // Simple Word-compatible HTML (opens in Word). For real DOCX, we can add html-docx-js later.
+    const blob = new Blob([`\uFEFF${html}`], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (title ? `${title}.doc` : 'document.doc');
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [title]);
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex >= 0 && historyIndex < history.length - 1;
 
   const handleUndo = useCallback(async () => {
     if (!editorRef.current || !canUndo) return;
-    const targetIndex = historyIndex - 1;
-    const target = history[targetIndex];
-    if (target) {
-      await (editorRef.current as any).render(target);
-      setHistoryIndex(targetIndex);
-    }
-  }, [canUndo, historyIndex, history]);
+    setHistoryIndex(prevIdx => {
+      const targetIndex = prevIdx - 1;
+      const target = history[targetIndex];
+      if (target) {
+        (editorRef.current as any).render(target);
+        return targetIndex;
+      }
+      return prevIdx;
+    });
+  }, [canUndo, history]);
 
   const handleRedo = useCallback(async () => {
     if (!editorRef.current || !canRedo) return;
-    const targetIndex = historyIndex + 1;
-    const target = history[targetIndex];
-    if (target) {
-      await (editorRef.current as any).render(target);
-      setHistoryIndex(targetIndex);
-    }
-  }, [canRedo, historyIndex, history]);
+    setHistoryIndex(prevIdx => {
+      const targetIndex = prevIdx + 1;
+      const target = history[targetIndex];
+      if (target) {
+        (editorRef.current as any).render(target);
+        return targetIndex;
+      }
+      return prevIdx;
+    });
+  }, [canRedo, history]);
 
   return (
-    <div className="bg-muted/40 p-4 rounded-lg">
-      <div className="mx-auto max-w-3xl bg-white rounded-xl border overflow-hidden">
+    <div className="">
+      <div className="mx-auto max-w-3xl bg-white rounded-none overflow-hidden">
         <div className="sticky top-0 z-10 border-b bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/60">
           <div className="flex items-center gap-2 p-2">
             <div className="text-sm font-medium truncate pl-1">{title || 'Editor'}</div>
             <div className="ml-auto" />
             <Button size="sm" variant="outline" onClick={handleUndo} disabled={!canUndo}>Undo</Button>
             <Button size="sm" variant="outline" onClick={handleRedo} disabled={!canRedo}>Redo</Button>
-            <Button size="sm" onClick={handleExport}>Export PDF</Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm">Export</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => handleExportPdf('a4')}>PDF (A4)</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExportPdf('letter')}>PDF (Letter)</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportHtml}>HTML (.html)</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportDoc}>Word (.doc)</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div className="p-6 md:p-10">
@@ -162,6 +206,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
       </div>
     </div>
   );
-};
+}
+;
 
 export default BlocksEditor;
