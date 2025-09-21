@@ -17,6 +17,7 @@ import { generateProposal, generateProposalSummary } from '@/lib/templates/propo
 import { toast } from '@/hooks/use-toast';
 import BlocksEditor, { BlocksData } from '@/components/editor/BlocksEditor';
 import { generateProposalBlocks } from '@/lib/templates/proposalBlocks';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProposalGeneratorProps {
   isOpen: boolean;
@@ -120,7 +121,7 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
     }));
   };
 
-  const generateProposalPreview = () => {
+  const generateProposalPreview = async () => {
     if (!formData.selectedPackage || !pricingAnalysis) return;
 
     const proposalContext = {
@@ -131,11 +132,22 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
       balanceDue: pricingAnalysis.adjustedPrice - Math.round(pricingAnalysis.adjustedPrice * 0.5)
     };
 
-    const blocks = generateProposalBlocks({
-      brandData,
-      proposalData: formData,
-      totalPrice: proposalContext.totalPrice,
-    });
+    let blocks = null as BlocksData | null;
+    const { data: saved, error: loadErr } = await supabase
+      .from('onboarding_responses')
+      .select('proposal_blocks')
+      .eq('id', brandData.id)
+      .single();
+    if (!loadErr && saved?.proposal_blocks) {
+      blocks = saved.proposal_blocks as BlocksData;
+    }
+    if (!blocks) {
+      blocks = generateProposalBlocks({
+        brandData,
+        proposalData: formData,
+        totalPrice: proposalContext.totalPrice,
+      });
+    }
     setGeneratedProposalBlocks(blocks);
     setPreviewMode(true);
   };
@@ -416,7 +428,18 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
               </div>
             </div>
             {generatedProposalBlocks && (
-              <BlocksEditor initialData={generatedProposalBlocks} title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`} singlePageDefault={false} />
+              <BlocksEditor 
+                initialData={generatedProposalBlocks} 
+                title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`} 
+                singlePageDefault={false}
+                onChange={async (data) => {
+                  // Auto-save with debounce handled in editor; here just persist
+                  await supabase
+                    .from('onboarding_responses')
+                    .update({ proposal_blocks: data, proposal_blocks_edited_at: new Date().toISOString() })
+                    .eq('id', brandData.id);
+                }}
+              />
             )}
           </div>
         )}

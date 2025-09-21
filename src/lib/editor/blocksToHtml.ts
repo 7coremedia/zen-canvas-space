@@ -53,10 +53,20 @@ const renderChecklist = (data: any) => {
 };
 const renderTable = (data: any) => {
   const rows: string[][] = data.content || [];
-  const body = rows
-    .map((row: string[]) => `<tr>${row.map((cell) => `<td>${cell || ''}</td>`).join('')}</tr>`) 
-    .join('');
-  return `<table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;width:100%"><tbody>${body}</tbody></table>`;
+  if (!rows.length) return '<table></table>';
+  const [header, ...rest] = rows;
+  const thead = `<thead><tr>${header
+    .map((cell, idx) => `<th style="text-align:${idx === header.length - 1 ? 'right' : 'left'};padding:8px;border:1px solid #000;font-weight:700;">${cell || ''}</th>`) 
+    .join('')}</tr></thead>`;
+  const tbody = `<tbody>${rest
+    .map((row: string[]) => {
+      const isTotalRow = (row[0] || '').toLowerCase().includes('total');
+      return `<tr>${row
+        .map((cell, idx) => `<td style="text-align:${idx === row.length - 1 ? 'right' : 'left'};padding:8px;border:1px solid #000;${isTotalRow ? 'font-weight:700;' : ''}">${cell || ''}</td>`)
+        .join('')}</tr>`;
+    })
+    .join('')}</tbody>`;
+  return `<table style="border-collapse:collapse;width:100%;font-size:12.5px;">${thead}${tbody}</table>`;
 };
 
 export const blocksToHtml = (data: BlocksData): string => {

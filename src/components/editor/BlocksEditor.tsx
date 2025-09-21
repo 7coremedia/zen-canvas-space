@@ -26,6 +26,8 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
   const [ready, setReady] = useState(false);
   const [history, setHistory] = useState<BlocksData[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const applyingRef = useRef(false);
+  const lastSaveRef = useRef<number>(0);
 
   // Initialize Editor.js only on client
   useEffect(() => {
@@ -83,6 +85,10 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
           setHistoryIndex(0);
         },
         onChange: async () => {
+          if (applyingRef.current) return; // don't capture history during programmatic render
+          const now = Date.now();
+          if (now - lastSaveRef.current < 250) return; // simple debounce
+          lastSaveRef.current = now;
           const data = (await instance.save()) as BlocksData;
           // Update external listener
           onChange?.(data);
@@ -165,7 +171,10 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
       const targetIndex = prevIdx - 1;
       const target = history[targetIndex];
       if (target) {
-        (editorRef.current as any).render(target);
+        applyingRef.current = true;
+        (editorRef.current as any).render(target).then(() => {
+          applyingRef.current = false;
+        });
         return targetIndex;
       }
       return prevIdx;
@@ -178,7 +187,10 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
       const targetIndex = prevIdx + 1;
       const target = history[targetIndex];
       if (target) {
-        (editorRef.current as any).render(target);
+        applyingRef.current = true;
+        (editorRef.current as any).render(target).then(() => {
+          applyingRef.current = false;
+        });
         return targetIndex;
       }
       return prevIdx;
