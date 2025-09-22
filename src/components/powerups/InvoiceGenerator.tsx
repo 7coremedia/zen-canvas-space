@@ -17,6 +17,7 @@ import { generateInvoice, generateInvoiceSummary, createInvoiceContext } from '@
 import BlocksEditor, { BlocksData } from '@/components/editor/BlocksEditor';
 import { generateInvoiceBlocks } from '@/lib/templates/invoiceBlocks';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface InvoiceGeneratorProps {
   isOpen: boolean;
@@ -130,7 +131,7 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
 
   // Adjustments removed
 
-  const generateInvoicePreview = () => {
+  const generateInvoicePreview = async () => {
     if (!formData.selectedPackage) return;
 
     const invoiceContext = createInvoiceContext(brandData, {
@@ -139,16 +140,28 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
       customizations: formData.customizations
     });
 
-    const blocks = generateInvoiceBlocks({
-      brandData,
-      invoiceData: {
-        clientInfo: formData.clientInfo,
-        selectedPackage: formData.selectedPackage,
-        customizations: { finalPrice: formData.customizations.finalPrice },
-      },
-      invoiceNumber: invoiceContext.invoiceNumber,
-      dueDate: invoiceContext.dueDate,
-    });
+    // Try loading saved blocks first
+    let blocks: BlocksData | null = null;
+    const { data: saved, error: loadErr } = await supabase
+      .from('onboarding_responses')
+      .select('invoice_blocks')
+      .eq('id', brandData.id)
+      .single();
+    if (!loadErr && saved?.invoice_blocks) {
+      blocks = saved.invoice_blocks as BlocksData;
+    }
+    if (!blocks) {
+      blocks = generateInvoiceBlocks({
+        brandData,
+        invoiceData: {
+          clientInfo: formData.clientInfo,
+          selectedPackage: formData.selectedPackage,
+          customizations: { finalPrice: formData.customizations.finalPrice },
+        },
+        invoiceNumber: invoiceContext.invoiceNumber,
+        dueDate: invoiceContext.dueDate,
+      });
+    }
 
     setGeneratedInvoiceBlocks(blocks);
     setPreviewMode(true);
@@ -371,7 +384,16 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
               </div>
             </div>
             {generatedInvoiceBlocks && (
-              <BlocksEditor initialData={generatedInvoiceBlocks} title={`Invoice — ${formData.clientInfo.company || brandData.brand_name || ''}`} />
+              <BlocksEditor 
+                initialData={generatedInvoiceBlocks} 
+                title={`Invoice — ${formData.clientInfo.company || brandData.brand_name || ''}`} 
+                onChange={async (data) => {
+                  await supabase
+                    .from('onboarding_responses')
+                    .update({ invoice_blocks: data, invoice_blocks_edited_at: new Date().toISOString() })
+                    .eq('id', brandData.id);
+                }}
+              />
             )}
           </div>
         )}

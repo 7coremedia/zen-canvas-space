@@ -29,11 +29,17 @@ export const generateInvoiceBlocks = (ctx: InvoiceContextLike): BlocksData => {
       { type: 'paragraph', data: { text: '<strong style="float:right;">KING</strong>' } },
       { type: 'header', data: { text: 'INVOICE', level: 2 } },
 
-      // Two-column info simulated as paragraphs
-      { type: 'paragraph', data: { text: `<strong>Bill To</strong> Invoice # ${invoiceNumber}` } },
-      { type: 'paragraph', data: { text: `${invoiceData.clientInfo.company || brandData.brand_name || 'Client'} <span style="float:right;"><strong>Invoice Date</strong> ${new Date().toLocaleDateString()}</span>` } },
-      { type: 'paragraph', data: { text: `${invoiceData.clientInfo.contact || ''}${phone ? ' — ' + phone : ''}` } },
-      { type: 'paragraph', data: { text: `${invoiceData.clientInfo.email || ''}` } },
+      // Two-column info as a table to keep alignment in PDF/preview
+      { type: 'table', data: { content: [
+        [
+          '<strong>Bill To</strong>',
+          `<div style="text-align:right;"><strong>Invoice #</strong> ${invoiceNumber}<br/><strong>Invoice Date</strong> ${new Date().toLocaleDateString()}</div>`
+        ],
+        [
+          `${invoiceData.clientInfo.company || brandData.brand_name || 'Client'}<br/>${invoiceData.clientInfo.contact || ''}${phone ? ' — ' + phone : ''}<br/>${invoiceData.clientInfo.email || ''}`,
+          ''
+        ]
+      ] } },
 
       // Description/Amount table
       { type: 'table', data: { content: [
