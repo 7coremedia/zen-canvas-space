@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type EditorJS from '@editorjs/editorjs';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { exportHtmlToPdf } from '@/lib/pdf/export';
+import { exportHtmlToPdf, exportHtmlToPdfText } from '@/lib/pdf/export';
 import { openPrintWindow } from '@/lib/pdf/export';
 import { blocksToHtml } from '@/lib/editor/blocksToHtml';
 
@@ -210,9 +210,10 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
               <DropdownMenuTrigger asChild>
                 <Button size="sm">Export</Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem onClick={() => handleExportPdf('a4')}>PDF (A4)</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExportPdf('letter')}>PDF (Letter)</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExportTextPdf('a4')}>PDF (Multi-page, text A4)</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleExportHtml}>HTML (.html)</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleExportDoc}>Word (.doc)</DropdownMenuItem>
                 <DropdownMenuItem onClick={handlePrint}>Print (System PDF)</DropdownMenuItem>

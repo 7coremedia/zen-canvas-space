@@ -20,6 +20,39 @@ const getPageSize = (pageSize: PageSize): [number, number] => {
   }
 };
 
+interface TextPdfOptions {
+  filename?: string;
+  pageSize?: PageSize;
+}
+
+export const exportHtmlToPdfText = async (html: string, opts?: TextPdfOptions) => {
+  const filename = opts?.filename || 'document.pdf';
+  const pageSize = opts?.pageSize || 'a4';
+  const [pageWidth, pageHeight] = getPageSize(pageSize);
+
+  // Render in a hidden container for jsPDF.html
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-10000px';
+  container.style.top = '0';
+  container.style.width = pageSize === 'letter' ? '816px' : '794px';
+  container.innerHTML = html;
+  document.body.appendChild(container);
+
+  const pdf = new jsPDF('p', 'pt', [pageWidth, pageHeight]);
+  await (pdf as any).html(container, {
+    margin: [36, 36, 36, 36],
+    autoPaging: 'text',
+    html2canvas: { scale: 1.2, useCORS: true, backgroundColor: '#ffffff' },
+    x: 0,
+    y: 0,
+    callback: () => {
+      pdf.save(filename);
+      document.body.removeChild(container);
+    }
+  });
+};
+
 export const exportHtmlToPdf = async (html: string, filenameOrOptions?: string | PdfOptions) => {
   const options: PdfOptions = typeof filenameOrOptions === 'string'
     ? { filename: filenameOrOptions }
