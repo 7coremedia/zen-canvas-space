@@ -4,7 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Download, Edit, Share2, Loader2, RotateCw, CircleX, FileText, Receipt, Trash2 } from 'lucide-react';
+import { ArrowLeft, Download, Edit, Share2, Loader2, RotateCw, CircleX, FileText, Receipt, Trash2, MoreVertical } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
@@ -80,6 +87,7 @@ const BrandProfileDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [brandProfile, setBrandProfile] = useState<OnboardingResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -183,87 +191,143 @@ const BrandProfileDetails = () => {
   }
 
   return (
-    <div className="container max-w-6xl py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-3xl font-bold ml-2">{brandProfile.brand_name}</h1>
+    <div className="relative min-h-screen bg-background">
+      {/* Header Section */}
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">
+        <div className="container max-w-6xl px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              className="md:h-10 md:w-10 h-9 w-9"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="sr-only">Back</span>
+            </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl md:text-3xl font-bold tracking-tight truncate">{brandProfile.brand_name}</h1>
+            </div>
+            <div className="flex-shrink-0 flex gap-2">
+              {isMobile ? (
+                // Mobile Actions Dropdown
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">Actions</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => setShowProposalModal(true)}>
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Generate Proposal</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowInvoiceModal(true)}>
+                      <Receipt className="mr-2 h-4 w-4" />
+                      <span>Generate Invoice</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/onboarding', { state: { editOnboardingId: id } })}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      <span>Edit Brand</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => console.log('Share clicked')}>
+                      <Share2 className="mr-2 h-4 w-4" />
+                      <span>Share</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => console.log('Export clicked')}>
+                      <Download className="mr-2 h-4 w-4" />
+                      <span>Export</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                // Desktop Actions
+                <>
+                  <Button variant="outline" size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setShowProposalModal(true)}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Proposal
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setShowInvoiceModal(true)}>
+                    <Receipt className="mr-2 h-4 w-4" />
+                    Invoice
+                  </Button>
+                  <Button size="sm" onClick={() => navigate('/onboarding', { state: { editOnboardingId: id } })}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
-          <Button variant="outline" size="sm">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setShowProposalModal(true)}>
-            <FileText className="mr-2 h-4 w-4" />
-            Proposal
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setShowInvoiceModal(true)}>
-            <Receipt className="mr-2 h-4 w-4" />
-            Invoice
-          </Button>
-          <Button size="sm" onClick={() => navigate('/onboarding', { state: { editOnboardingId: id } })}>
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-        </div>
-      </div>
+      </header>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <div className="w-full flex items-center justify-between gap-3">
-          <TabsList className="flex items-center gap-1 rounded-full bg-muted/60 p-1">
-            <TabsTrigger
-              value="overview"
-              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
+      <div className="container max-w-6xl px-4 py-4 md:py-6">
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <div className={`flex flex-col gap-3 ${isMobile ? 'sticky top-[73px] z-10 bg-background/95 backdrop-blur-sm -mx-4 px-4 pb-2' : 'w-full flex-row items-center justify-between'}`}>
+            <div className={`${isMobile ? 'w-full' : 'flex-1'}`}>
+              <TabsList className={`${
+                isMobile 
+                  ? 'w-full justify-start overflow-x-auto scrollbar-hide' 
+                  : 'flex items-center gap-1'
+              } rounded-full bg-muted/60 p-1`}>
+                <TabsTrigger
+                  value="overview"
+                  className="rounded-full px-3 py-1 text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow whitespace-nowrap"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger
+                  value="brand-identity"
+                  className="rounded-full px-3 py-1 text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow whitespace-nowrap"
+                >
+                  Brand Identity
+                </TabsTrigger>
+                <TabsTrigger
+                  value="audience"
+                  className="rounded-full px-3 py-1 text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow whitespace-nowrap"
+                >
+                  Audience
+                </TabsTrigger>
+                <TabsTrigger
+                  value="business"
+                  className="rounded-full px-3 py-1 text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow whitespace-nowrap"
+                >
+                  Business
+                </TabsTrigger>
+                <TabsTrigger
+                  value="marketing"
+                  className="rounded-full px-3 py-1 text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow whitespace-nowrap"
+                >
+                  Marketing
+                </TabsTrigger>
+                <TabsTrigger
+                  value="planning"
+                  className="rounded-full px-3 py-1 text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow whitespace-nowrap"
+                >
+                  Planning
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            <Button 
+              variant={activeTab === 'settings' ? 'default' : 'outline'} 
+              size="sm" 
+              className={`rounded-full text-xs sm:text-sm ${isMobile ? 'w-full' : ''}`}
+              onClick={() => setActiveTab('settings')}
             >
-              Overview
-            </TabsTrigger>
-            <TabsTrigger
-              value="brand-identity"
-              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
-            >
-              Brand Identity
-            </TabsTrigger>
-            <TabsTrigger
-              value="audience"
-              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
-            >
-              Audience
-            </TabsTrigger>
-            <TabsTrigger
-              value="business"
-              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
-            >
-              Business
-            </TabsTrigger>
-            <TabsTrigger
-              value="marketing"
-              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
-            >
-              Marketing
-            </TabsTrigger>
-            <TabsTrigger
-              value="planning"
-              className="rounded-full px-3 py-1 data-[state=active]:bg-background data-[state=active]:shadow"
-            >
-              Planning
-            </TabsTrigger>
-          </TabsList>
-          <Button 
-            variant={activeTab === 'settings' ? 'default' : 'outline'} 
-            size="sm" 
-            className="rounded-full"
-            onClick={() => setActiveTab('settings')}
-          >
-            Brand Settings
-          </Button>
-        </div>
+              Brand Settings
+            </Button>
+          </div>
 
         <TabsContent value="overview" className="space-y-6">
           <Card>
@@ -849,19 +913,20 @@ const BrandProfileDetails = () => {
         </div>
       ) : null}
 
-      {/* Proposal Generator Modal */}
-      <ProposalGenerator
-        isOpen={showProposalModal}
-        onClose={() => setShowProposalModal(false)}
-        brandData={brandProfile}
-      />
+        {/* Proposal Generator Modal */}
+        <ProposalGenerator
+          isOpen={showProposalModal}
+          onClose={() => setShowProposalModal(false)}
+          brandData={brandProfile}
+        />
 
-      {/* Invoice Generator Modal */}
-      <InvoiceGenerator
-        isOpen={showInvoiceModal}
-        onClose={() => setShowInvoiceModal(false)}
-        brandData={brandProfile}
-      />
+        {/* Invoice Generator Modal */}
+        <InvoiceGenerator
+          isOpen={showInvoiceModal}
+          onClose={() => setShowInvoiceModal(false)}
+          brandData={brandProfile}
+        />
+      </div>
     </div>
   );
 };
