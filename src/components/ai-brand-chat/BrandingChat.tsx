@@ -12,7 +12,11 @@ import ChatGlowingInput from './ChatGlowingInput';
 import { AIServiceManager } from '@/lib/ai/aiServiceManager';
 import { CTASystem, CTATemplate } from '@/lib/ai/contextAnalyzer';
 
-export const BrandingChat: React.FC = () => {
+interface BrandingChatProps {
+  initialMessage?: string;
+}
+
+export const BrandingChat: React.FC<BrandingChatProps> = ({ initialMessage = '' }) => {
   const navigate = useNavigate();
   const { chatState, addMessage, setLoading, setError, clearChat } = useBrandingChat();
   
@@ -20,6 +24,28 @@ export const BrandingChat: React.FC = () => {
   const aiService = useMemo(() => new AIServiceManager(), []);
 
   const [inputValue, setInputValue] = useState('');
+  
+  // Handle initial message from URL or props
+  useEffect(() => {
+    // Check URL for initial message
+    const params = new URLSearchParams(window.location.search);
+    const messageFromUrl = params.get('message');
+    const initialText = messageFromUrl || initialMessage;
+    
+    if (initialText && !chatState.messages.some(m => m.content === initialText)) {
+      setInputValue(initialText);
+      
+      // Auto-submit after a short delay if it's a direct link with a message
+      if (messageFromUrl) {
+        const timer = setTimeout(() => {
+          if (initialText.trim()) {
+            handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+          }
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [initialMessage]);
 
   const [ctaTemplates, setCtaTemplates] = useState<CTATemplate[]>([]);
   const [showCTAs, setShowCTAs] = useState(false);

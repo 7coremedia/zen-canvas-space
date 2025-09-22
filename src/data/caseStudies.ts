@@ -3,6 +3,9 @@ import type { CaseBlock } from "@/components/sections/case/blocks";
 import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
+// Hookr assets
+import hookrCover from "@/assets/Portfolio/hookr/hookr-port-cover-img.webp";
+import hookrFull from "@/assets/Portfolio/hookr/hoork-portfolio.webp";
 
 export type Partner = {
   id: string;
@@ -19,6 +22,8 @@ export type CaseStudy = {
   category: "Branding" | "Logo" | "Poster" | "Other";
   tagline: string;
   cover: string;
+  // Optional long, scrollable image for the full project view
+  fullImage?: string;
   year: string;
   sections: CaseBlock[];
   // Partner information
@@ -41,6 +46,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     tagline: "A beautiful and simple financial dashboard that educates while reporting.",
     cover: portfolio1,
+    fullImage: portfolio1,
     // Multiple partners example
     isMultiplePartners: true,
     brandName: "Periscope", // Same as title
@@ -132,6 +138,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2023",
     tagline: "Redefining luxury fashion with timeless elegance and modern aesthetics.",
     cover: portfolio2,
+    fullImage: portfolio2,
     // Single partner example
     isMultiplePartners: false,
     singlePartner: {
@@ -148,10 +155,28 @@ export const caseStudies: CaseStudy[] = [
     year: "2023",
     tagline: "Simplicity meets impact in this clean and versatile logo design.",
     cover: portfolio3,
+    fullImage: portfolio3,
     // Single partner example
     isMultiplePartners: false,
     singlePartner: {
       name: "Minimalist Logo", // Same as title
+      type: "By KING",
+    },
+    sections: [],
+  },
+  // New: Hookr project
+  {
+    slug: "hookr-branding-ui-ux",
+    title: "Hookr - Branding, UI & UX",
+    client: "Hookr",
+    category: "Branding",
+    year: "2025",
+    tagline: "Hookr is a platform for mutual consenting adults to just do what you're thinking... HookUp.",
+    cover: hookrCover,
+    fullImage: hookrFull,
+    isMultiplePartners: false,
+    singlePartner: {
+      name: "Hookr",
       type: "By KING",
     },
     sections: [],

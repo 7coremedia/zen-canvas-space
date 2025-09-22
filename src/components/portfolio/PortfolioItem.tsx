@@ -17,17 +17,29 @@ export default function PortfolioItem({
   imageUrl,
   slug, // Destructure slug
 }: PortfolioItemProps) {
+  const [loaded, setLoaded] = React.useState(false);
   return (
     <div className="relative group overflow-hidden rounded-lg">
       <Link to={`/portfolio/${slug}`} className="block"> {/* Use actual slug here */}
         {/* Fixed aspect ratio container. Adjust aspect if desired, e.g., aspect-[16/9] */}
         <div className="relative w-full aspect-[16/9] bg-gray-100">
+          {/* Skeleton */}
+          <div
+            className={cn(
+              "absolute inset-0 animate-pulse bg-gray-200",
+              loaded && "hidden"
+            )}
+          />
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-full object-cover object-top"
+            className={cn(
+              "w-full h-full object-cover object-top transition-opacity duration-500",
+              loaded ? "opacity-100" : "opacity-0"
+            )}
             loading="lazy"
             decoding="async"
+            onLoad={() => setLoaded(true)}
           />
           {/* Dark transparent overlay on hover */}
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 flex items-end p-4 opacity-0 group-hover:opacity-100">

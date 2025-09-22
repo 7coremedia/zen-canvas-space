@@ -169,125 +169,152 @@ const BrandDetails = () => {
   }
 
   return (
-    <div className="relative min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{brand.name}</h1>
-            <p className="text-muted-foreground">
-              Created on {new Date(brand.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <div className="flex gap-2 w-full md:w-auto">
-            <Button variant="outline" size="sm">
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
+    <div className="relative min-h-screen bg-background">
+      {/* Header Section */}
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="md:h-10 md:w-10 h-9 w-9"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="sr-only">Back</span>
             </Button>
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight truncate">{brand.name}</h1>
+              <p className="text-xs md:text-sm text-muted-foreground truncate">
+                Created on {new Date(brand.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex-shrink-0 flex gap-2">
+              <Button variant="outline" size="icon" className="md:hidden">
+                <Share2 className="h-4 w-4" />
+                <span className="sr-only">Share</span>
+              </Button>
+              <Button variant="outline" size="icon" className="md:hidden">
+                <Download className="h-4 w-4" />
+                <span className="sr-only">Export</span>
+              </Button>
+              <div className="hidden md:flex gap-2">
+                <Button variant="outline" size="sm">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-4 md:py-6">
 
         <Tabs 
           defaultValue="ai" 
           className="w-full"
           onValueChange={(value) => setActiveTab(value as BrandTab)}
         >
-          <div className="flex justify-between items-center mb-6">
-            <TabsList>
-              <TabsTrigger value="ai">
-                <Sparkles className="mr-2 h-4 w-4" />
-                Made with AI
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-4 md:mb-6">
+            <TabsList className="w-full sm:w-auto grid grid-cols-2">
+              <TabsTrigger value="ai" className="flex items-center justify-center gap-1.5 text-xs sm:text-sm">
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="truncate">AI Made</span>
               </TabsTrigger>
-              <TabsTrigger value="human">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Designed with Humans
+              <TabsTrigger value="human" className="flex items-center justify-center gap-1.5 text-xs sm:text-sm">
+                <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="truncate">Human Made</span>
               </TabsTrigger>
             </TabsList>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => setIsAskingAI(true)}
+                className="text-xs sm:text-sm h-9 sm:h-9"
               >
-                <Sparkles className="mr-2 h-4 w-4" />
-                Ask AI
+                <Sparkles className="mr-1.5 h-3.5 w-3.5 sm:mr-2 sm:h-4 sm:w-4" />
+                <span className="truncate">Ask AI</span>
               </Button>
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => setIsAskingHuman(true)}
+                className="text-xs sm:text-sm h-9 sm:h-9"
               >
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Ask Human
+                <MessageSquare className="mr-1.5 h-3.5 w-3.5 sm:mr-2 sm:h-4 sm:w-4" />
+                <span className="truncate">Ask Human</span>
               </Button>
             </div>
           </div>
 
           <TabsContent value={activeTab} className="mt-0">
             {filteredElements.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {filteredElements.map((element) => (
                   <div 
                     key={element.id}
-                    className="relative group bg-card rounded-xl border overflow-hidden hover:shadow-lg transition-shadow"
+                    className="relative group bg-card rounded-lg sm:rounded-xl border overflow-hidden hover:shadow-md sm:hover:shadow-lg transition-all duration-200 active:scale-[0.99]"
                   >
-                    <div className="p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-semibold">{element.title}</h3>
+                    <div className="p-3 sm:p-4">
+                      <div className="flex justify-between items-start gap-2 mb-2 sm:mb-3">
+                        <h3 className="font-medium text-sm sm:text-base line-clamp-1">{element.title}</h3>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 -mt-1 -mr-2">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-7 w-7 -mt-1 -mr-1.5 text-muted-foreground hover:text-foreground"
+                            >
                               <MoreVertical className="h-4 w-4" />
                               <span className="sr-only">More options</span>
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem className="text-sm">
                               <Edit className="mr-2 h-4 w-4" />
                               <span>Edit</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="text-sm">
                               <Copy className="mr-2 h-4 w-4" />
                               <span>Duplicate</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <div className="min-h-[120px]">
+                      <div className="min-h-[100px] sm:min-h-[120px] -mx-1 sm:mx-0">
                         {renderElementContent(element)}
                       </div>
                     </div>
-                    <div className="px-4 py-2 bg-muted/50 text-xs text-muted-foreground flex justify-between items-center">
-                      <span>
+                    <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-muted/40 text-[10px] sm:text-xs text-muted-foreground flex justify-between items-center">
+                      <span className="truncate">
                         {element.createdBy === 'ai' ? 'AI Generated' : 'Human Designed'}
                       </span>
-                      <span>
-                        {new Date(element.updatedAt).toLocaleDateString()}
+                      <span className="ml-2 whitespace-nowrap">
+                        {new Date(element.updatedAt).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: new Date(element.updatedAt).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                        })}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 border rounded-lg">
-                <p className="text-muted-foreground">
+              <div className="text-center p-6 sm:p-8 border rounded-lg bg-muted/20">
+                <p className="text-muted-foreground text-sm sm:text-base">
                   No {activeTab === 'ai' ? 'AI generated' : 'human designed'} elements yet.
                 </p>
                 <Button 
                   variant="outline" 
-                  className="mt-4"
+                  size="sm"
+                  className="mt-4 text-sm"
                   onClick={() => setActiveTab(activeTab === 'ai' ? 'human' : 'ai')}
                 >
                   View {activeTab === 'ai' ? 'human designed' : 'AI generated'} elements

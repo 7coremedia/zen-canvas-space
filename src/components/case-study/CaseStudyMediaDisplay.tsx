@@ -11,21 +11,30 @@ export default function CaseStudyMediaDisplay({
   mediaType = 'image',
   altText = 'Case study media',
 }: CaseStudyMediaDisplayProps) {
+  const [loaded, setLoaded] = React.useState(false);
   return (
     <div className="w-full h-auto bg-gray-100 flex items-center justify-center">
       {mediaType === 'image' && (
-        <img
-          src={mediaUrl}
-          alt={altText}
-          className="w-full h-auto object-contain max-w-full"
-          style={{ objectFit: 'contain', width: '100%', height: 'auto' }} // Ensure image scales without cropping
-        />
+        <div className="relative w-full flex justify-center">
+          {/* Skeleton placeholder */}
+          <div
+            className={`absolute inset-0 mx-auto max-w-[1600px] min-h-[40vh] animate-pulse bg-gray-200 ${loaded ? 'hidden' : ''}`}
+          />
+          <img
+            src={mediaUrl}
+            alt={altText}
+            className={`w-full h-auto object-contain max-w-[1600px] transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setLoaded(true)}
+          />
+        </div>
       )}
       {mediaType === 'video' && (
         <video
           src={mediaUrl}
           controls
-          className="w-full h-auto object-contain max-w-full"
+          className="w-full h-auto object-contain max-w-[1600px]"
           style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
         >
           Your browser does not support the video tag.

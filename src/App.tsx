@@ -46,7 +46,14 @@ function AppShell() {
           <Route path="/brand/:id" element={<BrandDetails />} />
           <Route path="/brand-profile/:id" element={<BrandProfileDetails />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/branding-chat" element={<BrandingChat />} />
+          <Route 
+            path="/branding-chat" 
+            element={
+              <BrandingChat 
+                initialMessage={new URLSearchParams(window.location.search).get('message') || ''} 
+              />
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

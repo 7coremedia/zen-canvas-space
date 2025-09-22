@@ -49,30 +49,30 @@ export default function CaseStudy() {
         <link rel="canonical" href={`/portfolio/${slug}`} />
       </Helmet>
 
-             {/* Conditional Header Rendering */}
-       {currentCaseStudy.isMultiplePartners ? (
-         <MultiplePartnersHeader
-           title={currentCaseStudy.title}
-           brandName={currentCaseStudy.title} // Use title as brand name
-           partners={currentCaseStudy.partners || []}
-         />
-       ) : currentCaseStudy.singlePartner ? (
-         <SinglePartnerHeader
-           title={currentCaseStudy.title}
-           partnerName={currentCaseStudy.title} // Use title as partner name
-           partnerType={currentCaseStudy.singlePartner.type}
-         />
-       ) : (
-         <CaseStudyHeader
-           title={currentCaseStudy.title}
-           owner={currentCaseStudy.client || "KING Team"}
-         />
-       )}
+      {/* Conditional Header Rendering */}
+      {currentCaseStudy.isMultiplePartners ? (
+        <MultiplePartnersHeader
+          title={currentCaseStudy.title}
+          brandName={currentCaseStudy.title} // Use title as brand name
+          partners={currentCaseStudy.partners || []}
+        />
+      ) : currentCaseStudy.singlePartner ? (
+        <SinglePartnerHeader
+          title={currentCaseStudy.title}
+          partnerName={currentCaseStudy.title} // Use title as partner name
+          partnerType={currentCaseStudy.singlePartner.type}
+        />
+      ) : (
+        <CaseStudyHeader
+          title={currentCaseStudy.title}
+          owner={currentCaseStudy.client || "KING Team"}
+        />
+      )}
 
       {/* Main Media Section - No Container for full-width */} 
       <section className="w-full pt-4 pb-8">
         <CaseStudyMediaDisplay
-          mediaUrl={currentCaseStudy.cover}
+          mediaUrl={currentCaseStudy.fullImage || currentCaseStudy.cover}
           mediaType="image"
           altText={currentCaseStudy.title}
         />

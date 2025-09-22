@@ -35,33 +35,66 @@ export class SecureAIService {
   async generateResponse(prompt: string, context: AIContext, provider?: string): Promise<AIResponse> {
     try {
       console.log('🚀 Calling secure Edge Function with prompt:', prompt.substring(0, 100) + '...');
+      const edgeFunctionUrl = this.edgeFunctionUrl;
+      const supabaseKey = this.getSupabaseAnonKey();
       
-      const response = await fetch(this.edgeFunctionUrl, {
+      console.log('🔧 Request details:', {
+        url: edgeFunctionUrl,
+        hasKey: !!supabaseKey,
+        provider: provider || this.defaultProvider,
+        promptLength: prompt.length
+      });
+      
+      const requestBody = {
+        message: prompt,
+        provider: provider || this.defaultProvider,
+        queryType: 'branding',
+        model: provider === 'openai' ? 'gpt-3.5-turbo' : 'gemini-pro',
+        // Add context if needed by your edge function
+        context: {
+          conversationHistory: context.conversationHistory || [],
+          currentStep: context.currentStep || 'default',
+          brandIdea: context.brandIdea || ''
+        }
+      };
+      
+      console.log('📤 Sending request to Edge Function...');
+      
+      const response = await fetch(edgeFunctionUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getSupabaseAnonKey()}`,
+          'Authorization': `Bearer ${supabaseKey}`,
         },
-        body: JSON.stringify({
-          message: prompt,
-          provider: provider || this.defaultProvider,
-          queryType: 'branding',
-          model: provider === 'openai' ? 'gpt-3.5-turbo' : 'gemini-pro'
-        })
+        body: JSON.stringify(requestBody)
+      });
+
+      const responseText = await response.text();
+      console.log('📥 Received response:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        body: responseText.substring(0, 200) + (responseText.length > 200 ? '...' : '')
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Edge Function error:', response.status, errorText);
-        throw new Error(`Edge Function error: ${response.status} - ${errorText}`);
+        console.error('❌ Edge Function error:', response.status, responseText);
+        throw new Error(`Edge Function error: ${response.status} - ${responseText}`);
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('❌ Failed to parse response as JSON:', responseText);
+        throw new Error('Invalid JSON response from server');
+      }
+      
       console.log('✅ Edge Function response received');
       
       return {
-        content: data.response,
-        metadata: this.extractMetadata(data.response)
+        content: data.response || data.message || 'No response content',
+        metadata: this.extractMetadata(data.response || data.message || '')
       };
 
     } catch (error) {
