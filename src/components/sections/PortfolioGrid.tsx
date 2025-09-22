@@ -2,54 +2,21 @@ import * as React from 'react';
 import PortfolioItem from '@/components/portfolio/PortfolioItem';
 import { Button } from '@/components/ui/button';
 import { Search, SlidersHorizontal } from 'lucide-react';
+import { caseStudies } from '@/data/caseStudies';
 
 export default function PortfolioGrid() {
 
-  // Placeholder data for portfolio items
-  const allPortfolioItems = React.useMemo(() => [
-    {
-      title: 'RingCentral - AI Expression',
-      category: 'Branding',
-      imageUrl: '/home/aalux-body-img.png', // Placeholder image
-      slug: 'periscope',
-    },
-    {
-      title: 'Reflection',
-      category: 'Graphic Design',
-      imageUrl: '/home/aalux-bento.png', // Placeholder image
-      slug: 'luxury-fashion',
-    },
-    {
-      title: "Open'er 2024",
-      category: 'Branding',
-      imageUrl: '/home/aalux-resu-in-sea.png', // Placeholder image
-      slug: 'minimalist-logo',
-    },
-    {
-      title: 'Kulture',
-      category: 'Graphic Design',
-      imageUrl: '/home/about-cont.png', // Placeholder image
-      slug: 'periscope',
-    },
-    {
-      title: 'Abstract Art',
-      category: 'Branding',
-      imageUrl: '/home/about-tumb.png', // Placeholder image
-      slug: 'luxury-fashion',
-    },
-    {
-      title: 'Digital Painting',
-      category: 'Graphic Design',
-      imageUrl: '/home/alux-bento-vibe.png', // Placeholder image
-      slug: 'minimalist-logo',
-    },
-    {
-      title: 'The People Pleaser',
-      category: 'Branding',
-      imageUrl: '/home/alux-label.png', // Placeholder image
-      slug: 'periscope',
-    },
-  ], []);
+  // Use actual case study data so grid and detail pages stay in sync
+  const allPortfolioItems = React.useMemo(
+    () =>
+      caseStudies.map((c) => ({
+        title: c.title,
+        category: c.category,
+        imageUrl: c.cover,
+        slug: c.slug,
+      })),
+    []
+  );
 
   const filteredItems = allPortfolioItems;
 
