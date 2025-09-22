@@ -140,15 +140,24 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
       customizations: formData.customizations
     });
 
-    // Try loading saved blocks first
+    // Try loading saved blocks first (localStorage + Supabase, prefer freshest)
     let blocks: BlocksData | null = null;
+    const storageKey = `blocks:invoice:${brandData.id}`;
+    const localRaw = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+    const localObj = localRaw ? JSON.parse(localRaw) as { data: BlocksData; ts: number } : null;
     const { data: saved, error: loadErr } = await supabase
       .from('onboarding_responses')
-      .select('invoice_blocks')
+      .select('invoice_blocks, invoice_blocks_edited_at')
       .eq('id', brandData.id)
       .single();
-    if (!loadErr && saved?.invoice_blocks) {
-      blocks = saved.invoice_blocks as BlocksData;
+    const rowAny = (saved || null) as any;
+    const remoteBlocks = (!loadErr && rowAny?.invoice_blocks) ? (rowAny.invoice_blocks as BlocksData) : null;
+    const remoteTs = rowAny?.invoice_blocks_edited_at ? new Date(rowAny.invoice_blocks_edited_at as string).getTime() : 0;
+    if (localObj && localObj.ts >= (remoteTs || 0)) {
+      blocks = localObj.data;
+    } else if (remoteBlocks) {
+      blocks = remoteBlocks;
+      if (typeof window !== 'undefined') localStorage.setItem(storageKey, JSON.stringify({ data: blocks, ts: Date.now() }));
     }
     if (!blocks) {
       blocks = generateInvoiceBlocks({
@@ -161,6 +170,7 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
         invoiceNumber: invoiceContext.invoiceNumber,
         dueDate: invoiceContext.dueDate,
       });
+      if (typeof window !== 'undefined') localStorage.setItem(storageKey, JSON.stringify({ data: blocks, ts: Date.now() }));
     }
 
     setGeneratedInvoiceBlocks(blocks);
@@ -387,10 +397,13 @@ const InvoiceGenerator = ({ isOpen, onClose, brandData }: InvoiceGeneratorProps)
               <BlocksEditor 
                 initialData={generatedInvoiceBlocks} 
                 title={`Invoice — ${formData.clientInfo.company || brandData.brand_name || ''}`} 
+                storageKey={`blocks:invoice:${brandData.id}`}
                 onChange={async (data) => {
+                  const storageKey = `blocks:invoice:${brandData.id}`;
+                  if (typeof window !== 'undefined') localStorage.setItem(storageKey, JSON.stringify({ data, ts: Date.now() }));
                   await supabase
                     .from('onboarding_responses')
-                    .update({ invoice_blocks: data, invoice_blocks_edited_at: new Date().toISOString() })
+                    .update({ invoice_blocks: data, invoice_blocks_edited_at: new Date().toISOString() } as any)
                     .eq('id', brandData.id);
                 }}
               />

@@ -26,7 +26,6 @@ export const generateInvoiceBlocks = (ctx: InvoiceContextLike): BlocksData => {
     blocks: [
       // Header
       { type: 'header', data: { text: 'KING Branding & Creative Agency', level: 2 } },
-      { type: 'paragraph', data: { text: '<strong style="float:right;">KING</strong>' } },
       { type: 'header', data: { text: 'INVOICE', level: 2 } },
 
       // Info as simple paragraphs (previous layout)
@@ -34,7 +33,8 @@ export const generateInvoiceBlocks = (ctx: InvoiceContextLike): BlocksData => {
       { type: 'paragraph', data: { text: `${invoiceData.clientInfo.company || brandData.brand_name || 'Client'}` } },
       { type: 'paragraph', data: { text: `${invoiceData.clientInfo.contact || ''}${phone ? ' — ' + phone : ''}` } },
       { type: 'paragraph', data: { text: `${invoiceData.clientInfo.email || ''}` } },
-      { type: 'paragraph', data: { text: `Invoice Date: ${new Date().toLocaleDateString()} <span style="float:right;">Invoice No: <b>${invoiceNumber}</b></span>` } },
+      { type: 'paragraph', data: { text: `<span style="float:right;"><strong>Invoice Date:</strong> ${new Date().toLocaleDateString()}</span>` } },
+      { type: 'paragraph', data: { text: `<span style="float:right;"><strong>Invoice No:</strong> <b>${invoiceNumber}</b></span>` } },
 
       // Description/Amount table
       { type: 'table', data: { content: [

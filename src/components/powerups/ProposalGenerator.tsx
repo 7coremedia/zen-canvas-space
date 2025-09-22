@@ -133,13 +133,23 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
     };
 
     let blocks = null as BlocksData | null;
+    const storageKey = `blocks:proposal:${brandData.id}`;
+    const localRaw = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+    const localObj = localRaw ? JSON.parse(localRaw) as { data: BlocksData; ts: number } : null;
     const { data: saved, error: loadErr } = await supabase
       .from('onboarding_responses')
-      .select('proposal_blocks')
+      .select('proposal_blocks, proposal_blocks_edited_at')
       .eq('id', brandData.id)
       .single();
-    if (!loadErr && saved?.proposal_blocks) {
-      blocks = saved.proposal_blocks as BlocksData;
+    const remoteBlocks = (!loadErr && saved?.proposal_blocks) ? (saved.proposal_blocks as BlocksData) : null;
+    const remoteTs = saved?.proposal_blocks_edited_at ? new Date(saved.proposal_blocks_edited_at as string).getTime() : 0;
+    // Choose the freshest source
+    if (localObj && localObj.ts >= (remoteTs || 0)) {
+      blocks = localObj.data;
+    } else if (remoteBlocks) {
+      blocks = remoteBlocks;
+      // sync down to local
+      if (typeof window !== 'undefined') localStorage.setItem(storageKey, JSON.stringify({ data: blocks, ts: Date.now() }));
     }
     if (!blocks) {
       blocks = generateProposalBlocks({
@@ -147,6 +157,7 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
         proposalData: formData,
         totalPrice: proposalContext.totalPrice,
       });
+      if (typeof window !== 'undefined') localStorage.setItem(storageKey, JSON.stringify({ data: blocks, ts: Date.now() }));
     }
     setGeneratedProposalBlocks(blocks);
     setPreviewMode(true);
@@ -428,12 +439,14 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
               </div>
             </div>
             {generatedProposalBlocks && (
-              <BlocksEditor 
-                initialData={generatedProposalBlocks} 
-                title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`} 
+              <BlocksEditor
+                initialData={generatedProposalBlocks}
+                title={`Proposal — ${formData.clientInfo.company || brandData.brand_name || ''}`}
                 singlePageDefault={false}
+                storageKey={`blocks:proposal:${brandData.id}`}
                 onChange={async (data) => {
-                  // Auto-save with debounce handled in editor; here just persist
+                  const storageKey = `blocks:proposal:${brandData.id}`;
+                  if (typeof window !== 'undefined') localStorage.setItem(storageKey, JSON.stringify({ data, ts: Date.now() }));
                   await supabase
                     .from('onboarding_responses')
                     .update({ proposal_blocks: data, proposal_blocks_edited_at: new Date().toISOString() })
@@ -443,9 +456,6 @@ const ProposalGenerator = ({ isOpen, onClose, brandData }: ProposalGeneratorProp
             )}
           </div>
         )}
-
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           {!previewMode ? (

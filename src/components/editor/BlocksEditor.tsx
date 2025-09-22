@@ -18,9 +18,10 @@ interface BlocksEditorProps {
   onExportPdf?: (html: string) => void;
   title?: string;
   singlePageDefault?: boolean;
+  storageKey?: string; // optional localStorage key for autosave when page hides/unloads
 }
 
-const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onExportPdf, title, singlePageDefault = true }) => {
+const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onExportPdf, title, singlePageDefault = true, storageKey }) => {
   const editorRef = useRef<EditorJS | null>(null);
   const holderId = useMemo(() => `editorjs-${Math.random().toString(36).slice(2)}`, []);
   const [ready, setReady] = useState(false);
@@ -28,6 +29,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const applyingRef = useRef(false);
   const lastSaveRef = useRef<number>(0);
+  const lastDataRef = useRef<BlocksData | null>(null);
 
   // Initialize Editor.js only on client
   useEffect(() => {
@@ -92,6 +94,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
           const data = (await instance.save()) as BlocksData;
           // Update external listener
           onChange?.(data);
+          lastDataRef.current = data;
           // Push into history if content changed
           setHistory(prev => {
             const next = prev.slice(0, historyIndex + 1);
@@ -114,11 +117,47 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
     return () => {
       isMounted = false;
       if (editorRef.current && (editorRef.current as any).destroy) {
+        // save on unmount if storageKey is provided
+        if (storageKey && lastDataRef.current && typeof window !== 'undefined') {
+          try { localStorage.setItem(storageKey, JSON.stringify({ data: lastDataRef.current, ts: Date.now() })); } catch {}
+        }
         (editorRef.current as any).destroy();
         editorRef.current = null;
       }
     };
-  }, [holderId, initialData, onChange]);
+  }, [holderId, initialData, onChange, storageKey]);
+
+  // Save on tab hide or before unload
+  useEffect(() => {
+    const handleVisibility = async () => {
+      if (document.hidden && storageKey && typeof window !== 'undefined') {
+        let data = lastDataRef.current;
+        if (!data && editorRef.current) {
+          try { data = await (editorRef.current as any).save(); } catch {}
+        }
+        if (data) {
+          try { localStorage.setItem(storageKey, JSON.stringify({ data, ts: Date.now() })); } catch {}
+        }
+      }
+    };
+    const handleBeforeUnload = async () => {
+      if (storageKey && typeof window !== 'undefined') {
+        let data = lastDataRef.current;
+        if (!data && editorRef.current) {
+          try { data = await (editorRef.current as any).save(); } catch {}
+        }
+        if (data) {
+          try { localStorage.setItem(storageKey, JSON.stringify({ data, ts: Date.now() })); } catch {}
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [storageKey]);
 
   const handleExportPdf = useCallback(async (page: 'a4' | 'letter') => {
     if (!editorRef.current) return;
@@ -160,6 +199,13 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
     a.download = (title ? `${title}.doc` : 'document.doc');
     a.click();
     URL.revokeObjectURL(url);
+  }, [title]);
+
+  const handleExportTextPdf = useCallback(async (page: 'a4' | 'letter') => {
+    if (!editorRef.current) return;
+    const data = (await (editorRef.current as any).save()) as BlocksData;
+    const html = blocksToHtml(data);
+    await exportHtmlToPdfText(html, { filename: (title ? `${title}.pdf` : 'document.pdf'), pageSize: page });
   }, [title]);
 
   const canUndo = historyIndex > 0;
