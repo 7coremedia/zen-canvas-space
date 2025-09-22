@@ -30,6 +30,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
   const applyingRef = useRef(false);
   const lastSaveRef = useRef<number>(0);
   const lastDataRef = useRef<BlocksData | null>(null);
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
 
   // Initialize Editor.js only on client
   useEffect(() => {
@@ -95,6 +96,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
           // Update external listener
           onChange?.(data);
           lastDataRef.current = data;
+          setLastSavedAt(Date.now());
           // Push into history if content changed
           setHistory(prev => {
             const next = prev.slice(0, historyIndex + 1);
@@ -137,6 +139,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
         }
         if (data) {
           try { localStorage.setItem(storageKey, JSON.stringify({ data, ts: Date.now() })); } catch {}
+          setLastSavedAt(Date.now());
         }
       }
     };
@@ -148,6 +151,7 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
         }
         if (data) {
           try { localStorage.setItem(storageKey, JSON.stringify({ data, ts: Date.now() })); } catch {}
+          setLastSavedAt(Date.now());
         }
       }
     };
@@ -250,6 +254,11 @@ const BlocksEditor: React.FC<BlocksEditorProps> = ({ initialData, onChange, onEx
           <div className="flex items-center gap-2 p-2">
             <div className="text-sm font-medium truncate pl-1">{title || 'Editor'}</div>
             <div className="ml-auto" />
+            {lastSavedAt && (
+              <div className="text-[11px] text-muted-foreground pr-2" title={new Date(lastSavedAt).toLocaleString()}>
+                Saved • {new Date(lastSavedAt).toLocaleTimeString()}
+              </div>
+            )}
             <Button size="sm" variant="outline" onClick={handleUndo} disabled={!canUndo}>Undo</Button>
             <Button size="sm" variant="outline" onClick={handleRedo} disabled={!canRedo}>Redo</Button>
             <DropdownMenu>

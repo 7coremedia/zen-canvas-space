@@ -1,5 +1,6 @@
 import type { BlocksData } from '@/components/editor/BlocksEditor';
 import { PACKAGES } from '@/config/packages';
+import logoUrl from '@/assets/king-logo.svg';
 
 interface InvoiceContextLike {
   brandData: any;
@@ -25,6 +26,7 @@ export const generateInvoiceBlocks = (ctx: InvoiceContextLike): BlocksData => {
     version: '2.29.0',
     blocks: [
       // Header
+      { type: 'paragraph', data: { text: `<img src="${logoUrl}" alt="KING" style="float:right;height:32px;width:auto;object-fit:contain;"/>` } },
       { type: 'header', data: { text: 'KING Branding & Creative Agency', level: 2 } },
       { type: 'header', data: { text: 'INVOICE', level: 2 } },
 
