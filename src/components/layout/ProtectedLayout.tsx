@@ -38,17 +38,17 @@ export default function ProtectedLayout() {
           {/* Role-based nav items */}
           <div className="flex gap-6">
             <a 
-              href="/dashboard/portfolio" 
+              href="/management/portfolio" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Portfolio
+              Portfolio Management
             </a>
             {(role?.is_admin || role?.is_moderator) && (
               <a 
-                href="/dashboard/users" 
+                href="/management/users" 
                 className="text-sm font-medium transition-colors hover:text-primary"
               >
-                Users
+                User Management
               </a>
             )}
           </div>

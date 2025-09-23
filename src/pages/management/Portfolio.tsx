@@ -29,7 +29,7 @@ export default function DashboardPortfolio() {
       
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Portfolio Management</h1>
-        <Button onClick={() => navigate("/dashboard/portfolio/new")}>
+        <Button onClick={() => navigate("/management/portfolio/new")}>
           <Plus className="w-4 h-4 mr-2" />
           Add Portfolio Item
         </Button>

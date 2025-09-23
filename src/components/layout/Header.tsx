@@ -8,6 +8,8 @@ import mobileLogoUrl from "@/assets/king-logo-mobile.svg";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/usePortfolioAuth";
+
 export default function Header() {
   const location = useLocation();
   const isCasePage = location.pathname.startsWith("/portfolio/");
@@ -18,6 +20,7 @@ export default function Header() {
     user,
     signOut
   } = useAuth();
+  const { role } = useUser();
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [isHidden, setIsHidden] = React.useState(false);
   const lastScrollY = React.useRef(0);
@@ -85,6 +88,12 @@ export default function Header() {
                             <FileText className="h-6 w-6" />
                             My Brands
                           </NavLink>
+                          {(role?.is_admin || role?.is_moderator || role?.is_worker) && (
+                            <NavLink to="/management/portfolio" className="flex items-center gap-3 font-display font-medium text-2xl text-foreground hover:text-accent transition-colors" onClick={() => setSheetOpen(false)}>
+                              <Briefcase className="h-6 w-6" />
+                              Portfolio Management
+                            </NavLink>
+                          )}
                           <button onClick={async () => {
                         await signOut();
                         setSheetOpen(false);

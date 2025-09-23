@@ -21,9 +21,9 @@ import BrandingChat from "./pages/BrandingChat";
 import BrandProfileDetails from "./pages/BrandProfileDetails";
 // Dashboard imports
 import ProtectedLayout from "./components/layout/ProtectedLayout";
-import DashboardPortfolio from "./pages/dashboard/Portfolio";
-import CreatePortfolio from "./pages/dashboard/CreatePortfolio";
-import EditPortfolio from "./pages/dashboard/EditPortfolio";
+import DashboardPortfolio from "./pages/management/Portfolio";
+import CreatePortfolio from "./pages/management/CreatePortfolio";
+import EditPortfolio from "./pages/management/EditPortfolio";
 
 import { AuthProvider } from "@/hooks/useAuth";
 import { PortfolioAuthProvider } from "@/hooks/usePortfolioAuth";
@@ -49,8 +49,8 @@ function AppShell() {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* Protected Dashboard Routes */}
-          <Route path="/dashboard" element={<ProtectedLayout />}>
+          {/* Protected Management Routes */}
+          <Route path="/management" element={<ProtectedLayout />}>
             <Route path="portfolio" element={<DashboardPortfolio />} />
             <Route path="portfolio/new" element={<CreatePortfolio />} />
             <Route path="portfolio/:id" element={<EditPortfolio />} />
