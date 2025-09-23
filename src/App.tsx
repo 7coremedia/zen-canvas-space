@@ -25,6 +25,7 @@ import ManagementDashboard from "./pages/management/Index";
 import DashboardPortfolio from "./pages/management/Portfolio";
 import CreatePortfolio from "./pages/management/CreatePortfolio";
 import EditPortfolio from "./pages/management/EditPortfolio";
+import RoleManagement from "./pages/management/RoleManagement";
 
 import { AuthProvider } from "@/hooks/useAuth";
 import { PortfolioAuthProvider } from "@/hooks/usePortfolioAuth";
@@ -56,6 +57,7 @@ function AppShell() {
             <Route path="portfolio" element={<DashboardPortfolio />} />
             <Route path="portfolio/new" element={<CreatePortfolio />} />
             <Route path="portfolio/:id" element={<EditPortfolio />} />
+            <Route path="roles" element={<RoleManagement />} />
           </Route>
           <Route path="/brand/:id" element={<BrandDetails />} />
           <Route path="/brand-profile/:id" element={<BrandProfileDetails />} />
