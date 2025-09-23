@@ -36,91 +36,132 @@ export default function PortfolioManager() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading portfolio items...</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  if (!portfolioItems || portfolioItems.length === 0) {
+    return (
+      <Card className="p-6">
+        <div className="text-center py-12">
+          <div className="mb-4">
+            <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+              <Edit2 className="w-8 h-8 text-muted-foreground" />
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">No portfolio items yet</h3>
+          <p className="text-muted-foreground mb-6">
+            Get started by adding your first portfolio item to showcase your work.
+          </p>
+          <Button onClick={() => navigate("/management/portfolio/new")}>
+            <Edit2 className="w-4 h-4 mr-2" />
+            Add First Item
+          </Button>
+        </div>
+      </Card>
+    );
   }
 
   return (
-    <Card className="p-6">
-      <div className="rounded-md border">
+    <Card className="p-6 rounded-xl">
+      <div className="rounded-lg border overflow-hidden">
         <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => setIsDragging(true)}>
           <Droppable droppableId="portfolio-items">
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      {role?.is_admin && <TableCell style={{ width: 50 }}></TableCell>}
-                      <TableCell>Title</TableCell>
-                      <TableCell>Category</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Created</TableCell>
-                      <TableCell style={{ width: 100 }}>Actions</TableCell>
+                    <TableRow className="bg-muted/50">
+                      {role?.is_admin && <TableCell className="w-12"></TableCell>}
+                      <TableCell className="font-semibold">Title</TableCell>
+                      <TableCell className="font-semibold">Category</TableCell>
+                      <TableCell className="font-semibold">Status</TableCell>
+                      <TableCell className="font-semibold">Created</TableCell>
+                      <TableCell className="font-semibold w-24">Actions</TableCell>
                     </TableRow>
                   </TableHeader>
-                <TableBody>
-                  {portfolioItems?.map((item, index) => (
-                    <Draggable 
-                      key={item.id} 
-                      draggableId={item.id} 
-                      index={index}
-                      isDragDisabled={!role?.is_admin}
-                    >
-                      {(provided, snapshot) => (
-                        <TableRow
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          className={snapshot.isDragging ? "bg-accent" : ""}
-                        >
-                          {role?.is_admin && (
-                            <TableCell>
-                              <div {...provided.dragHandleProps}>
-                                <GripVertical className="w-4 h-4 text-gray-400" />
-                              </div>
-                            </TableCell>
-                          )}
-                          <TableCell>{item.title}</TableCell>
-                          <TableCell>{item.category}</TableCell>
-                          <TableCell>
-                            {item.is_published ? (
-                              <span className="text-green-600">Published</span>
-                            ) : (
-                              <span className="text-yellow-600">Draft</span>
+                  <TableBody>
+                    {portfolioItems.map((item, index) => (
+                      <Draggable 
+                        key={item.id} 
+                        draggableId={item.id} 
+                        index={index}
+                        isDragDisabled={!role?.is_admin}
+                      >
+                        {(provided, snapshot) => (
+                          <TableRow
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`${snapshot.isDragging ? "bg-accent shadow-lg" : "hover:bg-muted/50"} transition-colors`}
+                          >
+                            {role?.is_admin && (
+                              <TableCell>
+                                <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                                </div>
+                              </TableCell>
                             )}
-                          </TableCell>
-                          <TableCell>
-                            {new Date(item.created_at).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => navigate('/dashboard/portfolio/' + item.id)}
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </Button>
-                              {role?.is_admin && (
+                            <TableCell className="font-medium">{item.title}</TableCell>
+                            <TableCell>
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {item.category}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              {item.is_published ? (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  Published
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                  Draft
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {new Date(item.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => deleteItem(item.id)}
+                                  onClick={() => navigate(`/management/portfolio/${item.id}`)}
+                                  className="h-8 w-8 p-0 hover:bg-blue-100"
                                 >
-                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                  <Edit2 className="w-4 h-4" />
                                 </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+                                {role?.is_admin && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => deleteItem(item.id)}
+                                    className="h-8 w-8 p-0 hover:bg-red-100"
+                                  >
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </Card>
   );
