@@ -1,0 +1,85 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
+
+export type Role = {
+  is_admin: boolean;
+  is_moderator: boolean;
+  is_worker: boolean;
+};
+
+type PortfolioAuthContextType = {
+  user: User | null;
+  role: Role | null;
+  isLoading: boolean;
+};
+
+const PortfolioAuthContext = createContext<PortfolioAuthContextType | undefined>(undefined);
+
+export function PortfolioAuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserRole(session.user.id);
+      } else {
+        setRole(null);
+        setIsLoading(false);
+      }
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserRole(session.user.id);
+      } else {
+        setRole(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function loadUserRole(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from("roles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error) throw error;
+      setRole(data);
+    } catch (error) {
+      console.error("Error loading user role:", error);
+      setRole(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <PortfolioAuthContext.Provider 
+      value={{ user, role, isLoading }}
+    >
+      {children}
+    </PortfolioAuthContext.Provider>
+  );
+}
+
+export function useUser() {
+  const context = useContext(PortfolioAuthContext);
+  if (context === undefined) {
+    throw new Error("useUser must be used within a PortfolioAuthProvider");
+  }
+  return context;
+}

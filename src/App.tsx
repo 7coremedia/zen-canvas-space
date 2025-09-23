@@ -19,8 +19,14 @@ import BrandDetails from "./pages/BrandDetails";
 import Dashboard from "./pages/Dashboard";
 import BrandingChat from "./pages/BrandingChat";
 import BrandProfileDetails from "./pages/BrandProfileDetails";
+// Dashboard imports
+import ProtectedLayout from "./components/layout/ProtectedLayout";
+import DashboardPortfolio from "./pages/dashboard/Portfolio";
+import CreatePortfolio from "./pages/dashboard/CreatePortfolio";
+import EditPortfolio from "./pages/dashboard/EditPortfolio";
 
 import { AuthProvider } from "@/hooks/useAuth";
+import { PortfolioAuthProvider } from "@/hooks/usePortfolioAuth";
 import CursorRing from "@/components/ui/CursorRing";
 
 const queryClient = new QueryClient();
@@ -43,15 +49,19 @@ function AppShell() {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          {/* Protected Dashboard Routes */}
+          <Route path="/dashboard" element={<ProtectedLayout />}>
+            <Route path="portfolio" element={<DashboardPortfolio />} />
+            <Route path="portfolio/new" element={<CreatePortfolio />} />
+            <Route path="portfolio/:id" element={<EditPortfolio />} />
+          </Route>
           <Route path="/brand/:id" element={<BrandDetails />} />
           <Route path="/brand-profile/:id" element={<BrandProfileDetails />} />
           <Route path="/contact" element={<Contact />} />
           <Route 
             path="/branding-chat" 
             element={
-              <BrandingChat 
-                initialMessage={new URLSearchParams(window.location.search).get('message') || ''} 
-              />
+              <BrandingChat />
             } 
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -70,9 +80,11 @@ const App = () => (
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <BrowserRouter>
-            <AppShell />
-          </BrowserRouter>
+          <PortfolioAuthProvider>
+            <BrowserRouter>
+              <AppShell />
+            </BrowserRouter>
+          </PortfolioAuthProvider>
         </AuthProvider>
       </TooltipProvider>
     </HelmetProvider>
