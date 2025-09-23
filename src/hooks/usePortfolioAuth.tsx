@@ -51,16 +51,33 @@ export function PortfolioAuthProvider({ children }: { children: React.ReactNode 
 
   async function loadUserRole(userId: string) {
     try {
-      const { data, error } = await supabase
+      // First try to find by user_id
+      let { data, error } = await supabase
         .from("roles")
         .select("*")
         .eq("user_id", userId)
         .single();
 
+      // If not found by user_id, try by email as fallback
+      if (error && user?.email) {
+        const { data: emailData, error: emailError } = await supabase
+          .from("roles")
+          .select("*")
+          .eq("email", user.email)
+          .single();
+        
+        if (!emailError) {
+          data = emailData;
+          error = null;
+        }
+      }
+
       if (error) throw error;
+      console.log("Role loaded:", data);
       setRole(data);
     } catch (error) {
       console.error("Error loading user role:", error);
+      console.log("User ID:", userId, "User email:", user?.email);
       setRole(null);
     } finally {
       setIsLoading(false);
