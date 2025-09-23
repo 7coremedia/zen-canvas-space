@@ -5,6 +5,7 @@ import { useUser } from "@/hooks/usePortfolioAuth";
 import PortfolioManager from "@/components/admin/PortfolioManager";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export default function DashboardPortfolio() {
   const { user, role } = useUser();
@@ -18,7 +19,16 @@ export default function DashboardPortfolio() {
   }, [user, role, navigate]);
 
   if (!user || !(role?.is_admin || role?.is_moderator || role?.is_worker)) {
-    return null;
+    return (
+      <main className="container mx-auto py-8 px-4">
+        <Card className="p-6">
+          <h1 className="text-2xl font-semibold mb-2">Access required</h1>
+          <p className="text-sm text-muted-foreground">
+            You need an admin, moderator, or worker role to manage portfolio items.
+          </p>
+        </Card>
+      </main>
+    );
   }
 
   return (
