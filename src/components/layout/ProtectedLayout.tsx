@@ -33,6 +33,14 @@ export default function ProtectedLayout() {
               <p className="text-muted-foreground">
                 You need special permissions to access the management area.
               </p>
+              
+              {/* Debug info */}
+              <div className="mt-4 p-4 bg-gray-100 rounded text-sm text-left">
+                <p><strong>Debug Info:</strong></p>
+                <p>User: {user ? user.email : "Not logged in"}</p>
+                <p>Role: {role ? JSON.stringify(role) : "No role found"}</p>
+                <p>Loading: {isLoading ? "Yes" : "No"}</p>
+              </div>
             </div>
             
             <RoleRequestForm />
