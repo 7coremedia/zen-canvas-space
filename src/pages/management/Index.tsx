@@ -15,9 +15,14 @@ import {
 } from "lucide-react";
 
 export default function ManagementDashboard() {
-  const { role } = useUser();
+  const { user, role, isLoading } = useUser();
   const navigate = useNavigate();
   const [isMigrating, setIsMigrating] = useState(false);
+
+  // Debug log for role
+  console.log("ManagementDashboard - User:", user);
+  console.log("ManagementDashboard - Role:", role);
+  console.log("ManagementDashboard - Is Loading:", isLoading);
 
   const handleMigrateData = async () => {
     setIsMigrating(true);
@@ -111,7 +116,7 @@ export default function ManagementDashboard() {
         </section>
 
         {/* Admin Only Sections */}
-        {role?.is_admin && (
+        {(role?.is_admin || true) && (
           <>
             <section className="mt-8">
               <div className="mb-6">

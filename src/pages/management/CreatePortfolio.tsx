@@ -3,22 +3,33 @@ import { Helmet } from "react-helmet-async";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
-import { portfolioFormSchema } from "@/components/admin/PortfolioForm";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import PortfolioForm from "@/components/admin/PortfolioForm";
+import CreatePortfolioForm from "@/components/admin/CreatePortfolioForm";
 
 export default function CreatePortfolio() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { mutateAsync: createPortfolio } = useMutation({
-    mutationFn: async (data: z.infer<typeof portfolioFormSchema> & { media_url: string; full_image_url?: string }): Promise<void> => {
+    mutationFn: async (data: any): Promise<void> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { error } = await supabase
         .from("portfolios")
         .insert([{
-          ...data,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
+          slug: data.title.toLowerCase().replace(/\s+/g, '-'),
+          title: data.title,
+          client: data.client,
+          category: data.category,
+          tagline: data.tagline,
+          year: data.year,
+          cover_url: data.media_url,
+          full_image_url: data.full_image_url,
+          is_published: data.is_published,
+          is_multiple_partners: false,
+          order_index: 0,
+          user_id: user?.id,
         }]);
 
       if (error) throw error;
@@ -29,7 +40,7 @@ export default function CreatePortfolio() {
         title: "Success",
         description: "Portfolio item created successfully",
       });
-      navigate("/dashboard/portfolio");
+      navigate("/management/portfolio");
     },
     onError: (error) => {
       toast({
@@ -42,7 +53,7 @@ export default function CreatePortfolio() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreate = async (data: z.infer<typeof portfolioFormSchema> & { media_url: string; full_image_url?: string }) => {
+  const handleCreate = async (data: any) => {
     setIsLoading(true);
     try {
       await createPortfolio(data);
@@ -50,6 +61,7 @@ export default function CreatePortfolio() {
       setIsLoading(false);
     }
   };
+
   return (
     <main className="container mx-auto py-8 px-4">
       <Helmet>
@@ -59,11 +71,11 @@ export default function CreatePortfolio() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Create Portfolio Item</h1>
         <p className="mt-2 text-muted-foreground">
-          Add a new item to your portfolio
+          Add a new item to showcase your work
         </p>
       </div>
 
-      <PortfolioForm
+      <CreatePortfolioForm
         onSubmit={handleCreate}
         isLoading={isLoading}
       />
