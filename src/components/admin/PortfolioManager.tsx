@@ -41,21 +41,22 @@ export default function PortfolioManager() {
 
   return (
     <Card className="p-6">
-      <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => setIsDragging(true)}>
-        <Droppable droppableId="portfolio-items">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {role?.is_admin && <TableCell style={{ width: 50 }}></TableCell>}
-                    <TableCell>Title</TableCell>
-                    <TableCell>Category</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Created</TableCell>
-                    <TableCell style={{ width: 100 }}>Actions</TableCell>
-                  </TableRow>
-                </TableHeader>
+      <div className="rounded-md border">
+        <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => setIsDragging(true)}>
+          <Droppable droppableId="portfolio-items">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {role?.is_admin && <TableCell style={{ width: 50 }}></TableCell>}
+                      <TableCell>Title</TableCell>
+                      <TableCell>Category</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Created</TableCell>
+                      <TableCell style={{ width: 100 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHeader>
                 <TableBody>
                   {portfolioItems?.map((item, index) => (
                     <Draggable 
@@ -120,6 +121,7 @@ export default function PortfolioManager() {
           )}
         </Droppable>
       </DragDropContext>
+      </div>
     </Card>
   );
 }

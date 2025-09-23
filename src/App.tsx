@@ -21,6 +21,7 @@ import BrandingChat from "./pages/BrandingChat";
 import BrandProfileDetails from "./pages/BrandProfileDetails";
 // Dashboard imports
 import ProtectedLayout from "./components/layout/ProtectedLayout";
+import ManagementDashboard from "./pages/management/Index";
 import DashboardPortfolio from "./pages/management/Portfolio";
 import CreatePortfolio from "./pages/management/CreatePortfolio";
 import EditPortfolio from "./pages/management/EditPortfolio";
@@ -51,6 +52,7 @@ function AppShell() {
           <Route path="/dashboard" element={<Dashboard />} />
           {/* Protected Management Routes */}
           <Route path="/management" element={<ProtectedLayout />}>
+            <Route index element={<ManagementDashboard />} />
             <Route path="portfolio" element={<DashboardPortfolio />} />
             <Route path="portfolio/new" element={<CreatePortfolio />} />
             <Route path="portfolio/:id" element={<EditPortfolio />} />

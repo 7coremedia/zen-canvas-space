@@ -89,9 +89,9 @@ export default function Header() {
                             My Brands
                           </NavLink>
                           {(role?.is_admin || role?.is_moderator || role?.is_worker) && (
-                            <NavLink to="/management/portfolio" className="flex items-center gap-3 font-display font-medium text-2xl text-foreground hover:text-accent transition-colors" onClick={() => setSheetOpen(false)}>
+                            <NavLink to="/management" className="flex items-center gap-3 font-display font-medium text-2xl text-foreground hover:text-accent transition-colors" onClick={() => setSheetOpen(false)}>
                               <Briefcase className="h-6 w-6" />
-                              Portfolio Management
+                              Management Dashboard
                             </NavLink>
                           )}
                           <button onClick={async () => {
