@@ -38,12 +38,9 @@ export default function CaseStudy() {
   }
 
   // Filter related case studies (excluding the current one) by category
-  const relatedCaseStudies = React.useMemo(() => {
-    if (!allPortfolioItems || !currentCaseStudy) return [];
-    return allPortfolioItems
-      .filter(item => item.slug !== slug && item.category === currentCaseStudy.category)
-      .slice(0, 3); // Limit to 3 related items
-  }, [allPortfolioItems, currentCaseStudy, slug]);
+  const relatedCaseStudies = (allPortfolioItems || [])
+    .filter((item) => currentCaseStudy && item.slug !== slug && item.category === currentCaseStudy.category)
+    .slice(0, 3);
 
   // Placeholder for project tags/keywords
   const projectTags = [

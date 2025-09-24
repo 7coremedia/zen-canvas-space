@@ -7,16 +7,17 @@ import { usePublicPortfolio } from '@/hooks/usePublicPortfolio';
 export default function PortfolioGrid() {
   const { data: portfolioItems, isLoading, error } = usePublicPortfolio();
 
-  const filteredItems = React.useMemo(() => {
-    if (!portfolioItems) return [];
-    
-    return portfolioItems.map((item) => ({
-      title: item.title,
-      category: item.category,
-      imageUrl: item.cover_url,
-      slug: item.slug,
-    }));
-  }, [portfolioItems]);
+  console.debug('PortfolioGrid items:', portfolioItems);
+  const filteredItems = Array.isArray(portfolioItems)
+    ? portfolioItems
+        .filter((i) => i && i.title && i.category && i.cover_url && i.slug)
+        .map((item) => ({
+          title: String(item.title),
+          category: String(item.category),
+          imageUrl: String(item.cover_url),
+          slug: String(item.slug),
+        }))
+    : [];
 
   if (isLoading) {
     return (
