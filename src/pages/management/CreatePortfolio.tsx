@@ -31,6 +31,8 @@ export default function CreatePortfolio() {
           is_published: data.is_published,
           is_multiple_partners: data.is_multiple_partners || false,
           brand_name: data.brand_name,
+          portfolio_type: data.portfolio_type || 'gallery',
+          pdf_url: data.portfolio_type === 'case_study' ? (data.pdf_url || null) : null,
           order_index: 0,
           user_id: user?.id,
         }])
@@ -42,8 +44,8 @@ export default function CreatePortfolio() {
         throw error;
       }
 
-      // Create media files entries
-      if (data.media_files && data.media_files.length > 0) {
+      // Create media files entries only for gallery portfolios
+      if (data.portfolio_type !== 'case_study' && data.media_files && data.media_files.length > 0) {
         const mediaData = data.media_files.map((media: any, index: number) => ({
           portfolio_id: portfolio.id,
           url: media.url,

@@ -85,18 +85,14 @@ export default function CaseStudy() {
       {/* Main Media Section - No Container for full-width */} 
       <section className="w-full pt-4 pb-8">
         <PortfolioMediaDisplay
-          coverImage={currentCaseStudy.cover_url ? {
-            id: 'cover',
-            url: currentCaseStudy.cover_url,
-            type: 'image',
-            name: currentCaseStudy.title
-          } : undefined}
-          mediaFiles={portfolioMedia?.map(media => ({
-            id: media.id,
-            url: media.url,
-            type: media.media_type as 'image' | 'video' | 'gif' | 'pdf',
-            name: media.file_name
-          })) || []}
+          mediaFiles={(portfolioMedia || [])
+            .filter(m => !m.is_cover)
+            .map(media => ({
+              id: media.id,
+              url: media.url,
+              type: media.media_type as 'image' | 'video' | 'gif' | 'pdf',
+              name: media.file_name
+            }))}
         />
       </section>
 

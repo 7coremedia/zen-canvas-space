@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import CreatePortfolioFormV2 from "@/components/admin/CreatePortfolioFormV2";
 import { PortfolioItem } from "@/hooks/usePortfolio";
+import { usePortfolioMedia } from "@/hooks/usePortfolioMedia";
 
 export default function EditPortfolio() {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,9 @@ export default function EditPortfolio() {
     },
   });
 
+  // Load existing gallery media for this portfolio (exclude cover in the form)
+  const { data: portfolioMedia = [], isLoading: isLoadingMedia } = usePortfolioMedia(id || "");
+
   const { mutateAsync: updatePortfolio } = useMutation({
     mutationFn: async (data: any): Promise<void> => {
       const updatePayload = {
@@ -34,7 +38,7 @@ export default function EditPortfolio() {
         category: data.category,
         tagline: data.tagline,
         year: data.year ?? null,
-        cover_url: data.media_url,
+        cover_url: data.media_url, // Treat media_url from form as the dedicated cover
         media_url: data.media_url,
         media_type: 'image' as const,
         full_image_url: data.full_image_url ?? data.media_url,
@@ -50,6 +54,70 @@ export default function EditPortfolio() {
         .eq("id", id);
 
       if (error) throw error;
+
+      // Persist gallery media (exclude cover) using desired list from the form
+      const desiredFiles: Array<{ id?: string; url: string; type: string; name: string; size?: number }> =
+        Array.isArray(data.media_files) ? data.media_files : [];
+
+      // Fetch current media from DB
+      const { data: existingMedia, error: fetchMediaError } = await supabase
+        .from("portfolio_media")
+        .select("id,url,is_cover")
+        .eq("portfolio_id", id);
+      if (fetchMediaError) throw fetchMediaError;
+
+      const existingNonCover = (existingMedia || []).filter((m) => !m.is_cover);
+      const existingByUrl = new Map(existingNonCover.map((m) => [m.url, m]));
+      const desiredUrls = new Set(desiredFiles.map((f) => f.url));
+
+      // Delete removed
+      const toDelete = existingNonCover.filter((m) => !desiredUrls.has(m.url)).map((m) => m.id);
+      if (toDelete.length) {
+        const { error: delErr } = await supabase
+          .from("portfolio_media")
+          .delete()
+          .in("id", toDelete);
+        if (delErr) throw delErr;
+      }
+
+      // Upsert/update order for remaining and insert new
+      const inserts: any[] = [];
+      const updates: Array<{ id: string; display_order: number }> = [];
+
+      desiredFiles.forEach((f, index) => {
+        const match = existingByUrl.get(f.url);
+        if (match) {
+          updates.push({ id: match.id, display_order: index });
+        } else {
+          inserts.push({
+            portfolio_id: id,
+            url: f.url,
+            media_type: f.type,
+            file_name: f.name,
+            file_size: f.size ?? null,
+            display_order: index,
+            is_cover: false,
+          });
+        }
+      });
+
+      if (inserts.length) {
+        const { error: insErr } = await supabase
+          .from("portfolio_media")
+          .insert(inserts);
+        if (insErr) throw insErr;
+      }
+
+      if (updates.length) {
+        // Batch update display orders
+        for (const u of updates) {
+          const { error: updErr } = await supabase
+            .from("portfolio_media")
+            .update({ display_order: u.display_order })
+            .eq("id", u.id);
+          if (updErr) throw updErr;
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolioItems"] });
@@ -81,7 +149,7 @@ export default function EditPortfolio() {
     }
   };
 
-  if (isLoadingPortfolio) {
+  if (isLoadingPortfolio || isLoadingMedia) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -120,8 +188,17 @@ export default function EditPortfolio() {
           is_published: portfolio.is_published,
           is_multiple_partners: (portfolio as any).is_multiple_partners,
           brand_name: (portfolio as any).brand_name,
-          media_url: (portfolio as any).media_url ?? (portfolio as any).cover_url,
-          full_image_url: (portfolio as any).full_image_url ?? (portfolio as any).media_url,
+          media_url: (portfolio as any).cover_url ?? (portfolio as any).media_url,
+          full_image_url: (portfolio as any).full_image_url ?? (portfolio as any).cover_url,
+          media_files: (portfolioMedia || [])
+            .filter((m) => !m.is_cover)
+            .map((m) => ({
+              id: m.id,
+              url: m.url,
+              type: m.media_type as any,
+              name: m.file_name,
+              size: m.file_size ?? undefined,
+            })),
         }}
         onSubmit={handleUpdate}
         isLoading={isUpdating}
