@@ -269,7 +269,7 @@ export default function CreatePortfolioFormV2({
             onCoverChange={setCoverImage}
             onMediaFilesChange={setMediaFiles}
             maxFiles={10}
-            acceptedTypes={['image/*', 'video/*', '.pdf']}
+            acceptedTypes={['image/*', 'video/*', 'application/pdf']}
           />
         )}
       </div>

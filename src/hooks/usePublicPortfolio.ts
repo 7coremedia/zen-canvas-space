@@ -22,6 +22,8 @@ export interface PublicPortfolioItem {
   is_multiple_partners: boolean;
   brand_name?: string;
   is_published: boolean;
+  portfolio_type?: 'gallery' | 'case_study';
+  pdf_url?: string | null;
   created_at: string;
   updated_at: string;
   partners?: PublicPartner[];
@@ -50,7 +52,7 @@ export function usePublicPortfolio() {
       if (portfolioError) throw portfolioError;
 
       // Transform the data to match the expected format
-      const transformedData = portfolios.map(portfolio => ({
+      const transformedData = portfolios.map((portfolio: any) => ({
         ...portfolio,
         partners: portfolio.portfolio_partners?.map((partner: any) => ({
           id: partner.id,
