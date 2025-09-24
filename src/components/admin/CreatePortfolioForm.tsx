@@ -57,22 +57,46 @@ interface UploadedFile {
 interface CreatePortfolioFormProps {
   onSubmit: (data: PortfolioFormData & { media_url: string; full_image_url?: string }) => Promise<void>;
   isLoading?: boolean;
+  initialData?: Partial<PortfolioFormData> & {
+    media_url?: string;
+    full_image_url?: string;
+    partners?: Array<{ name: string; social_name: string; social_link: string; image_url: string }>
+  };
 }
 
-export default function CreatePortfolioForm({ onSubmit, isLoading }: CreatePortfolioFormProps) {
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+export default function CreatePortfolioForm({ onSubmit, isLoading, initialData }: CreatePortfolioFormProps) {
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(() => {
+    if (initialData?.media_url) {
+      return [{
+        id: 'existing',
+        file: new File([new Blob()], 'existing'),
+        preview: initialData.media_url,
+        progress: 100,
+        status: 'completed',
+        url: initialData.media_url,
+      }];
+    }
+    return [];
+  });
   const [dragActive, setDragActive] = useState(false);
   const [partners, setPartners] = useState<Array<{
     name: string;
     social_name: string;
     social_link: string;
     image_url: string;
-  }>>([]);
+  }>>((initialData?.partners as any) || []);
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<PortfolioFormData>({
     resolver: zodResolver(portfolioSchema),
     defaultValues: {
-      is_published: true,
+      title: initialData?.title ?? undefined,
+      client: initialData?.client ?? undefined,
+      category: initialData?.category as any,
+      tagline: initialData?.tagline ?? undefined,
+      year: initialData?.year ?? undefined,
+      is_published: initialData?.is_published ?? true,
+      is_multiple_partners: initialData?.is_multiple_partners ?? false,
+      brand_name: initialData?.brand_name ?? undefined,
     }
   });
 
@@ -155,16 +179,18 @@ export default function CreatePortfolioForm({ onSubmit, isLoading }: CreatePortf
 
   const onFormSubmit = async (data: PortfolioFormData) => {
     const coverFile = uploadedFiles.find(f => f.status === 'completed');
-    if (!coverFile?.url) {
+    const existingUrl = initialData?.media_url;
+    const finalUrl = coverFile?.url || existingUrl;
+    if (!finalUrl) {
       alert('Please upload at least one media file');
       return;
     }
 
     await onSubmit({
       ...data,
-      media_url: coverFile.url,
-      full_image_url: coverFile.url,
-      partners: partners.filter(p => p.name.trim() !== ''), // Only include partners with names
+      media_url: finalUrl,
+      full_image_url: finalUrl,
+      partners: partners.filter(p => p.name.trim() !== ''),
     });
   };
 

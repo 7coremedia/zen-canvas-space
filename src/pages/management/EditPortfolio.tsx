@@ -1,12 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
 import { useState } from "react";
-import { portfolioFormSchema } from "@/components/admin/PortfolioForm";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
-import PortfolioForm from "@/components/admin/PortfolioForm";
+import { supabase } from "@/integrations/supabase/client";
+import CreatePortfolioForm from "@/components/admin/CreatePortfolioForm";
 import { PortfolioItem } from "@/hooks/usePortfolio";
 
 export default function EditPortfolio() {
@@ -29,10 +27,26 @@ export default function EditPortfolio() {
   });
 
   const { mutateAsync: updatePortfolio } = useMutation({
-    mutationFn: async (data: z.infer<typeof portfolioFormSchema> & { media_url: string; full_image_url?: string }): Promise<void> => {
+    mutationFn: async (data: any): Promise<void> => {
+      const updatePayload = {
+        title: data.title,
+        client: data.client ?? null,
+        category: data.category,
+        tagline: data.tagline,
+        year: data.year ?? null,
+        cover_url: data.media_url,
+        media_url: data.media_url,
+        media_type: 'image' as const,
+        full_image_url: data.full_image_url ?? data.media_url,
+        is_published: data.is_published,
+        is_multiple_partners: data.is_multiple_partners ?? false,
+        brand_name: data.brand_name ?? null,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from("portfolios")
-        .update(data)
+        .update(updatePayload)
         .eq("id", id);
 
       if (error) throw error;
@@ -44,7 +58,7 @@ export default function EditPortfolio() {
         title: "Success",
         description: "Portfolio item updated successfully",
       });
-      navigate("/dashboard/portfolio");
+      navigate("/management/portfolio");
     },
     onError: (error) => {
       toast({
@@ -58,7 +72,7 @@ export default function EditPortfolio() {
 
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const handleUpdate = async (data: z.infer<typeof portfolioFormSchema> & { media_url: string; full_image_url?: string }) => {
+  const handleUpdate = async (data: any) => {
     setIsUpdating(true);
     try {
       await updatePortfolio(data);
@@ -96,8 +110,19 @@ export default function EditPortfolio() {
         </p>
       </div>
 
-      <PortfolioForm
-        initialData={portfolio}
+      <CreatePortfolioForm
+        initialData={{
+          title: portfolio.title,
+          client: (portfolio as any).client,
+          category: portfolio.category as any,
+          tagline: (portfolio as any).tagline,
+          year: (portfolio as any).year,
+          is_published: portfolio.is_published,
+          is_multiple_partners: (portfolio as any).is_multiple_partners,
+          brand_name: (portfolio as any).brand_name,
+          media_url: (portfolio as any).media_url ?? (portfolio as any).cover_url,
+          full_image_url: (portfolio as any).full_image_url ?? (portfolio as any).media_url,
+        }}
         onSubmit={handleUpdate}
         isLoading={isUpdating}
       />
