@@ -10,7 +10,6 @@ import CreatePortfolioForm from "@/components/admin/CreatePortfolioForm";
 export default function CreatePortfolio() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
   const { mutateAsync: createPortfolio } = useMutation({
     mutationFn: async (data: any): Promise<void> => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -26,6 +25,8 @@ export default function CreatePortfolio() {
           tagline: data.tagline,
           year: data.year,
           cover_url: data.media_url,
+          media_url: data.media_url,
+          media_type: 'image',
           full_image_url: data.full_image_url,
           is_published: data.is_published,
           is_multiple_partners: data.is_multiple_partners || false,

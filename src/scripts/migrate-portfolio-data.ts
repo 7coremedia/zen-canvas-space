@@ -6,13 +6,25 @@ export async function migratePortfolioData() {
   console.log("Starting portfolio data migration...");
 
   try {
+    // Ensure we have an authenticated user for RLS (inserts require user_id = auth.uid())
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError) {
+      console.error("Auth error while getting user:", authError);
+      return;
+    }
+    const user = authData?.user;
+    if (!user) {
+      console.warn("No authenticated user. Please sign in before running migration.");
+      return;
+    }
+
     for (const [index, caseStudy] of caseStudies.entries()) {
       console.log(`Migrating: ${caseStudy.title}`);
 
       // Insert portfolio item
       const { data: portfolio, error: portfolioError } = await supabase
         .from("portfolios")
-        .insert({
+        .upsert({
           slug: caseStudy.slug,
           title: caseStudy.title,
           client: caseStudy.client,
@@ -20,12 +32,15 @@ export async function migratePortfolioData() {
           tagline: caseStudy.tagline,
           cover_url: caseStudy.cover,
           full_image_url: caseStudy.fullImage,
+          media_url: caseStudy.fullImage || caseStudy.cover,
+          media_type: 'image',
           year: caseStudy.year,
           is_multiple_partners: caseStudy.isMultiplePartners || false,
           brand_name: caseStudy.brandName,
           is_published: true,
           order_index: index,
-        })
+          user_id: user.id,
+        }, { onConflict: 'slug' })
         .select()
         .single();
 
