@@ -1,11 +1,12 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
-import { usePublicPortfolioItem } from "@/hooks/usePublicPortfolio";
+import { usePublicPortfolioItem, usePublicPortfolio } from "@/hooks/usePublicPortfolio";
+import { usePublicPortfolioMedia } from "@/hooks/usePortfolioMedia";
 import CaseStudyHeader from "@/components/case-study/CaseStudyHeader";
 import MultiplePartnersHeader from "@/components/case-study/MultiplePartnersHeader";
 import SinglePartnerHeader from "@/components/case-study/SinglePartnerHeader";
-import CaseStudyMediaDisplay from "@/components/case-study/CaseStudyMediaDisplay";
+import PortfolioMediaDisplay from "@/components/portfolio/PortfolioMediaDisplay";
 import PortfolioItem from "@/components/portfolio/PortfolioItem";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Share2, Send } from 'lucide-react';
@@ -14,6 +15,8 @@ import { cn } from '@/lib/utils';
 export default function CaseStudy() {
   const { slug } = useParams<{ slug: string }>();
   const { data: currentCaseStudy, isLoading, error } = usePublicPortfolioItem(slug || '');
+  const { data: portfolioMedia, isLoading: isLoadingMedia } = usePublicPortfolioMedia(currentCaseStudy?.id || '');
+  const { data: allPortfolioItems } = usePublicPortfolio();
 
   if (isLoading) {
     return (
@@ -35,10 +38,12 @@ export default function CaseStudy() {
   }
 
   // Filter related case studies (excluding the current one) by category
-  const relatedCaseStudies = caseStudies.filter(
-    (study) =>
-      study.slug !== slug && study.category === currentCaseStudy.category
-  );
+  const relatedCaseStudies = React.useMemo(() => {
+    if (!allPortfolioItems || !currentCaseStudy) return [];
+    return allPortfolioItems
+      .filter(item => item.slug !== slug && item.category === currentCaseStudy.category)
+      .slice(0, 3); // Limit to 3 related items
+  }, [allPortfolioItems, currentCaseStudy, slug]);
 
   // Placeholder for project tags/keywords
   const projectTags = [
@@ -65,7 +70,13 @@ export default function CaseStudy() {
         <MultiplePartnersHeader
           title={currentCaseStudy.title}
           brandName={currentCaseStudy.brand_name || currentCaseStudy.title}
-          partners={currentCaseStudy.partners || []}
+          partners={(currentCaseStudy.partners || []).map(partner => ({
+            id: partner.id,
+            name: partner.name,
+            socialName: partner.social_name,
+            imageUrl: partner.image_url,
+            socialLink: partner.social_link,
+          }))}
         />
       ) : (
         <CaseStudyHeader
@@ -76,10 +87,19 @@ export default function CaseStudy() {
 
       {/* Main Media Section - No Container for full-width */} 
       <section className="w-full pt-4 pb-8">
-        <CaseStudyMediaDisplay
-          mediaUrl={currentCaseStudy.full_image_url || currentCaseStudy.cover_url}
-          mediaType="image"
-          altText={currentCaseStudy.title}
+        <PortfolioMediaDisplay
+          coverImage={currentCaseStudy.cover_url ? {
+            id: 'cover',
+            url: currentCaseStudy.cover_url,
+            type: 'image',
+            name: currentCaseStudy.title
+          } : undefined}
+          mediaFiles={portfolioMedia?.map(media => ({
+            id: media.id,
+            url: media.url,
+            type: media.media_type as 'image' | 'video' | 'gif' | 'pdf',
+            name: media.file_name
+          })) || []}
         />
       </section>
 
@@ -120,7 +140,7 @@ export default function CaseStudy() {
                   key={index}
                   title={item.title}
                   category={item.category}
-                  imageUrl={item.cover}
+                  imageUrl={item.cover_url}
                   slug={item.slug}
                 />
               ))}

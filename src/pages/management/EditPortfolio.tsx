@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import CreatePortfolioForm from "@/components/admin/CreatePortfolioForm";
+import CreatePortfolioFormV2 from "@/components/admin/CreatePortfolioFormV2";
 import { PortfolioItem } from "@/hooks/usePortfolio";
 
 export default function EditPortfolio() {
@@ -110,7 +110,7 @@ export default function EditPortfolio() {
         </p>
       </div>
 
-      <CreatePortfolioForm
+      <CreatePortfolioFormV2
         initialData={{
           title: portfolio.title,
           client: (portfolio as any).client,

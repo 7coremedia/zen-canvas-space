@@ -49,6 +49,27 @@ export async function migratePortfolioData() {
         continue;
       }
 
+      // Insert cover image as media entry if it exists
+      if (caseStudy.cover || caseStudy.fullImage) {
+        const coverMediaData = {
+          portfolio_id: portfolio.id,
+          url: caseStudy.fullImage || caseStudy.cover,
+          media_type: 'image' as const,
+          file_name: `${caseStudy.title} - Cover Image`,
+          file_size: null,
+          display_order: 0,
+          is_cover: true,
+        };
+
+        const { error: coverMediaError } = await (supabase as any)
+          .from("portfolio_media")
+          .insert(coverMediaData);
+
+        if (coverMediaError) {
+          console.error(`Error inserting cover media for ${caseStudy.title}:`, coverMediaError);
+        }
+      }
+
       // Insert partners if they exist
       if (caseStudy.partners && caseStudy.partners.length > 0) {
         const partnersData = caseStudy.partners.map(partner => ({

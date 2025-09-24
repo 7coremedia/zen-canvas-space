@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import CreatePortfolioForm from "@/components/admin/CreatePortfolioForm";
+import CreatePortfolioFormV2 from "@/components/admin/CreatePortfolioFormV2";
 
 export default function CreatePortfolio() {
   const navigate = useNavigate();
@@ -40,6 +40,28 @@ export default function CreatePortfolio() {
       if (error) {
         console.error("Portfolio creation error:", error);
         throw error;
+      }
+
+      // Create media files entries
+      if (data.media_files && data.media_files.length > 0) {
+        const mediaData = data.media_files.map((media: any, index: number) => ({
+          portfolio_id: portfolio.id,
+          url: media.url,
+          media_type: media.type,
+          file_name: media.name,
+          file_size: media.size || null,
+          display_order: index,
+          is_cover: false,
+        }));
+
+        const { error: mediaError } = await supabase
+          .from("portfolio_media")
+          .insert(mediaData);
+
+        if (mediaError) {
+          console.error("Media creation error:", mediaError);
+          // Don't throw error for media, just log it
+        }
       }
 
       // Then, create partners if they exist
@@ -103,7 +125,7 @@ export default function CreatePortfolio() {
         </p>
       </div>
 
-      <CreatePortfolioForm
+      <CreatePortfolioFormV2
         onSubmit={handleCreate}
         isLoading={isLoading}
       />
