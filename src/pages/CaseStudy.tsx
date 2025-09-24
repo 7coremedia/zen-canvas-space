@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
-import { caseStudies } from "@/data/caseStudies";
+import { usePublicPortfolioItem } from "@/hooks/usePublicPortfolio";
 import CaseStudyHeader from "@/components/case-study/CaseStudyHeader";
 import MultiplePartnersHeader from "@/components/case-study/MultiplePartnersHeader";
 import SinglePartnerHeader from "@/components/case-study/SinglePartnerHeader";
@@ -13,9 +13,20 @@ import { cn } from '@/lib/utils';
 
 export default function CaseStudy() {
   const { slug } = useParams<{ slug: string }>();
-  const currentCaseStudy = caseStudies.find((c) => c.slug === slug);
+  const { data: currentCaseStudy, isLoading, error } = usePublicPortfolioItem(slug || '');
 
-  if (!currentCaseStudy) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-theme(spacing.20))]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading portfolio item...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !currentCaseStudy) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-theme(spacing.20))]">
         <p className="text-xl text-gray-600">Case study not found.</p>
@@ -50,17 +61,11 @@ export default function CaseStudy() {
       </Helmet>
 
       {/* Conditional Header Rendering */}
-      {currentCaseStudy.isMultiplePartners ? (
+      {currentCaseStudy.is_multiple_partners ? (
         <MultiplePartnersHeader
           title={currentCaseStudy.title}
-          brandName={currentCaseStudy.title} // Use title as brand name
+          brandName={currentCaseStudy.brand_name || currentCaseStudy.title}
           partners={currentCaseStudy.partners || []}
-        />
-      ) : currentCaseStudy.singlePartner ? (
-        <SinglePartnerHeader
-          title={currentCaseStudy.title}
-          partnerName={currentCaseStudy.title} // Use title as partner name
-          partnerType={currentCaseStudy.singlePartner.type}
         />
       ) : (
         <CaseStudyHeader
@@ -72,7 +77,7 @@ export default function CaseStudy() {
       {/* Main Media Section - No Container for full-width */} 
       <section className="w-full pt-4 pb-8">
         <CaseStudyMediaDisplay
-          mediaUrl={currentCaseStudy.fullImage || currentCaseStudy.cover}
+          mediaUrl={currentCaseStudy.full_image_url || currentCaseStudy.cover_url}
           mediaType="image"
           altText={currentCaseStudy.title}
         />

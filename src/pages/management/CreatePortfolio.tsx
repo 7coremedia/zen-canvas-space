@@ -15,7 +15,8 @@ export default function CreatePortfolio() {
     mutationFn: async (data: any): Promise<void> => {
       const { data: { user } } = await supabase.auth.getUser();
       
-      const { error } = await supabase
+      // First, create the portfolio item
+      const { data: portfolio, error } = await supabase
         .from("portfolios")
         .insert([{
           slug: data.title.toLowerCase().replace(/\s+/g, '-'),
@@ -27,12 +28,38 @@ export default function CreatePortfolio() {
           cover_url: data.media_url,
           full_image_url: data.full_image_url,
           is_published: data.is_published,
-          is_multiple_partners: false,
+          is_multiple_partners: data.is_multiple_partners || false,
+          brand_name: data.brand_name,
           order_index: 0,
           user_id: user?.id,
-        }]);
+        }])
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Portfolio creation error:", error);
+        throw error;
+      }
+
+      // Then, create partners if they exist
+      if (data.partners && data.partners.length > 0) {
+        const partnersData = data.partners.map((partner: any) => ({
+          portfolio_id: portfolio.id,
+          name: partner.name,
+          social_name: partner.social_name,
+          social_link: partner.social_link,
+          image_url: partner.image_url,
+        }));
+
+        const { error: partnersError } = await supabase
+          .from("portfolio_partners")
+          .insert(partnersData);
+
+        if (partnersError) {
+          console.error("Partners creation error:", partnersError);
+          throw partnersError;
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolioItems"] });

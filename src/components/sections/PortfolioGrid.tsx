@@ -2,23 +2,42 @@ import * as React from 'react';
 import PortfolioItem from '@/components/portfolio/PortfolioItem';
 import { Button } from '@/components/ui/button';
 import { Search, SlidersHorizontal } from 'lucide-react';
-import { caseStudies } from '@/data/caseStudies';
+import { usePublicPortfolio } from '@/hooks/usePublicPortfolio';
 
 export default function PortfolioGrid() {
+  const { data: portfolioItems, isLoading, error } = usePublicPortfolio();
 
-  // Use actual case study data so grid and detail pages stay in sync
-  const allPortfolioItems = React.useMemo(
-    () =>
-      caseStudies.map((c) => ({
-        title: c.title,
-        category: c.category,
-        imageUrl: c.cover,
-        slug: c.slug,
-      })),
-    []
-  );
+  const filteredItems = React.useMemo(() => {
+    if (!portfolioItems) return [];
+    
+    return portfolioItems.map((item) => ({
+      title: item.title,
+      category: item.category,
+      imageUrl: item.cover_url,
+      slug: item.slug,
+    }));
+  }, [portfolioItems]);
 
-  const filteredItems = allPortfolioItems;
+  if (isLoading) {
+    return (
+      <section className="container mx-auto py-12 px-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading portfolio...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="container mx-auto py-12 px-4">
+        <div className="text-center">
+          <p className="text-red-500">Error loading portfolio items</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="container mx-auto py-12 px-4">

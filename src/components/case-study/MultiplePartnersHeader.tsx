@@ -60,11 +60,40 @@ export default function MultiplePartnersHeader({
                className="w-auto min-w-[160px] max-h-80 overflow-y-auto rounded-3xl border border-gray-200 shadow-lg animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
                sideOffset={8}
              >
-                                                                                                                                                                                         {partners.map((partner) => (
-                                                                                                                                                                 <DropdownMenuItem 
-                                                                   key={partner.id} 
-                                                                   className="flex items-center gap-1 py-0.5 px-1.5 hover:bg-gray-50 rounded-[20px] mx-0.25 transition-all duration-200 ease-out"
-                                                                 >
+               {partners.map((partner) => (
+                 <DropdownMenuItem 
+                   key={partner.id} 
+                   className="flex items-center gap-1 py-0.5 px-1.5 hover:bg-gray-50 rounded-[20px] mx-0.25 transition-all duration-200 ease-out cursor-pointer"
+                   onClick={() => {
+                     if (partner.socialLink) {
+                       // Check if it's a social media link and format it properly
+                       let url = partner.socialLink;
+                       
+                       // Handle different social media platforms
+                       if (partner.socialName.toLowerCase().includes('instagram') || partner.socialName.toLowerCase().includes('ig')) {
+                         if (!url.startsWith('http')) {
+                           url = `https://instagram.com/${url.replace('@', '')}`;
+                         }
+                       } else if (partner.socialName.toLowerCase().includes('whatsapp')) {
+                         if (!url.startsWith('http')) {
+                           url = `https://wa.me/${url.replace(/\D/g, '')}`;
+                         }
+                       } else if (partner.socialName.toLowerCase().includes('twitter') || partner.socialName.toLowerCase().includes('x')) {
+                         if (!url.startsWith('http')) {
+                           url = `https://twitter.com/${url.replace('@', '')}`;
+                         }
+                       } else if (partner.socialName.toLowerCase().includes('linkedin')) {
+                         if (!url.startsWith('http')) {
+                           url = `https://linkedin.com/in/${url.replace('@', '')}`;
+                         }
+                       } else if (!url.startsWith('http')) {
+                         url = `https://${url}`;
+                       }
+                       
+                       window.open(url, '_blank', 'noopener,noreferrer');
+                     }
+                   }}
+                 >
                    <div className="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center">
                      {partner.imageUrl ? (
                        <img 

@@ -33,6 +33,14 @@ const portfolioSchema = z.object({
   tagline: z.string().min(1, "Tagline is required"),
   year: z.string().optional(),
   is_published: z.boolean().default(true),
+  is_multiple_partners: z.boolean().default(false),
+  brand_name: z.string().optional(),
+  partners: z.array(z.object({
+    name: z.string().min(1, "Partner name is required"),
+    social_name: z.string().optional(),
+    social_link: z.string().optional(),
+    image_url: z.string().optional(),
+  })).optional(),
 });
 
 type PortfolioFormData = z.infer<typeof portfolioSchema>;
@@ -54,6 +62,12 @@ interface CreatePortfolioFormProps {
 export default function CreatePortfolioForm({ onSubmit, isLoading }: CreatePortfolioFormProps) {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [dragActive, setDragActive] = useState(false);
+  const [partners, setPartners] = useState<Array<{
+    name: string;
+    social_name: string;
+    social_link: string;
+    image_url: string;
+  }>>([]);
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<PortfolioFormData>({
     resolver: zodResolver(portfolioSchema),
@@ -150,6 +164,7 @@ export default function CreatePortfolioForm({ onSubmit, isLoading }: CreatePortf
       ...data,
       media_url: coverFile.url,
       full_image_url: coverFile.url,
+      partners: partners.filter(p => p.name.trim() !== ''), // Only include partners with names
     });
   };
 
@@ -225,6 +240,105 @@ export default function CreatePortfolioForm({ onSubmit, isLoading }: CreatePortf
               />
               {errors.tagline && (
                 <p className="text-sm text-red-500">{errors.tagline.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="multiple-partners"
+                  checked={watch("is_multiple_partners")}
+                  onCheckedChange={(checked) => setValue("is_multiple_partners", checked)}
+                />
+                <Label htmlFor="multiple-partners">Multiple Partners/Team Project</Label>
+              </div>
+
+              {watch("is_multiple_partners") && (
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                  <div className="space-y-2">
+                    <Label htmlFor="brand-name">Brand/Project Name</Label>
+                    <Input
+                      id="brand-name"
+                      {...register("brand_name")}
+                      placeholder="e.g., Periscope, KING Collective"
+                      className="rounded-lg"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium">Partners</Label>
+                    <div className="space-y-3 mt-2">
+                      {partners.map((partner, index) => (
+                        <div key={index} className="grid grid-cols-2 gap-3 p-3 border rounded-lg bg-white">
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Name</Label>
+                            <Input
+                              placeholder="Partner name"
+                              value={partner.name}
+                              onChange={(e) => {
+                                const newPartners = [...partners];
+                                newPartners[index].name = e.target.value;
+                                setPartners(newPartners);
+                              }}
+                              className="rounded-lg"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Social Handle</Label>
+                            <Input
+                              placeholder="@username"
+                              value={partner.social_name}
+                              onChange={(e) => {
+                                const newPartners = [...partners];
+                                newPartners[index].social_name = e.target.value;
+                                setPartners(newPartners);
+                              }}
+                              className="rounded-lg"
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <Label className="text-xs text-muted-foreground">Website/Social Link</Label>
+                            <Input
+                              placeholder="https://..."
+                              value={partner.social_link}
+                              onChange={(e) => {
+                                const newPartners = [...partners];
+                                newPartners[index].social_link = e.target.value;
+                                setPartners(newPartners);
+                              }}
+                              className="rounded-lg"
+                            />
+                          </div>
+                          <div className="col-span-2 flex justify-end">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newPartners = partners.filter((_, i) => i !== index);
+                                setPartners(newPartners);
+                              }}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPartners([...partners, { name: "", social_name: "", social_link: "", image_url: "" }])}
+                        className="w-full rounded-lg"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Partner
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
 

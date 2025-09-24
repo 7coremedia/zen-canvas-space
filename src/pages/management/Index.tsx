@@ -19,10 +19,12 @@ export default function ManagementDashboard() {
   const navigate = useNavigate();
   const [isMigrating, setIsMigrating] = useState(false);
 
-  // Debug log for role
-  console.log("ManagementDashboard - User:", user);
-  console.log("ManagementDashboard - Role:", role);
-  console.log("ManagementDashboard - Is Loading:", isLoading);
+  // Debug log for role (remove after testing)
+  if (process.env.NODE_ENV === 'development') {
+    console.log("ManagementDashboard - User:", user);
+    console.log("ManagementDashboard - Role:", role);
+    console.log("ManagementDashboard - Is Loading:", isLoading);
+  }
 
   const handleMigrateData = async () => {
     setIsMigrating(true);
