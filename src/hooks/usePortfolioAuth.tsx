@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+
 import type { User } from "@supabase/supabase-js";
 
 export type Role = {
   is_admin: boolean;
   is_moderator: boolean;
-  is_worker: boolean;
 };
 
 type PortfolioAuthContextType = {

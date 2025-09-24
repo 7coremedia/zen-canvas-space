@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface PublicPartner {
   id: string;
@@ -28,11 +28,12 @@ export interface PublicPortfolioItem {
 }
 
 export function usePublicPortfolio() {
+  const sb = supabase as any; // TEMP: remove after regenerating Supabase types
   const { data, isLoading, error } = useQuery({
     queryKey: ["publicPortfolio"],
     queryFn: async () => {
       // Get published portfolio items with their partners
-      const { data: portfolios, error: portfolioError } = await supabase
+      const { data: portfolios, error: portfolioError } = await sb
         .from("portfolios")
         .select(`
           *,
@@ -69,12 +70,13 @@ export function usePublicPortfolio() {
 }
 
 export function usePublicPortfolioItem(slug: string) {
+  const sb = supabase as any; // TEMP: remove after regenerating Supabase types
   const { data, isLoading, error } = useQuery({
     queryKey: ["publicPortfolioItem", slug],
     queryFn: async () => {
       if (!slug) return null;
 
-      const { data: portfolio, error: portfolioError } = await supabase
+      const { data: portfolio, error: portfolioError } = await sb
         .from("portfolios")
         .select(`
           *,

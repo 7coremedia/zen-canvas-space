@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 export type PortfolioItem = {
   id: string;
   title: string;
   description?: string;
-  client?: string;
   category: "Branding" | "Logo" | "Poster" | "Other";
   tagline?: string;
   media_url: string;
