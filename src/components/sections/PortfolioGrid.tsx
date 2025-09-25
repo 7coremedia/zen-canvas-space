@@ -50,26 +50,26 @@ export default function PortfolioGrid() {
       <Tabs value={tab} onValueChange={(v) => setTab(v as any)} className="w-full">
         {/* Top Bar: Tabs on left, suggestions on right */}
         <div className="flex flex-col gap-4 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center md:justify-between">
             <TabsList
-              className="inline-flex flex-shrink-0 gap-1 rounded-3xl bg-gray-100 p-1.5 sm:p-1 mx-1.5 sm:mx-0"
+              className="inline-flex flex-shrink-0 gap-1 rounded-3xl bg-gray-100 p-1.5 sm:p-1 mx-3 sm:mx-0"
             >
               <TabsTrigger
                 value="portfolio"
-                className="rounded-3xl w-[6.75rem] sm:w-36 justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
+                className="rounded-3xl w-21 sm:w-32 justify-center px-3 sm:px-2 py-1 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
               >
                 Portfolio
               </TabsTrigger>
               <TabsTrigger
                 value="case_studies"
-                className="rounded-3xl w-[6.75rem] sm:w-36 justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
+                className="rounded-3xl w-23 sm:w-36 justify-center px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
               >
                 <span className="sm:hidden">Case Study</span>
                 <span className="hidden sm:inline">Case Study Files</span>
               </TabsTrigger>
               <TabsTrigger
                 value="research_docs"
-                className="rounded-3xl w-[6.75rem] sm:w-36 justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
+                className="rounded-3xl w-21 sm:w-32 justify-center px-3 sm:px-2 py-1 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
               >
                 <span className="sm:hidden">Research</span>
                 <span className="hidden sm:inline">Research Docs</span>
@@ -131,7 +131,7 @@ export default function PortfolioGrid() {
               )}
 
               {tab === 'research_docs' && (
-                <div className="rounded-xl border border-gray-200 p-8 text-center text-gray-700 bg-white">
+                <div className="rounded-3xl border border-gray-200 p-8 text-center text-gray-700 bg-white">
                   <h3 className="text-xl font-semibold mb-2">Research Docs – Coming Soon</h3>
                   <p className="text-sm text-gray-500">You’ll be able to see behind-the-scenes docs for select projects here.</p>
                 </div>

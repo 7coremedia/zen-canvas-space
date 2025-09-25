@@ -55,7 +55,7 @@ export default function Cta({ background = 'transparent', className }: CtaProps)
     <section className={cn("container mx-auto py-16", className)}>
       {/* Inner Container - Left aligned on desktop, centered on mobile; adaptive background */}
       <div className={cn(
-        "border border-black rounded-[2rem] p-8 max-w-4xl mx-auto lg:mx-0",
+        "border border-grey rounded-[2rem] p-8 max-w-4xl mx-auto lg:mx-0",
         background === 'white' ? 'bg-white' : 'bg-transparent'
       )}>
           {/* Heading and Subtitle */}
@@ -77,7 +77,7 @@ export default function Cta({ background = 'transparent', className }: CtaProps)
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Enter a brand idea or message..."
-                className="w-full h-24 p-4 border border-black rounded-3xl bg-transparent placeholder:text-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-800"
+                className="w-full h-24 p-4 border border-grey rounded-3xl bg-transparent placeholder:text-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-800"
               />
             </div>
 
@@ -88,7 +88,7 @@ export default function Cta({ background = 'transparent', className }: CtaProps)
                 <NavLink to="/onboarding">
                   <Button
                     type="button"
-                    className="bg-transparent text-black border border-black rounded-2xl px-6 py-2 hover:bg-transparent transition-colors font-black"
+                    className="bg-transparent text-black border border-grey-400 rounded-2xl px-6 py-2 hover:bg-transparent transition-colors font-black"
                     style={{ fontFamily: 'Satoshi Variable' }}
                   >
                     Start My Brand
