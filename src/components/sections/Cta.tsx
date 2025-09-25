@@ -82,7 +82,7 @@ export default function Cta({ background = 'transparent', className }: CtaProps)
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5">
               {/* Left Side - Direct Action Buttons */}
               <div className="flex flex-wrap gap-3">
                 <NavLink to="/onboarding">
@@ -107,45 +107,47 @@ export default function Cta({ background = 'transparent', className }: CtaProps)
               </div>
 
               {/* Right Side - Communication Links */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-600 mr-2 font-black" style={{ fontFamily: 'Satoshi Variable' }}>Send with</span>
-                
-                {/* WhatsApp Button */}
-                <Button
-                  type="button"
-                  onClick={handleWhatsAppClick}
-                  className="border-0 rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-black text-black flex items-center gap-2"
-                  style={{ backgroundColor: '#e2a312', fontFamily: 'Satoshi Variable' }}
-                >
-                  <img 
-                    src="/whatsapp-icon.svg" 
-                    alt="WhatsApp" 
-                    className="w-4 h-4"
-                  />
-                  WhatsApp
-                </Button>
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <span className="text-sm text-gray-600 font-black" style={{ fontFamily: 'Satoshi Variable' }}>Send with</span>
+                {/* Buttons row (wrap on mobile) */}
+                <div className="flex flex-wrap gap-2 sm:gap-3">
+                  {/* WhatsApp Button */}
+                  <Button
+                    type="button"
+                    onClick={handleWhatsAppClick}
+                    className="border-0 rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-black text-black flex items-center gap-2"
+                    style={{ backgroundColor: '#e2a312', fontFamily: 'Satoshi Variable' }}
+                  >
+                    <img 
+                      src="/whatsapp-icon.svg" 
+                      alt="WhatsApp" 
+                      className="w-4 h-4"
+                    />
+                    WhatsApp
+                  </Button>
 
-                {/* Email Button */}
-                <Button
-                  type="button"
-                  onClick={handleEmailClick}
-                  className="border-0 rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-black text-black flex items-center gap-2"
-                  style={{ backgroundColor: '#e2a312', fontFamily: 'Satoshi Variable' }}
-                >
-                  <Mail className="w-4 h-4" />
-                  E-mail
-                </Button>
+                  {/* Email Button */}
+                  <Button
+                    type="button"
+                    onClick={handleEmailClick}
+                    className="border-0 rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-black text-black flex items-center gap-2"
+                    style={{ backgroundColor: '#e2a312', fontFamily: 'Satoshi Variable' }}
+                  >
+                    <Mail className="w-4 h-4" />
+                    E-mail
+                  </Button>
 
-                {/* Call Button */}
-                <Button
-                  type="button"
-                  onClick={handleCallClick}
-                  className="border-0 rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-black text-black flex items-center gap-2"
-                  style={{ backgroundColor: '#e2a312', fontFamily: 'Satoshi Variable' }}
-                >
-                  <PhoneCall className="w-4 h-4" />
-                  Call now
-                </Button>
+                  {/* Call Button */}
+                  <Button
+                    type="button"
+                    onClick={handleCallClick}
+                    className="border-0 rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-black text-black flex items-center gap-2"
+                    style={{ backgroundColor: '#e2a312', fontFamily: 'Satoshi Variable' }}
+                  >
+                    <PhoneCall className="w-4 h-4" />
+                    Call now
+                  </Button>
+                </div>
               </div>
             </div>
           </form>

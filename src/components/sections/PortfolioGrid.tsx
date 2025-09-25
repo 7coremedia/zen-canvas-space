@@ -52,25 +52,27 @@ export default function PortfolioGrid() {
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between">
             <TabsList
-              className="inline-flex flex-shrink-0 gap-1 rounded-3xl bg-gray-100 p-1"
+              className="inline-flex flex-shrink-0 gap-1 rounded-3xl bg-gray-100 p-1.5 sm:p-1 mx-1.5 sm:mx-0"
             >
               <TabsTrigger
                 value="portfolio"
-                className="rounded-3xl w-36 justify-center px-4 py-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
+                className="rounded-3xl w-[6.75rem] sm:w-36 justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
               >
                 Portfolio
               </TabsTrigger>
               <TabsTrigger
                 value="case_studies"
-                className="rounded-3xl w-36 justify-center px-4 py-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
+                className="rounded-3xl w-[6.75rem] sm:w-36 justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
               >
-                Case Study Files
+                <span className="sm:hidden">Case Study</span>
+                <span className="hidden sm:inline">Case Study Files</span>
               </TabsTrigger>
               <TabsTrigger
                 value="research_docs"
-                className="rounded-3xl w-36 justify-center px-4 py-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
+                className="rounded-3xl w-[6.75rem] sm:w-36 justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm transition"
               >
-                Research Docs
+                <span className="sm:hidden">Research</span>
+                <span className="hidden sm:inline">Research Docs</span>
               </TabsTrigger>
             </TabsList>
 
