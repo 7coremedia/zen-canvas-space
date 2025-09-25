@@ -64,129 +64,130 @@ export default function ManagementDashboard() {
       roles: ["is_admin", "is_moderator", "is_worker"],
     },
   ];
-
   const hasAccess = (allowedRoles: string[]) => {
     if (!role) return false;
     return allowedRoles.some(r => role[r as keyof typeof role]);
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="bg-gray-50 min-h-screen">
       <Helmet>
         <title>Management Dashboard – KING</title>
       </Helmet>
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Management Dashboard</h1>
-        <p className="mt-2 text-muted-foreground">
-          Welcome to the KING management interface
-        </p>
-      </div>
+      <main className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <header className="mb-10">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Management Dashboard</h1>
+          <p className="mt-2 text-lg text-gray-600">
+            Welcome to the KING management interface
+          </p>
+        </header>
 
-      <div className="grid gap-6">
-        {/* Portfolio Management Section */}
-        <section>
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold flex items-center gap-2">
-              <Briefcase className="h-6 w-6" />
-              Portfolio Management
-            </h2>
-            <p className="text-muted-foreground mt-1">
-              Manage portfolio items and showcase work
-            </p>
-          </div>
+        <div className="space-y-12">
+          {/* Portfolio Management Section */}
+          <section>
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                <Briefcase className="h-7 w-7" />
+                <span>Portfolio Management</span>
+              </h2>
+              <p className="text-gray-500 mt-1">
+                Manage portfolio items and showcase work
+              </p>
+            </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {portfolioActions.map((action, i) => (
-              hasAccess(action.roles) && (
-                <Card 
-                  key={i}
-                  className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => navigate(action.href)}
-                >
-                  <div className="mb-4">
-                    <action.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">{action.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {action.description}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {portfolioActions.map((action, i) => (
+                hasAccess(action.roles) && (
+                  <Card 
+                    key={i}
+                    className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-shadow cursor-pointer group"
+                    onClick={() => navigate(action.href)}
+                  >
+                    <div className="mb-4">
+                      <action.icon className="h-10 w-10 text-gray-700 group-hover:text-primary transition-colors" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1 text-gray-900">{action.title}</h3>
+                    <p className="text-sm text-gray-500">
+                      {action.description}
+                    </p>
+                  </Card>
+                )
+              ))}
+            </div>
+          </section>
+
+          {/* Admin Only Sections */}
+          {(role?.is_admin) && (
+            <div className="space-y-12">
+              <section>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                    <Users className="h-7 w-7" />
+                    <span>User Management</span>
+                  </h2>
+                  <p className="text-gray-500 mt-1">
+                    Manage user roles and permissions
+                  </p>
+                </div>
+
+                <Card className="bg-white p-6 rounded-2xl shadow-sm">
+                  <p className="text-gray-500">
+                    User management features coming soon...
                   </p>
                 </Card>
-              )
-            ))}
-          </div>
-        </section>
+              </section>
 
-        {/* Admin Only Sections */}
-        {(role?.is_admin || true) && (
-          <>
-            <section className="mt-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                  <Users className="h-6 w-6" />
-                  User Management
-                </h2>
-                <p className="text-muted-foreground mt-1">
-                  Manage user roles and permissions
-                </p>
-              </div>
-
-              <Card className="p-6">
-                <p className="text-muted-foreground">
-                  User management features coming soon...
-                </p>
-              </Card>
-            </section>
-
-            <section className="mt-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                  <Database className="h-6 w-6" />
-                  Data Migration
-                </h2>
-                <p className="text-muted-foreground mt-1">
-                  Migrate existing portfolio data to Supabase
-                </p>
-              </div>
-
-              <Card className="p-6">
-                <div className="space-y-4">
-                  <p className="text-muted-foreground">
-                    Migrate your existing portfolio items from the codebase to Supabase database.
-                    This will make them manageable through the admin interface.
+              <section>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                    <Database className="h-7 w-7" />
+                    <span>Data Migration</span>
+                  </h2>
+                  <p className="text-gray-500 mt-1">
+                    Migrate existing portfolio data to Supabase
                   </p>
-                  <Button 
-                    onClick={handleMigrateData}
-                    disabled={isMigrating}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Database className="h-4 w-4 mr-2" />
-                    {isMigrating ? "Migrating..." : "Migrate Portfolio Data"}
-                  </Button>
                 </div>
-              </Card>
-            </section>
 
-            <section className="mt-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                  <Settings className="h-6 w-6" />
-                  System Settings
-                </h2>
-                <p className="text-muted-foreground mt-1">
-                  Configure system-wide settings
-                </p>
-              </div>
+                <Card className="bg-white p-6 rounded-2xl shadow-sm">
+                  <div className="space-y-4">
+                    <p className="text-gray-500">
+                      Migrate your existing portfolio items from the codebase to Supabase database.
+                      This will make them manageable through the admin interface.
+                    </p>
+                    <Button 
+                      onClick={handleMigrateData}
+                      disabled={isMigrating}
+                      className="bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg px-5 py-2.5 transition-colors"
+                    >
+                      <Database className="h-5 w-5 mr-2" />
+                      {isMigrating ? "Migrating..." : "Migrate Portfolio Data"}
+                    </Button>
+                  </div>
+                </Card>
+              </section>
 
-              <Card className="p-6">
-                <p className="text-muted-foreground">
-                  System settings features coming soon...
-                </p>
-              </Card>
-            </section>
-          </>
-        )}
-      </div>
+              <section>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                    <Settings className="h-7 w-7" />
+                    <span>System Settings</span>
+                  </h2>
+                  <p className="text-gray-500 mt-1">
+                    Configure system-wide settings
+                  </p>
+                </div>
+
+                <Card className="bg-white p-6 rounded-2xl shadow-sm">
+                  <p className="text-gray-500">
+                    System settings features coming soon...
+                  </p>
+                </Card>
+              </section>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
