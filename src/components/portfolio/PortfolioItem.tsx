@@ -19,10 +19,10 @@ export default function PortfolioItem({
 }: PortfolioItemProps) {
   const [loaded, setLoaded] = React.useState(false);
   return (
-    <div className="relative group overflow-hidden rounded-lg">
+    <div className="relative group">
       <Link to={`/portfolio/${slug}`} className="block"> {/* Use actual slug here */}
-        {/* Fixed aspect ratio container. Adjust aspect if desired, e.g., aspect-[16/9] */}
-        <div className="relative w-full aspect-[16/9] bg-gray-100">
+        {/* Media container with rounded corners */}
+        <div className="relative w-full aspect-[16/9] bg-gray-100 rounded-2xl overflow-hidden">
           {/* Skeleton */}
           <div
             className={cn(
