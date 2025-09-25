@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Share2, Send, Plus, ChevronDown } from 'lucide-react';
+import { Bookmark, Plus, ChevronDown } from 'lucide-react';
+import PortfolioActions from '@/components/portfolio/PortfolioActions';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,12 +21,14 @@ interface MultiplePartnersHeaderProps {
   title: string;
   brandName: string;
   partners: Partner[];
+  slug: string;
 }
 
 export default function MultiplePartnersHeader({
   title,
   brandName,
   partners,
+  slug,
 }: MultiplePartnersHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
@@ -124,14 +126,11 @@ export default function MultiplePartnersHeader({
         <Button variant="outline" size="sm" className="flex items-center gap-1 border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50">
           <Bookmark className="w-3 h-3" /> Save
         </Button>
-        <Button variant="outline" size="sm" className="flex items-center gap-1 border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50">
-          <Share2 className="w-3 h-3" /> Share
-        </Button>
-        <Button asChild variant="secondary" size="sm" className="gold-shimmer text-black px-3 py-1.5 text-xs font-semibold transition-all duration-300 hover:scale-105">
-          <Link to="/contact">
-            <Send className="w-3 h-3 mr-1 animate-pulse" /> Request
-          </Link>
-        </Button>
+        <PortfolioActions 
+          title={title} 
+          slug={slug} 
+          variant="header" 
+        />
       </div>
     </div>
   );

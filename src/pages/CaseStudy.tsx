@@ -73,6 +73,7 @@ export default function CaseStudy() {
             imageUrl: partner.image_url,
             socialLink: partner.social_link,
           }))}
+          slug={slug || ''}
         />
       ) : (
         <CaseStudyHeader

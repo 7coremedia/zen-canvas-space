@@ -1,16 +1,19 @@
 import { Button } from '@/components/ui/button';
-import { Bookmark, Share2, Send, Plus } from 'lucide-react';
+import { Bookmark, Plus } from 'lucide-react';
+import PortfolioActions from '@/components/portfolio/PortfolioActions';
 
 interface SinglePartnerHeaderProps {
   title: string;
   partnerName: string;
   partnerType?: string; // e.g., "By KING"
+  slug: string;
 }
 
 export default function SinglePartnerHeader({
   title,
   partnerName,
   partnerType = "By KING",
+  slug,
 }: SinglePartnerHeaderProps) {
   return (
          <div className="w-full bg-white border-b border-gray-200 py-4 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between shadow-sm sticky top-0 z-20">
@@ -40,12 +43,11 @@ export default function SinglePartnerHeader({
         <Button variant="outline" size="sm" className="flex items-center gap-1 border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50">
           <Bookmark className="w-3 h-3" /> Save
         </Button>
-        <Button variant="outline" size="sm" className="flex items-center gap-1 border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50">
-          <Share2 className="w-3 h-3" /> Share
-        </Button>
-        <Button variant="secondary" size="sm" className="gold-shimmer text-black px-3 py-1.5 text-xs font-semibold transition-all duration-300 hover:scale-105">
-          <Send className="w-3 h-3 mr-1 animate-pulse" /> Request
-        </Button>
+        <PortfolioActions 
+          title={title} 
+          slug={slug} 
+          variant="header" 
+        />
       </div>
     </div>
   );
