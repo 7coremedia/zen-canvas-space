@@ -165,7 +165,7 @@ export default function CaseStudy() {
       {/* Bottom Buttons/Navigation (similar to header buttons) */}
       <div className="w-full bg-white border-t border-gray-200 py-4 px-4 sm:px-6 lg:px-8 flex flex-row items-center justify-center gap-3 shadow-sm mt-8 overflow-x-auto">
         <Button asChild variant="secondary" className="gold-shimmer text-black hover:bg-yellow-500 text-sm px-4 py-2 h-auto flex-shrink-0 font-semibold transition-all duration-300 hover:scale-105">
-          <Link to="/contact">Request for this</Link>
+          <Link to={`/contact?portfolio=${encodeURIComponent(currentCaseStudy.title)}&url=${encodeURIComponent(`${window.location.origin}/portfolio/${slug}`)}`}>Request for this</Link>
         </Button>
 
 

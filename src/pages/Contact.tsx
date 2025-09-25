@@ -7,20 +7,35 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const Schema = z.object({ name: z.string().min(2), email: z.string().email(), message: z.string().min(10) });
 
 type Values = z.infer<typeof Schema>;
 
 export default function Contact() {
+  const [searchParams] = useSearchParams();
   const form = useForm<Values>({ resolver: zodResolver(Schema) });
   const whatsappNumber = "2348160891799"; // Your WhatsApp number without + sign
+
+  // Auto-fill form with portfolio information from URL params
+  useEffect(() => {
+    const portfolioTitle = searchParams.get('portfolio');
+    const portfolioUrl = searchParams.get('url');
+    
+    if (portfolioTitle && portfolioUrl) {
+      const autoMessage = `I want this: ${portfolioTitle}
+
+Portfolio Link: ${portfolioUrl}`;
+      form.setValue('message', autoMessage);
+    }
+  }, [searchParams, form]);
 
   const sendToWhatsApp = (values: Values) => {
     const message = `Hi! I'm ${values.name}.
 
 Email: ${values.email}
-
 Message: ${values.message}`;
 
     const encodedMessage = encodeURIComponent(message);

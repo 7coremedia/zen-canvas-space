@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PortfolioItemProps {
@@ -18,6 +18,15 @@ export default function PortfolioItem({
   slug, // Destructure slug
 }: PortfolioItemProps) {
   const [loaded, setLoaded] = React.useState(false);
+  
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const portfolioUrl = `${window.location.origin}/portfolio/${slug}`;
+    const contactUrl = `/contact?portfolio=${encodeURIComponent(title)}&url=${encodeURIComponent(portfolioUrl)}`;
+    window.open(contactUrl, '_blank');
+  };
+
   return (
     <div className="relative group">
       <Link to={`/portfolio/${slug}`} className="block"> {/* Use actual slug here */}
@@ -49,6 +58,15 @@ export default function PortfolioItem({
                 Get started
               </Button>
               <div className="flex space-x-2">
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
+                  className="bg-white/90 text-black hover:bg-white w-8 h-8 rounded-full"
+                  onClick={handleContactClick}
+                  title="Contact about this project"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                </Button>
                 <Button variant="secondary" size="icon" className="bg-white/90 text-black hover:bg-white w-8 h-8 rounded-full">
                   <Bookmark className="h-4 w-4" />
                 </Button>
