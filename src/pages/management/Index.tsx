@@ -70,7 +70,7 @@ export default function ManagementDashboard() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-white min-h-screen">
       <Helmet>
         <title>Management Dashboard – KING</title>
       </Helmet>
@@ -87,28 +87,36 @@ export default function ManagementDashboard() {
           {/* Portfolio Management Section */}
           <section>
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+              <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800">
                 <Briefcase className="h-7 w-7" />
-                <span>Portfolio Management</span>
+                <span>
+                  <span className="sm:hidden">Portfolio Mgt</span>
+                  <span className="hidden sm:inline">Portfolio Management</span>
+                </span>
               </h2>
               <p className="text-gray-500 mt-1">
                 Manage portfolio items and showcase work
               </p>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
               {portfolioActions.map((action, i) => (
                 hasAccess(action.roles) && (
                   <Card 
                     key={i}
-                    className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-shadow cursor-pointer group"
+                    className="bg-gray-100 p-3 sm:p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex flex-col items-center justify-center aspect-square sm:aspect-auto text-center"
                     onClick={() => navigate(action.href)}
                   >
-                    <div className="mb-4">
-                      <action.icon className="h-10 w-10 text-gray-700 group-hover:text-primary transition-colors" />
+                    <div className="mb-2 sm:mb-4">
+                      <action.icon className="h-7 w-7 sm:h-10 sm:w-10 text-gray-700 group-hover:text-primary transition-colors" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-1 text-gray-900">{action.title}</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-semibold text-xs sm:text-lg mb-0.5 sm:mb-1 text-gray-900">
+                      <span className="sm:hidden">
+                        {action.title.includes('View') ? 'View' : action.title.includes('Add') ? 'Add' : action.title.includes('Edit') ? 'Edit' : action.title}
+                      </span>
+                      <span className="hidden sm:inline">{action.title}</span>
+                    </h3>
+                    <p className="hidden sm:block text-sm text-gray-500">
                       {action.description}
                     </p>
                   </Card>
@@ -122,16 +130,19 @@ export default function ManagementDashboard() {
             <div className="space-y-12">
               <section>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800">
                     <Users className="h-7 w-7" />
-                    <span>User Management</span>
+                    <span>
+                      <span className="sm:hidden">User Mgt</span>
+                      <span className="hidden sm:inline">User Management</span>
+                    </span>
                   </h2>
                   <p className="text-gray-500 mt-1">
                     Manage user roles and permissions
                   </p>
                 </div>
 
-                <Card className="bg-white p-6 rounded-2xl shadow-sm">
+                <Card className="bg-gray-100 p-6 rounded-2xl shadow-sm">
                   <p className="text-gray-500">
                     User management features coming soon...
                   </p>
@@ -140,7 +151,7 @@ export default function ManagementDashboard() {
 
               <section>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800">
                     <Database className="h-7 w-7" />
                     <span>Data Migration</span>
                   </h2>
@@ -149,7 +160,7 @@ export default function ManagementDashboard() {
                   </p>
                 </div>
 
-                <Card className="bg-white p-6 rounded-2xl shadow-sm">
+                <Card className="bg-gray-100 p-6 rounded-2xl shadow-sm">
                   <div className="space-y-4">
                     <p className="text-gray-500">
                       Migrate your existing portfolio items from the codebase to Supabase database.
@@ -169,7 +180,7 @@ export default function ManagementDashboard() {
 
               <section>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800 rounded-full bg-gray-100 p-3">
+                  <h2 className="text-2xl font-semibold flex items-center gap-3 text-gray-800">
                     <Settings className="h-7 w-7" />
                     <span>System Settings</span>
                   </h2>
@@ -178,7 +189,7 @@ export default function ManagementDashboard() {
                   </p>
                 </div>
 
-                <Card className="bg-white p-6 rounded-2xl shadow-sm">
+                <Card className="bg-gray-100 p-6 rounded-2xl shadow-sm">
                   <p className="text-gray-500">
                     System settings features coming soon...
                   </p>

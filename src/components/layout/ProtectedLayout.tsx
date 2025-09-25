@@ -8,6 +8,7 @@ import RoleRequestForm from "@/components/admin/RoleRequestForm";
 export default function ProtectedLayout() {
   const { user, role, isLoading } = useUser();
   const navigate = useNavigate();
+  const hasMgmtAccess = Boolean((role as any)?.is_admin || (role as any)?.is_moderator || (role as any)?.is_worker);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -23,7 +24,7 @@ export default function ProtectedLayout() {
     );
   }
 
-  if (!user || !(role?.is_admin || role?.is_moderator || role?.is_worker)) {
+  if (!user || !hasMgmtAccess) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto py-8 px-4">
@@ -72,14 +73,16 @@ export default function ProtectedLayout() {
               href="/management/portfolio" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Portfolio Management
+              <span className="sm:hidden">Portfolio Mgt</span>
+              <span className="hidden sm:inline">Portfolio Management</span>
             </a>
             {(role?.is_admin || role?.is_moderator) && (
               <a 
                 href="/management/roles" 
                 className="text-sm font-medium transition-colors hover:text-primary"
               >
-                Role Management
+                <span className="sm:hidden">Role Mgt</span>
+                <span className="hidden sm:inline">Role Management</span>
               </a>
             )}
           </div>
