@@ -83,18 +83,37 @@ export default function CaseStudy() {
       )}
 
       {/* Main Media Section - No Container for full-width */} 
-      <section className="w-full pt-4 pb-8">
-        <PortfolioMediaDisplay
-          mediaFiles={(portfolioMedia || [])
-            .filter(m => !m.is_cover)
-            .map(media => ({
-              id: media.id,
-              url: media.url,
-              type: media.media_type as 'image' | 'video' | 'gif' | 'pdf',
-              name: media.file_name
-            }))}
-        />
-      </section>
+      {currentCaseStudy.portfolio_type === 'case_study' ? (
+        <section className="w-full pt-4 pb-8">
+          <div className="container mx-auto px-4">
+            {currentCaseStudy.pdf_url ? (
+              <a
+                href={currentCaseStudy.pdf_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-lg bg-black text-white px-6 py-3 font-semibold hover:bg-gray-800 transition"
+              >
+                Download Case Study (PDF)
+              </a>
+            ) : (
+              <p className="text-sm text-muted-foreground">No case study PDF available.</p>
+            )}
+          </div>
+        </section>
+      ) : (
+        <section className="w-full pt-4 pb-8">
+          <PortfolioMediaDisplay
+            mediaFiles={(portfolioMedia || [])
+              .filter(m => !m.is_cover)
+              .map(media => ({
+                id: media.id,
+                url: media.url,
+                type: media.media_type as 'image' | 'video' | 'gif' | 'pdf',
+                name: media.file_name
+              }))}
+          />
+        </section>
+      )}
 
       {/* Tags Section (below main image) */}
       <section className="container mx-auto px-4 py-6">

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import PortfolioItem from '@/components/portfolio/PortfolioItem';
 import { Button } from '@/components/ui/button';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePublicPortfolio } from '@/hooks/usePublicPortfolio';
 
 export default function PortfolioGrid() {
   const { data: portfolioItems, isLoading, error } = usePublicPortfolio();
 
   console.debug('PortfolioGrid items:', portfolioItems);
-  const filteredItems = Array.isArray(portfolioItems)
+  const allItems = Array.isArray(portfolioItems)
     ? portfolioItems
         .filter((i) => i && i.title && i.category && i.cover_url && i.slug)
         .map((item) => ({
@@ -16,8 +16,10 @@ export default function PortfolioGrid() {
           category: String(item.category),
           imageUrl: String(item.cover_url),
           slug: String(item.slug),
+          portfolio_type: String((item as any).portfolio_type || 'gallery'),
         }))
     : [];
+  const caseStudyItems = allItems.filter((i) => i.portfolio_type === 'case_study');
 
   if (isLoading) {
     return (
@@ -42,42 +44,33 @@ export default function PortfolioGrid() {
 
   return (
     <section className="container mx-auto py-12 px-4">
-      {/* Search Bar */}
-      <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
-        <div className="relative flex-grow w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search KING..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-        <div className="hidden md:flex items-center gap-4 text-sm text-gray-700">
-          <span className="font-medium">Projects</span>
-          <span>People</span>
-          <span>Assets</span>
-          <span>Images</span>
-          <Button variant="outline" className="flex items-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
-            <SlidersHorizontal className="w-4 h-4 rotate-90" /> {/* Using SlidersHorizontal for recommended icon */}
-            Recommended
-          </Button>
-        </div>
-      </div>
+      <Tabs defaultValue="case_studies" className="w-full mb-8">
+        <TabsList className="grid grid-cols-2 w-full">
+          <TabsTrigger value="case_studies">Case Study Files</TabsTrigger>
+          <TabsTrigger value="research_docs">Research Docs</TabsTrigger>
+        </TabsList>
 
+        <TabsContent value="case_studies">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+            {caseStudyItems.map((item, index) => (
+              <PortfolioItem
+                key={index}
+                title={item.title}
+                category={item.category}
+                imageUrl={item.imageUrl}
+                slug={item.slug}
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-
-      {/* Portfolio Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-        {filteredItems.map((item, index) => (
-          <PortfolioItem
-            key={index}
-            title={item.title}
-            category={item.category}
-            imageUrl={item.imageUrl}
-            slug={item.slug}
-          />
-        ))}
-      </div>
+        <TabsContent value="research_docs">
+          <div className="rounded-xl border border-gray-200 p-8 text-center text-gray-700 bg-white">
+            <h3 className="text-xl font-semibold mb-2">Research Docs – Coming Soon</h3>
+            <p className="text-sm text-gray-500">You’ll be able to see behind-the-scenes docs for select projects here.</p>
+          </div>
+        </TabsContent>
+      </Tabs>
     </section>
   );
 }
