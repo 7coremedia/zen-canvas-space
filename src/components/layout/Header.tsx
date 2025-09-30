@@ -15,6 +15,7 @@ export default function Header() {
   const isCasePage = location.pathname.startsWith("/portfolio/");
   // Treat all pages except home as light (black text). Case pages now use black.
   const isLight = location.pathname !== "/";
+  const isHome = location.pathname === "/";
   const isMobile = useIsMobile();
   const {
     user,
@@ -25,6 +26,12 @@ export default function Header() {
   const [isHidden, setIsHidden] = React.useState(false);
   const lastScrollY = React.useRef(0);
   React.useEffect(() => {
+    // Disable scroll-hide/show behavior on the homepage entirely
+    if (isHome) {
+      setIsHidden(false);
+      return;
+    }
+
     const onScroll = () => {
       const currentY = window.scrollY;
       const delta = currentY - lastScrollY.current;
@@ -32,19 +39,22 @@ export default function Header() {
       if (currentY < 10) {
         setIsHidden(false);
       } else if (delta > threshold) {
+        // scrolling down → hide
         setIsHidden(true);
       } else if (delta < -threshold) {
+        // scrolling up → show
         setIsHidden(false);
       }
       lastScrollY.current = currentY;
     };
-    window.addEventListener("scroll", onScroll, {
-      passive: true
-    } as AddEventListenerOptions);
+
+    window.addEventListener("scroll", onScroll, { passive: true } as AddEventListenerOptions);
     return () => window.removeEventListener("scroll", onScroll as EventListener);
-  }, []);
+  }, [isHome]);
   const logoSrc = isMobile && isLight ? mobileLogoUrl : logoUrl;
-  return <header className={cn("absolute inset-x-0 top-1.5 z-50 h-16 bg-transparent transition-transform duration-300 will-change-transform", isHidden ? "-translate-y-full" : "translate-y-0")}>
+  // Use fixed positioning on all non-home pages so the header can reappear on scroll-up anywhere
+  const positionClass = isHome ? "absolute" : "fixed";
+  return <header className={cn(positionClass, "inset-x-0 top-1.5 z-50 h-16 bg-transparent transition-transform duration-300 will-change-transform", isHidden ? "-translate-y-full" : "translate-y-0")}>
       <div className={cn("container mx-auto flex h-full items-center justify-between", isLight ? "text-black" : "text-white")}> 
         {/* Left: Menu + Portfolio pill */}
         <div className="flex items-center gap-3">
@@ -74,11 +84,17 @@ export default function Header() {
                     <NavLink to="/about" className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight" onClick={() => setSheetOpen(false)}>
                       ABOUT
                     </NavLink>
+                    <NavLink to="/jobs" className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight" onClick={() => setSheetOpen(false)}>
+                      JOBS
+                    </NavLink>
                     <NavLink to="/contact" className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight" onClick={() => setSheetOpen(false)}>
                       CONTACT
                     </NavLink>
                     <NavLink to="/portfolio" className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight" onClick={() => setSheetOpen(false)}>
                       PORTFOLIO
+                    </NavLink>
+                    <NavLink to="/contracts" className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight" onClick={() => setSheetOpen(false)}>
+                      CONTRACTS
                     </NavLink>
                     
                     {user ? <div className="border-t border-muted pt-10 mt-10">

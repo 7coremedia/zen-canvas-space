@@ -1,114 +1,179 @@
-"use client";
+import { useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
-import { useState, useEffect } from "react";
-import { ChevronDown, X } from "lucide-react";
+type ServiceItem = {
+	id: string;
+	label: string;
+	group: string;
+};
 
-interface Category {
-  name: string;
-  items: string[];
+type Props = {
+	className?: string;
+	onSelect?: (service: ServiceItem) => void;
+};
+
+/**
+ * Floating bar + translucent blurred popover for selecting design categories.
+ * Exports default to preserve the existing import in `src/pages/Index.tsx`.
+ */
+export default function DesignSelector({ className, onSelect }: Props) {
+	const [open, setOpen] = useState(false);
+	const [activeGroup, setActiveGroup] = useState<string>("All");
+
+	// Curated groups and items
+	const groups = useMemo(
+		() => [
+			"All",
+			"Brand & Identity",
+			"Digital & Experience",
+			"Products & Objects",
+			"Publications & Media",
+			"Marketing & Campaigns",
+			"Special Creative",
+		],
+		[]
+	);
+
+	const items: ServiceItem[] = useMemo(
+		() => [
+			// Brand & Identity
+			{ id: "logo", label: "Logo Design", group: "Brand & Identity" },
+			{ id: "brand-identity", label: "Brand Identity Systems", group: "Brand & Identity" },
+			{ id: "packaging", label: "Packaging Design", group: "Brand & Identity" },
+			{ id: "type-color", label: "Typography & Color Systems", group: "Brand & Identity" },
+			{ id: "guidelines", label: "Brand Guidelines", group: "Brand & Identity" },
+
+			// Digital & Experience
+			{ id: "ui-ux", label: "UI/UX Design", group: "Digital & Experience" },
+			{ id: "website", label: "Website / Landing Page Design", group: "Digital & Experience" },
+			{ id: "mobile-app", label: "Mobile App Design", group: "Digital & Experience" },
+			{ id: "interactive", label: "Interactive Prototypes", group: "Digital & Experience" },
+			{ id: "dashboards", label: "Dashboards & Platforms", group: "Digital & Experience" },
+
+			// Products & Objects
+			{ id: "product-design", label: "Product Design (physical)", group: "Products & Objects" },
+			{ id: "3d", label: "3D Visualization & Renders", group: "Products & Objects" },
+			{ id: "mockups", label: "Mockups & Prototypes", group: "Products & Objects" },
+
+			// Publications & Media
+			{ id: "books", label: "Book Design (covers + layouts)", group: "Publications & Media" },
+			{ id: "magazine", label: "Magazine / Editorial Design", group: "Publications & Media" },
+			{ id: "annual-report", label: "Annual Reports", group: "Publications & Media" },
+			{ id: "whitepaper", label: "Whitepapers / eBooks", group: "Publications & Media" },
+
+			// Marketing & Campaigns
+			{ id: "campaigns", label: "Advertising Campaigns", group: "Marketing & Campaigns" },
+			{ id: "social", label: "Social Media Post Design", group: "Marketing & Campaigns" },
+			{ id: "motion", label: "Motion Graphics / Video Ads", group: "Marketing & Campaigns" },
+			{ id: "ooh", label: "Out-of-Home (billboards, posters)", group: "Marketing & Campaigns" },
+
+			// Special Creative
+			{ id: "concepts", label: "Creative Concepts", group: "Special Creative" },
+			{ id: "collaterals", label: "Brand Collaterals (cards, stationery, merch)", group: "Special Creative" },
+			{ id: "event-identity", label: "Event / Campaign Visual Identity", group: "Special Creative" },
+			{ id: "decks", label: "Presentations & Pitch Decks", group: "Special Creative" },
+		],
+		[]
+	);
+
+	const grouped = useMemo(() => {
+		if (activeGroup === "All") return { All: items };
+		return { [activeGroup]: items.filter((i) => i.group === activeGroup) };
+	}, [activeGroup, items]);
+
+	const handleSelect = (item: ServiceItem) => {
+		onSelect?.(item);
+		// Default behavior: navigate to contact with prefilled message
+		if (!onSelect) {
+			const url = `/contact?service=${encodeURIComponent(item.label)}&message=${encodeURIComponent(
+				`Hi King, I want design for: ${item.label}`
+			)}`;
+			window.location.href = url;
+		}
+		setOpen(false);
+	};
+
+	return (
+		<Popover open={open} onOpenChange={setOpen}>
+			<PopoverTrigger asChild>
+				<Button
+					variant="hero"
+					size="lg"
+					className={cn(
+						"px-5 h-12 rounded-xl border border-black/10 bg-white/40 shadow-sm backdrop-blur-md text-sm text-neutral-900 hover:bg-white/60 hover:shadow-md",
+						"flex items-center gap-2",
+						className
+					)}
+					aria-label="Open design category selector"
+				>
+					<span className="opacity-90">I want design for</span>
+					<ChevronDown className="h-4 w-4 opacity-80" />
+				</Button>
+			</PopoverTrigger>
+
+			<PopoverContent
+				align="center"
+				sideOffset={10}
+				className={cn(
+					"w-[min(92vw,680px)] p-0 rounded-xl overflow-hidden border border-black/10 bg-white/35 backdrop-blur-2xl shadow-2xl",
+					"data-[state=open]:animate-in data-[side=bottom]:slide-in-from-top-2"
+				)}
+			>
+				{/* Group filter pills */}
+				<div className="flex flex-wrap gap-2 p-3 border-b border-black/10 bg-white/25 backdrop-blur-sm rounded-t-xl">
+					{groups.map((g) => (
+						<button
+							key={g}
+							type="button"
+							onClick={() => setActiveGroup(g)}
+							className={cn(
+								"px-3 py-1 text-xs rounded-full transition",
+								activeGroup === g
+									? "bg-black text-white"
+									: "bg-white/60 text-neutral-900 hover:bg-white"
+							)}
+							aria-pressed={activeGroup === g}
+						>
+							{g}
+						</button>
+					))}
+				</div>
+
+				{/* Searchable, grouped list */}
+				<Command className="bg-transparent">
+					<CommandInput placeholder="Search design needs…" />
+					<CommandList>
+						<CommandEmpty>No results found.</CommandEmpty>
+
+						{Object.entries(grouped).map(([groupName, groupItems], gi) => (
+							<div key={groupName}>
+								<CommandGroup heading={groupName}>
+									<ScrollArea className="max-h-[320px]">
+										<div className="py-1">
+											{groupItems.map((item) => (
+												<CommandItem
+													key={item.id}
+													onSelect={() => handleSelect(item)}
+													className="cursor-pointer"
+												>
+													<span className="text-sm">{item.label}</span>
+													<span className="ml-auto text-xs text-muted-foreground">{item.group}</span>
+												</CommandItem>
+											))}
+										</div>
+									</ScrollArea>
+								</CommandGroup>
+								{gi < Object.keys(grouped).length - 1 && <CommandSeparator />}
+							</div>
+						))}
+					</CommandList>
+				</Command>
+			</PopoverContent>
+		</Popover>
+	);
 }
-
-const categories: Category[] = [
-  {
-    name: "Brand & Identity",
-    items: ["Logo Design", "Brand Identity Systems", "Packaging Design", "Typography & Color Systems", "Brand Guidelines"],
-  },
-  {
-    name: "Digital & Experience",
-    items: ["UI/UX Design", "Website / Landing Page Design", "Mobile App Design", "Interactive Prototypes", "Dashboards & Platforms"],
-  },
-  {
-    name: "Products & Objects",
-    items: ["Product Design (physical goods)", "3D Visualization & Renders", "Mockups & Prototypes"],
-  },
-  {
-    name: "Publications & Media",
-    items: ["Book Design (covers + layouts)", "Magazine / Editorial Design", "Annual Reports", "Whitepapers / eBooks"],
-  },
-  {
-    name: "Marketing & Campaigns",
-    items: ["Advertising Campaigns (online + offline)", "Social Media Post Design", "Motion Graphics / Video Ads", "Out-of-Home (billboards, posters, transit ads)"],
-  },
-  {
-    name: "Special Creative",
-    items: ["Creative Concepts (from scratch)", "Brand Collaterals (cards, stationery, merch)", "Event / Campaign Visual Identity", "Presentations & Pitch Decks"],
-  },
-];
-
-export function DesignSelector() {
-  const [open, setOpen] = useState(false);
-
-  // Prevent page scroll when panel is open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  return (
-    <div className="relative w-full flex justify-center mt-12">
-      {/* Floating Bar */}
-      <div
-        onClick={() => setOpen(true)}
-        className="backdrop-blur-md bg-white/10 border border-white/20 text-white 
-                   px-6 py-3 rounded-xl flex items-center gap-2 cursor-pointer
-                   shadow-lg hover:bg-white/20 transition"
-      >
-        <span className="font-medium">I want design for</span>
-        <ChevronDown size={18} />
-      </div>
-
-      {/* Popup Panel */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <div className="relative bg-white/10 backdrop-blur-lg text-white border border-white/20
-                        w-11/12 max-w-5xl rounded-2xl p-8 shadow-2xl 
-                        max-h-[85vh] overflow-y-auto">
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-gray-300 hover:text-white"
-              aria-label="Close panel"
-            >
-              <X size={22} />
-            </button>
-
-            <h2 className="text-2xl font-semibold mb-6">Select a design category</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {categories.map((category, index) => (
-                <div key={index} className="pb-2">
-                  <h3 className="font-medium text-lg mb-4 text-white/90 border-b border-white/20 pb-2">{category.name}</h3>
-                  <div className="flex flex-col gap-2">
-                    {category.items.map((item, itemIndex) => (
-                      <button
-                        key={itemIndex}
-                        className="px-4 py-2.5 text-sm rounded-lg bg-white/5 hover:bg-white/10 
-                                  cursor-pointer transition-all duration-200 text-left 
-                                  border border-white/10 hover:border-white/20"
-                        onClick={() => {
-                          console.log(`Selected: ${item}`);
-                          // Handle item selection here
-                        }}
-                      >
-                        {item}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default DesignSelector;

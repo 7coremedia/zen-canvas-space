@@ -30,6 +30,8 @@ import RoleManagement from "./pages/management/RoleManagement";
 import { AuthProvider } from "@/hooks/useAuth";
 import { PortfolioAuthProvider } from "@/hooks/usePortfolioAuth";
 import CursorRing from "@/components/ui/CursorRing";
+import Jobs from "./pages/Jobs";
+import Contracts from "./pages/Contracts";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,8 @@ function AppShell() {
           <Route path="/portfolio/:slug" element={<CaseStudy />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/contracts" element={<Contracts />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
