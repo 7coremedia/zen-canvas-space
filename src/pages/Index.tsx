@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/sections/Hero";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import ProcessTabs from "@/components/sections/ProcessTabs";
 import { CornerRightDown, ChevronDown } from 'lucide-react';
 import PortfolioShowcase from "@/components/sections/PortfolioShowcase";
 import { usePublicPortfolio } from "@/hooks/usePublicPortfolio";
+import DesignSelector from "@/components/smart-blocks/smart-overlay-action";
 
 import aaluxuryBrandingPresentationHero from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
 import aaluxuryFull from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
@@ -22,6 +23,8 @@ import aaluxuryMoodboard from "@/assets/aaluxury-brand-pres.jpg";
 import aaluxResuInSea from "@/assets/aalux-resu-in-sea.png"; // Import the new image
 
 const Index = () => {
+  const [showDesignSelector, setShowDesignSelector] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
   const portraitStripPlaceholders = Array.from({ length: 8 });
   const ambitionCardImages = [
     {
@@ -194,8 +197,24 @@ const Index = () => {
     const message = `Hi King, I'm interested in the ${planName} plan. I'd like to discuss pricing and next steps.`;
     return `/contact?plan=${encodeURIComponent(planName)}&message=${encodeURIComponent(message)}`;
   };
+  // Add scroll effect for DesignSelector
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const heroBottom = heroRef.current.getBoundingClientRect().bottom;
+        // Show the design selector when scrolled past the hero section
+        setShowDesignSelector(window.scrollY > heroBottom);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <main className="bg-[#f2f2f2]">
+    <main className="bg-[#f2f2f2] relative">
       <Helmet>
         <title>KING – Branding & Creative Portfolio</title>
         <meta name="description" content="Premium branding, logo design, and creative portfolio by KING. Explore work, services, and start your brand journey." />
@@ -212,7 +231,16 @@ const Index = () => {
         </script>
       </Helmet>
 
-      <Hero />
+      <div ref={heroRef}>
+        <Hero />
+      </div>
+      
+      {/* Floating Design Selector */}
+      <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-500 ${
+        showDesignSelector ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+      }`}>
+        <DesignSelector />
+      </div>
 
       {/* New premium content blocks */}
       <PortfolioShowcase />
