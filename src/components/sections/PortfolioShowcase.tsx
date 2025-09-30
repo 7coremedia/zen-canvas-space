@@ -41,7 +41,7 @@ export default function PortfolioShowcase() {
   };
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden">
+    <section className="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
         {portfolioItems.map((item, index) => (
           <div
@@ -64,7 +64,7 @@ export default function PortfolioShowcase() {
         ))}
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-5">
+      <div className="relative z-10 min-h-[65vh] sm:min-h-[75vh] md:min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-5">
         <span className="inline-flex items-center gap-2 rounded-md border border-white/30 bg-black/20 px-4 py-2 text-xs uppercase tracking-[0.3em] text-white/80 backdrop-blur-sm">
           We design
         </span>
@@ -77,7 +77,7 @@ export default function PortfolioShowcase() {
           </span>
         </div>
 
-        <div className="mt-10 flex items-center gap-4">
+        <div className="mt-8 sm:mt-10 flex items-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => goTo(currentIndex - 1)}
@@ -97,7 +97,7 @@ export default function PortfolioShowcase() {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 gap-3">
+      <div className="absolute bottom-6 sm:bottom-10 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:gap-3">
         {portfolioItems.map((_, index) => (
           <button
             key={index}
@@ -111,8 +111,8 @@ export default function PortfolioShowcase() {
         ))}
       </div>
 
-      <div className="absolute bottom-10 left-6 z-10 max-w-xs text-left md:left-10">
-        <div className="rounded-md border border-white/20 bg-black/25 px-4 py-3 backdrop-blur-sm">
+      <div className="absolute bottom-6 sm:bottom-10 left-4 sm:left-6 md:left-10 z-10 max-w-xs text-left">
+        <div className="rounded-md border border-white/20 bg-black/25 px-3 sm:px-4 py-2.5 sm:py-3 backdrop-blur-sm">
           <p className="font-display text-[0.625rem] uppercase tracking-[0.25em] text-white/70">
             {activeItem?.title || "Featured Project"}
           </p>

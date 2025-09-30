@@ -32,21 +32,15 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Giant KING logo in #1b1917, aligned left */}
-          <div
-            aria-label="KING logo"
-            className="w-full max-w-7xl h-20 sm:h-24 md:h-32 lg:h-40 bg-[#1b1917]"
-            style={{
-              WebkitMaskImage: `url(${logoUrl})`,
-              maskImage: `url(${logoUrl})`,
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "left center",
-              maskPosition: "left center",
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-            }}
-          />
+          {/* Giant KING logo */}
+          <div className="w-full max-w-7xl">
+            <img
+              src={logoUrl}
+              alt="KING logo"
+              className="h-20 sm:h-24 md:h-32 lg:h-40 w-auto object-contain"
+              loading="lazy"
+            />
+          </div>
 
           {/* Row: copyright (left) and links (right) on one straight line */}
           <div className="flex w-full items-center justify-between">

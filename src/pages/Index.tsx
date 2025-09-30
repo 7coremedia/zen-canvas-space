@@ -189,6 +189,11 @@ const Index = () => {
   const showPreviousSection = () => {
     setVisibleSections((prev) => Math.max(1, prev - 1));
   };
+
+  const buildPricingContactUrl = (planName: string) => {
+    const message = `Hi King, I'm interested in the ${planName} plan. I'd like to discuss pricing and next steps.`;
+    return `/contact?plan=${encodeURIComponent(planName)}&message=${encodeURIComponent(message)}`;
+  };
   return (
     <main className="bg-[#f2f2f2]">
       <Helmet>
@@ -301,7 +306,9 @@ const Index = () => {
                 <li>• Logo & Basic Identity</li>
                 <li>• Launch Toolkit</li>
               </ul>
-              <Button variant="gold" className="w-full">Request Pricing</Button>
+              <Button asChild variant="gold" className="w-full">
+                <a href={buildPricingContactUrl("Starter")}>Request Pricing</a>
+              </Button>
             </div>
             <div className="relative border border-black/10 rounded-xl p-6 bg-white/80 backdrop-blur-sm shadow-md md:scale-[1.02] md:-translate-y-2">
               <div className="absolute -top-3 left-6 text-xs px-2 py-1 rounded-full bg-[#1b1917] text-white">Most Popular</div>
@@ -312,7 +319,9 @@ const Index = () => {
                 <li>• Full Identity System</li>
                 <li>• Website & Content Kit</li>
               </ul>
-              <Button variant="gold" className="w-full">Request Pricing</Button>
+              <Button asChild variant="gold" className="w-full">
+                <a href={buildPricingContactUrl("Growth")}>Request Pricing</a>
+              </Button>
             </div>
             <div className="border border-black/10 rounded-xl p-6 bg-white/70 backdrop-blur-sm shadow-sm">
               <h3 className="font-semibold text-lg mb-2">Enterprise</h3>
@@ -322,7 +331,9 @@ const Index = () => {
                 <li>• Multi-Channel Rollout</li>
                 <li>• Ongoing Creative Support</li>
               </ul>
-              <Button variant="gold" className="w-full">Request Pricing</Button>
+              <Button asChild variant="gold" className="w-full">
+                <a href={buildPricingContactUrl("Enterprise")}>Request Pricing</a>
+              </Button>
             </div>
           </div>
         </div>

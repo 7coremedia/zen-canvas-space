@@ -23,12 +23,22 @@ export default function Contact() {
   useEffect(() => {
     const portfolioTitle = searchParams.get('portfolio');
     const portfolioUrl = searchParams.get('url');
-    
-    if (portfolioTitle && portfolioUrl) {
-      const autoMessage = `I want this: ${portfolioTitle}
+    const planName = searchParams.get('plan');
+    const planMessage = searchParams.get('message');
 
-Portfolio Link: ${portfolioUrl}`;
-      form.setValue('message', autoMessage);
+    const parts: string[] = [];
+
+    if (planName || planMessage) {
+      const header = planName ? `I'm interested in the ${planName} plan.` : "";
+      parts.push([header, planMessage].filter(Boolean).join("\n\n"));
+    }
+
+    if (portfolioTitle && portfolioUrl) {
+      parts.push(`I want this: ${portfolioTitle}\n\nPortfolio Link: ${portfolioUrl}`);
+    }
+
+    if (parts.length) {
+      form.setValue('message', parts.join('\n\n'));
     }
   }, [searchParams, form]);
 

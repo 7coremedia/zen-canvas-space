@@ -77,7 +77,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative h-[100svh] min-h-[620px] w-full overflow-hidden">
+    <section className="relative h-[100svh] min-h-[520px] sm:min-h-[620px] w-full overflow-hidden">
       <Helmet>
         <title>KING – Branding & Creative Portfolio</title>
         <meta name="description" content="Crafting brands that command attention. Explore work, services, and start your brand journey with KING." />
