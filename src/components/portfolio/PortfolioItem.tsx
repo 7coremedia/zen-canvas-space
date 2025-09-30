@@ -31,7 +31,7 @@ export default function PortfolioItem({
     <div className="relative group">
       <Link to={`/portfolio/${slug}`} className="block"> {/* Use actual slug here */}
         {/* Media container with rounded corners */}
-        <div className="relative w-full aspect-[16/9] bg-gray-100 rounded-2xl overflow-hidden">
+        <div className="relative w-full bg-gray-100 rounded-2xl overflow-hidden">
           {/* Skeleton */}
           <div
             className={cn(
@@ -43,7 +43,7 @@ export default function PortfolioItem({
             src={imageUrl}
             alt={title}
             className={cn(
-              "w-full h-full object-cover object-top transition-opacity duration-500",
+              "block w-full h-auto object-top transition-opacity duration-500",
               loaded ? "opacity-100" : "opacity-0"
             )}
             loading="lazy"

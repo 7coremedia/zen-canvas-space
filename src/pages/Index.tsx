@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Testimonials from "@/components/sections/Testimonials";
 import Cta from "@/components/sections/Cta";
 import ProcessTabs from "@/components/sections/ProcessTabs";
-import { CornerRightDown } from 'lucide-react';
+import { CornerRightDown, ChevronDown } from 'lucide-react';
 import PortfolioShowcase from "@/components/sections/PortfolioShowcase";
 import { usePublicPortfolio } from "@/hooks/usePublicPortfolio";
 
@@ -22,6 +22,173 @@ import aaluxuryMoodboard from "@/assets/aaluxury-brand-pres.jpg";
 import aaluxResuInSea from "@/assets/aalux-resu-in-sea.png"; // Import the new image
 
 const Index = () => {
+  const portraitStripPlaceholders = Array.from({ length: 8 });
+  const ambitionCardImages = [
+    {
+      src: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/T-DB%20Leave%20out%20guess%20work.png",
+      alt: "T-DB Leave out guess work",
+      fit: "contain" as const,
+      aspect: "aspect-[4/5]" as const,
+    },
+    {
+      src: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/T-DB%20Burnout%20is%20real.png",
+      alt: "T-DB Burnout is real",
+      fit: "contain" as const,
+      aspect: "aspect-[4/5]" as const,
+    },
+    {
+      src: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/Emerald%20Course%20Book.png",
+      alt: "Emerald Course Book cover",
+      aspect: "aspect-[4/5]" as const,
+    },
+    {
+      src: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/Emerald%20course%20book%20inside.png",
+      alt: "Emerald course book inside spread",
+      aspect: "aspect-[4/5]" as const,
+    },
+  ];
+  const positioningPreviewTiles = [
+    { aspect: "aspect-[4/3]", position: "0% 0%" },
+    { aspect: "aspect-[4/5]", position: "100% 0%" },
+    { aspect: "aspect-square", position: "0% 100%" },
+    { aspect: "aspect-[16/10]", position: "100% 100%" },
+  ];
+  const [showSample, setShowSample] = useState(false);
+  const [visibleSections, setVisibleSections] = useState(1);
+
+  const sampleSections = [
+    {
+      title: "Client Request",
+      content: (
+        <>
+          <p className="text-sm text-neutral-700">
+            “King I need a logo for my brand and a revamp. Luxury, Highend my goal is to sell outside of Africa”
+          </p>
+          <p className="mt-4 text-xs uppercase tracking-[0.3em] text-neutral-500">
+            — Amara O., CEO. Aalux Labs
+          </p>
+        </>
+      ),
+      images: [
+        {
+          src: "/home/client-req-home.png",
+          alt: "Aaluxury Brand Presentation",
+        },
+      ],
+    },
+    {
+      title: "Process",
+      content: (
+        <>
+          <p className="text-sm text-neutral-700">
+            “Our creative process dosent come first. Research does. It's the first process”
+          </p>
+          <p className="mt-4 text-xs uppercase tracking-[0.3em] text-neutral-500">
+            — Abby. K, CCO, King Labs
+          </p>
+        </>
+      ),
+    },
+    {
+      title: "Problem",
+      reverse: true,
+      content: (
+        <p className="text-sm text-neutral-700">
+          Aalux Labs, a beginning luxury brand, sought a distinctive visual identity to penetrate the competitive global market. Their
+          challenge was to create a logo and branding that conveyed luxury and sophistication while resonating with an international
+          audience.
+        </p>
+      ),
+      images: [
+        {
+          src: "/home/prob-king-sol.png",
+          alt: "Aaluxury Intro Hero Mobile",
+        },
+      ],
+    },
+    {
+      title: "King",
+      content: (
+        <p className="text-sm text-neutral-700">
+          Our approach began with in-depth market research and brand strategy development. We crafted a logo that blends classic elegance
+          with modern simplicity, utilizing a custom typeface and a refined color palette to embody the brand's high-end aspirations and
+          global vision.
+        </p>
+      ),
+    },
+    {
+      title: "Solution",
+      content: (
+        <p className="text-sm text-neutral-700">
+          Based on the chosen moodboard, we developed a comprehensive brand identity system. This included the final logo design, a refined
+          color palette, typography guidelines, and imagery standards, all carefully crafted to elevate Aalux Labs' presence in the luxury
+          market and support their goal of global expansion.
+        </p>
+      ),
+      images: [
+        {
+          src: "/home/aalux-bento.png",
+          alt: "Aaluxury Brand Presentation",
+        },
+      ],
+    },
+    {
+      title: "Others",
+      content: (
+        <p className="text-sm text-neutral-700">
+          The brand asked for a more vibrant vibe and packaging for a wider audience which they decided to market as the norm while their
+          luxury is kept for high end customers. So, we delivered.
+        </p>
+      ),
+      images: [
+        {
+          src: "/home/alux-label.png",
+          alt: "Other Project Image",
+        },
+      ],
+    },
+    {
+      title: "Additional Visuals",
+      content: (
+        <p className="text-sm text-neutral-700">
+          Supplemental imagery from the identity rollout to further illustrate the brand's visual direction.
+        </p>
+      ),
+      stacked: true,
+      images: [
+        {
+          src: "home/aalux-resu-in-sea.png",
+          alt: "Aaluxury products in a seaside setting",
+        },
+        {
+          src: "/home/aalux-body-img.png",
+          alt: "Aaluxury Moodboard",
+        },
+        {
+          src: "/home/alux-bento-vibe.png",
+          alt: "Full width packaging image",
+        },
+      ],
+    },
+  ];
+
+  const handleToggleSample = () => {
+    setShowSample((prev) => {
+      const next = !prev;
+      if (!next) {
+        setVisibleSections(1);
+      }
+      return next;
+    });
+  };
+
+  const showNextSection = () => {
+    setVisibleSections((prev) => Math.min(sampleSections.length, prev + 1));
+  };
+
+  const showPreviousSection = () => {
+    setVisibleSections((prev) => Math.max(1, prev - 1));
+  };
   return (
     <main className="bg-[#f2f2f2]">
       <Helmet>
@@ -45,13 +212,12 @@ const Index = () => {
       {/* New premium content blocks */}
       <PortfolioShowcase />
 
-      {/* Featured Projects */}
       <section className="px-4 py-12 md:py-16 bg-[#f2f2f2]">
         <div className="container mx-auto">
-          <h2 className="font-display text-4xl md:text-6xl font-medium tracking-tight mb-8">
+          <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-tight mb-8">
             Featured <em className="italic">projects</em>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12 items-start">
             {[
               {
                 title: 'Aalux Labs',
@@ -72,19 +238,31 @@ const Index = () => {
                 cover: 'https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/3a5abacjjan.png',
               },
             ].map((item, i) => (
-              <article key={i} className="group">
-                <a href={(item as any).to ?? undefined} className="block" aria-label={`Open project ${item.title}`}>
-                  <img
-                    src={(item as any).cover ?? ''}
-                    alt={`${item.title} cover`}
-                    className="w-full aspect-[16/9] object-cover rounded mb-3 bg-neutral-200"
-                    loading="lazy"
-                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  { !(item as any).cover && (
-                    <div className="w-full aspect-[16/9] bg-neutral-200 rounded mb-3" aria-hidden="true" />
-                  )}
-                  <h3 className="font-semibold text-lg">{item.title}</h3>
+              <article
+                key={i}
+                className="group h-full transition-transform duration-300 ease-out hover:-translate-y-2"
+              >
+                <a
+                  href={(item as any).to ?? undefined}
+                  className="block h-full"
+                  aria-label={`Open project ${item.title}`}
+                >
+                  <div className="relative w-full aspect-[16/9] overflow-hidden rounded bg-neutral-200 transition-shadow duration-300 group-hover:shadow-xl">
+                    {(item as any).cover ? (
+                      <img
+                        src={(item as any).cover}
+                        alt={`${item.title} cover`}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full" aria-hidden="true" />
+                    )}
+                  </div>
+                  <h3 className="mt-4 font-semibold text-lg">{item.title}</h3>
                   <p className="text-xs uppercase tracking-wide text-neutral-500">{item.tag}</p>
                 </a>
               </article>
@@ -97,7 +275,7 @@ const Index = () => {
       <section className="px-4 py-12 md:py-16 bg-[#f2f2f2]">
         <div className="container mx-auto text-center">
           <div className="mb-6">
-            <h2 className="font-display text-4xl md:text-6xl font-medium tracking-[-0.04em]">
+            <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-[-0.04em]">
               Case <em className="italic">studies</em>
             </h2>
             <p className="mt-2 text-sm uppercase tracking-[0.45em] text-neutral-500">Featured</p>
@@ -111,7 +289,7 @@ const Index = () => {
         {/* Decorative subtle rings */}
         <div className="pointer-events-none absolute inset-0 [background:radial-gradient(circle_at_50%_0%,rgba(0,0,0,0.06),transparent_60%)]" aria-hidden="true" />
         <div className="container mx-auto">
-          <h2 className="font-display text-4xl md:text-6xl font-medium tracking-[-0.02em] mb-10">
+          <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-[-0.02em] mb-10">
             Transparent <em className="italic">pricing</em>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -154,7 +332,7 @@ const Index = () => {
       <section className="px-4 py-16 md:py-24 bg-[#f2f2f2]">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           <div className="md:col-span-5">
-            <h2 className="font-display text-4xl md:text-6xl font-medium tracking-[-0.02em]">A letter to <em className="italic">founders</em> & builders</h2>
+            <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-[-0.02em]">A letter to <em className="italic">founders</em> & builders</h2>
           </div>
           <div className="md:col-span-7">
             <p className="text-base md:text-lg text-neutral-800 leading-relaxed mb-6">
@@ -163,52 +341,105 @@ const Index = () => {
             <p className="text-base md:text-lg text-neutral-800 leading-relaxed mb-6">
               We work in tight sprints with honest feedback loops. You’ll see progress quickly, test it with real users, and get a brand that feels inevitable. If you’re ready to build what lasts, we’re ready to crown the next king.
             </p>
-            <div className="w-full aspect-[21/9] bg-neutral-200 rounded" aria-hidden="true" />
+            <img
+              src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/King-Crowns-Brands.png"
+              alt="King Crowns branding collage"
+              className="w-full rounded object-cover"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
 
       {/* Luxury color billboard with Playfair headline */}
-      <section className="relative min-h-[120vh] md:min-h-[140vh] flex items-center bg-[#1b1917] text-white overflow-hidden">
-        <div className="container mx-auto px-4">
-          <h2 className="font-display text-5xl md:text-7xl font-medium leading-tight tracking-[-0.025em] max-w-5xl">
-            Design that turns <em className="italic">ambition</em> into <em className="italic">authority</em>.
-          </h2>
-          <p className="mt-6 max-w-2xl text-white/80">
-            For founders, operators, and creators building brands that last. Strategy-first, execution-obsessed.
-          </p>
+      <section className="relative bg-[#1b1917] text-white overflow-hidden py-16 md:py-24">
+        <div className="container mx-auto px-4 space-y-10">
+          <div className="space-y-6">
+            <h2 className="font-display normal-case text-5xl md:text-7xl font-medium leading-tight tracking-[-0.025em] max-w-5xl">
+              Design that turns <em className="italic">ambition</em> into <em className="italic">authority</em>.
+            </h2>
+            <p className="max-w-2xl text-white/80">
+              For founders, operators, and creators building brands that last. Strategy-first, execution-obsessed.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            {ambitionCardImages.map(({ src, alt, aspect, fit }, index) => (
+              <div
+                key={index}
+                className={`${aspect ?? "aspect-[1350/1920]"} w-full overflow-hidden rounded-lg border border-white/10 bg-white/5 md:max-h-[420px] transition-transform duration-500 ease-out hover:-translate-y-2 hover:scale-[1.03] flex items-center justify-center`}
+              >
+                <img
+                  src={src}
+                  alt={alt}
+                  className={`h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"}`}
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Full-screen image placeholder */}
-      <section className="min-h-[160vh] md:min-h-[180vh] bg-neutral-200 flex items-center justify-center">
-        <div className="text-neutral-500">Full-screen image placeholder</div>
+      <section>
+        <img
+          src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/Nature-is-art.png"
+          alt="Nature-inspired art collage"
+          className="w-full h-auto"
+          loading="lazy"
+        />
       </section>
 
       {/* Centered image with creative text layout around */}
-      <section className="px-4 py-28 md:py-36 bg-[#0f3d2e] text-white min-h-[160vh] md:min-h-[180vh] overflow-hidden">
+      <section className="px-4 pt-28 md:pt-36 pb-0 bg-[#394223] text-white overflow-hidden">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-4 order-2 md:order-1">
-            <h3 className="font-display text-4xl md:text-6xl tracking-[-0.02em] leading-tight">
+            <h3 className="font-display normal-case text-4xl md:text-6xl tracking-[-0.02em] leading-tight">
               Make your <em className="italic">customer</em> the hero.
             </h3>
             <p className="mt-4 text-white/85">We build brands around the journeys your users actually take—then design every touchpoint to feel inevitable.</p>
           </div>
           <div className="md:col-span-4 order-1 md:order-2 flex justify-center">
-            <div className="w-full max-w-md aspect-square bg-neutral-100 rounded" aria-hidden="true" />
+            <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6 backdrop-blur-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#394223] via-[#394223]/80 to-transparent" aria-hidden="true" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#394223] via-[#394223]/80 to-transparent" aria-hidden="true" />
+              <div className="flex animate-marquee gap-6">
+                {portraitStripPlaceholders.concat(portraitStripPlaceholders).map((_, index) => (
+                  <div
+                    key={index}
+                    className="group relative aspect-[3/4] w-28 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/10 backdrop-blur-sm transition-transform duration-500 ease-out hover:-translate-y-1 hover:scale-[1.05] sm:w-32 md:w-36 lg:w-40"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-white/10 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" aria-hidden="true" />
+                    <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-3 px-5">
+                      <span className="block h-16 w-16 rounded-full bg-white/20" aria-hidden="true" />
+                      <span className="block h-3 w-3/4 rounded-full bg-white/25" aria-hidden="true" />
+                      <span className="block h-3 w-2/3 rounded-full bg-white/15" aria-hidden="true" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="md:col-span-4 order-3">
             <p className="text-white/85">From the first impression to the final click: identity, web, content, and launch—delivered with craftsmanship and speed.</p>
           </div>
         </div>
+        <div className="mt-16 w-full px-0">
+          <img
+            src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/make%20them%20the%20hero.gif"
+            alt="Make them the hero animated collage"
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        </div>
       </section>
 
       {/* Process-inspired immersive sections */}
       {/* Market Research – light on dark with right-aligned image */}
-      <section className="relative min-h-[160vh] md:min-h-[180vh] bg-[#1b1917] text-white flex items-center overflow-hidden">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+      <section className="relative min-h-screen bg-[#1b1917] text-white flex items-center overflow-hidden py-20 md:py-24">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
           <div className="md:col-span-6">
-            <h2 className="font-display text-4xl md:text-6xl tracking-[-0.025em] leading-tight mb-6">
+            <h2 className="font-display normal-case text-4xl md:text-6xl tracking-[-0.025em] leading-tight mb-6">
               Market <span className="italic">Research</span>
             </h2>
             <p className="text-white/80 max-w-xl mb-8">
@@ -220,42 +451,31 @@ const Index = () => {
               and decision frameworks.
             </p>
           </div>
-          <div className="md:col-span-6 flex justify-center">
-            <div className="w-full max-w-2xl aspect-[3/2] bg-neutral-200/20 rounded border border-white/10" aria-hidden="true" />
-          </div>
-        </div>
-      </section>
-
-      {/* Brand Strategy – ivory band with left image */}
-      <section className="min-h-[160vh] md:min-h-[180vh] bg-[#faf7f2] text-[#1b1917] flex items-center">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-          <div className="md:col-span-6 order-2 md:order-1">
-            <div className="w-full max-w-2xl aspect-[3/2] bg-neutral-300 rounded" aria-hidden="true" />
-          </div>
-          <div className="md:col-span-5 order-1 md:order-2">
-            <h2 className="font-display text-4xl md:text-6xl tracking-[-0.02em] leading-tight mb-6">
-              Brand <em className="italic">Strategy</em>
-            </h2>
-            <p className="text-neutral-700 max-w-xl mb-6">
-              The core strategic foundation that guides all brand decisions—positioning, promise, and value proposition synthesized into a
-              living playbook.
-            </p>
-            <p className="text-neutral-700/90 max-w-xl">
-              Deliverables: strategy brief, narrative spine, message matrix, and tone guidelines—ready for design and go-to-market.
-            </p>
+          <div className="md:col-span-6 flex justify-center items-start">
+            <img
+              src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/king%20books.png"
+              alt="Market research books and strategy materials"
+              className="w-full max-w-2xl aspect-[3/2] rounded-xl border border-white/10 object-cover transition-transform duration-500 ease-out hover:-translate-y-3 hover:scale-[1.03]"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
 
       {/* Visual Identity – deep green with centered image */}
-      <section className="min-h-[160vh] md:min-h-[180vh] bg-[#0f3d2e] text-white flex items-center">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+      <section className="min-h-screen bg-[#0f3d2e] text-white flex items-center py-20 md:py-24">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
           <div className="md:col-span-4">
-            <h2 className="font-display text-4xl md:text-6xl tracking-[-0.02em] leading-tight mb-6">Visual <em className="italic">Identity</em></h2>
+            <h2 className="font-display normal-case text-4xl md:text-6xl tracking-[-0.02em] leading-tight mb-6">Visual <em className="italic">Identity</em></h2>
             <p className="text-white/85">Logo systems, typography, color, and art direction crafted for longevity and clarity.</p>
           </div>
-          <div className="md:col-span-4 flex justify-center">
-            <div className="w-full max-w-xl aspect-[4/5] bg-neutral-100 rounded" aria-hidden="true" />
+          <div className="md:col-span-4 flex justify-center items-start">
+            <img
+              src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/Positioning-1.png"
+              alt="Visual identity showcase"
+              className="w-full max-w-xl aspect-[4/5] rounded-xl object-cover transition-transform duration-500 ease-out hover:-translate-y-3 hover:scale-[1.03]"
+              loading="lazy"
+            />
           </div>
           <div className="md:col-span-4">
             <p className="text-white/80">From symbol to motion identity—built modularly, documented thoroughly, and ready to scale.</p>
@@ -263,30 +483,32 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Launch Narrative – rich brown with quote style */}
-      <section className="min-h-[160vh] md:min-h-[180vh] bg-[#2a211b] text-white flex items-center">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl">
-            <h2 className="font-display text-4xl md:text-6xl tracking-[-0.02em] leading-tight mb-6">Launch <em className="italic">Narrative</em></h2>
-            <p className="text-white/80 mb-8">We choreograph how the story lands—internally and in-market—so the brand debuts with momentum.</p>
-            <blockquote className="text-2xl md:text-3xl font-display italic tracking-tight text-white/90">
-              “Design is not just about problem solving, it’s about asking the right questions.”
-            </blockquote>
-          </div>
-        </div>
-      </section>
-
       {/* Positioning – cream band with bold/regular mix and mosaic placeholders */}
-      <section className="min-h-[160vh] md:min-h-[180vh] bg-[#f4efe9] text-[#1b1917] flex items-center">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
-          <div className="md:col-span-5 order-2 md:order-1 grid grid-cols-2 gap-3">
-            <div className="aspect-[4/3] bg-neutral-300 rounded" aria-hidden="true" />
-            <div className="aspect-[4/5] bg-neutral-300 rounded" aria-hidden="true" />
-            <div className="aspect-square bg-neutral-300 rounded" aria-hidden="true" />
-            <div className="aspect-[16/10] bg-neutral-300 rounded" aria-hidden="true" />
+      <section className="min-h-screen bg-[#f4efe9] text-[#1b1917] flex items-center py-20 md:py-24">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+          <div className="md:col-span-5 order-2 md:order-1">
+            <div className="relative overflow-hidden rounded-2xl bg-neutral-100/5 p-4">
+              <div className="relative grid grid-cols-2 gap-3">
+                {positioningPreviewTiles.map(({ aspect, position }, index) => (
+                  <div
+                    key={index}
+                    className={`group relative ${aspect} overflow-hidden rounded-xl transition-transform duration-500 ease-out hover:-translate-y-2 hover:scale-[1.04]`}
+                  >
+                    <img
+                      src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/Positioning-4.png"
+                      alt="Positioning detail preview"
+                      className="absolute inset-0 h-full w-full object-cover"
+                      style={{ objectPosition: position }}
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" aria-hidden="true" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="md:col-span-7 order-1 md:order-2">
-            <h2 className="font-display text-4xl md:text-6xl tracking-[-0.025em] leading-tight mb-4">
+            <h2 className="font-display normal-case text-4xl md:text-6xl tracking-[-0.025em] leading-tight mb-4">
               <span className="font-medium">Positioning</span> that claims your category.
             </h2>
             <p className="text-lg text-neutral-800 mb-6">
@@ -298,15 +520,20 @@ const Index = () => {
       </section>
 
       {/* Narrative Spine – dark band with centered type focus */}
-      <section className="min-h-[160vh] md:min-h-[180vh] bg-[#131313] text-white flex items-center">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-display text-5xl md:text-7xl tracking-[-0.03em] leading-tight mb-6">
+      <section className="min-h-screen bg-[#131313] text-white flex items-center py-20 md:py-24">
+        <div className="container mx-auto px-4 text-center flex flex-col items-center justify-start">
+          <h2 className="font-display normal-case text-5xl md:text-7xl tracking-[-0.03em] leading-tight mb-6">
             The <span className="italic">Narrative</span> Spine
           </h2>
           <p className="text-white/80 max-w-3xl mx-auto mb-10">
             Your brand’s core story architecture—built from pillars, proof points, and a message matrix that scales from landing page to investor deck.
           </p>
-          <div className="mx-auto w-full max-w-4xl aspect-[21/9] bg-neutral-200/10 rounded border border-white/10" aria-hidden="true" />
+          <img
+            src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/king-creativity-book-launch.png"
+            alt="King creativity book launch spread"
+            className="mx-auto w-full max-w-4xl h-auto rounded-xl border border-white/10 transition-transform duration-500 ease-out hover:-translate-y-3 hover:scale-[1.02]"
+            loading="lazy"
+          />
         </div>
       </section>
 
@@ -314,7 +541,7 @@ const Index = () => {
       <section className="py-16 px-4 bg-[#f2f2f2]">
         <div className="container mx-auto">
           <div className="flex items-center justify-center gap-3">
-            <h2 className="font-display text-2xl md:text-4xl font-medium">See Our Process</h2>
+            <h2 className="font-display normal-case text-2xl md:text-4xl font-medium">See Our Process</h2>
             <CornerRightDown className="w-12 h-12 md:w-16 md:h-16" style={{ color: '#16181d', transform: 'translateY(18px)' }} />
           </div>
         </div>
@@ -323,103 +550,107 @@ const Index = () => {
       {/* Process Tabs */}
       <ProcessTabs />
 
-      {/* Existing CTA buttons */}
+      {/* Sample brand identity */}
       <section className="py-16 px-4 bg-[#f2f2f2]">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 items-start">
-          {/* Left Column: All Text */}
-          <div className="flex flex-col justify-between h-full">
-            <div className="max-w-md">
-              <h2 className="text-4xl font-bold mb-4 font-display">Client Request</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                “King I need a logo for my brand and a revamp. Luxury, Highend my goal is to sell outside of Africa”
-                <br />— Amara O., CEO. Aalux Labs
-              </p>
+        <div className="container mx-auto max-w-6xl">
+          <button
+            type="button"
+            onClick={handleToggleSample}
+            className="flex w-full items-center justify-between rounded-full bg-[#f2f2f2] px-6 py-4 text-left transition"
+            aria-expanded={showSample}
+          >
+            <span className="text-sm font-semibold uppercase tracking-[0.35em] text-neutral-800">See sample brand identity</span>
+            <ChevronDown className={`h-5 w-5 transition-transform ${showSample ? "rotate-180" : ""}`} />
+          </button>
+
+          {showSample && (
+            <div className="mt-8 space-y-8">
+              {sampleSections.slice(0, visibleSections).map((section, index) => {
+                const isLastVisible = index === visibleSections - 1;
+                const canShowMore = isLastVisible && visibleSections < sampleSections.length;
+                const canShowLess = isLastVisible && visibleSections > 1;
+
+                return (
+                  <article
+                    key={section.title}
+                    className="rounded-3xl bg-[#f2f2f2] p-6 md:p-10"
+                  >
+                    <div
+                      className={`grid grid-cols-1 gap-6 md:gap-10 ${
+                        section.stacked ? "" : "md:grid-cols-2 md:items-center"
+                      }`}
+                    >
+                      <div className={section.reverse ? "order-2 md:order-1" : "order-1"}>
+                        <h3 className="font-display text-3xl md:text-4xl font-medium normal-case mb-4">{section.title}</h3>
+                        <div className="leading-relaxed text-neutral-700 space-y-4 text-sm">
+                          {section.content}
+                        </div>
+                      </div>
+
+                      {section.images && section.images.length > 0 && (
+                        section.stacked ? (
+                          <div className="order-2 flex flex-col gap-4">
+                            {section.images.map((image) => (
+                              <img
+                                key={image.src}
+                                src={image.src}
+                                alt={image.alt}
+                                className="w-full h-auto rounded-2xl object-contain"
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className={`${section.reverse ? "order-1 md:order-2" : "order-2"} flex justify-center`}>
+                            <img
+                              src={section.images[0].src}
+                              alt={section.images[0].alt}
+                              className="w-full h-auto rounded-2xl object-contain"
+                            />
+                          </div>
+                        )
+                      )}
+                    </div>
+
+                    {(canShowMore || canShowLess) && (
+                      <div className="mt-6 flex items-center justify-between">
+                        {canShowLess ? (
+                          <Button variant="ghost" className="px-0 text-sm font-semibold" onClick={showPreviousSection}>
+                            See less
+                          </Button>
+                        ) : <span />}
+
+                        {canShowMore ? (
+                          <Button variant="ghost" className="px-0 text-sm font-semibold" onClick={showNextSection}>
+                            See next
+                          </Button>
+                        ) : null}
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+
+              {visibleSections === sampleSections.length && (
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    className="rounded-full px-6"
+                    onClick={() => setVisibleSections(1)}
+                  >
+                    Reset sections
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="px-0 text-sm font-semibold"
+                    onClick={handleToggleSample}
+                  >
+                    Hide sample
+                  </Button>
+                </div>
+              )}
             </div>
-
-            <div className="hidden md:block max-w-md">
-              <h2 className="text-4xl font-bold font-display mb-2">Process</h2>
-              <p className="text-sm text-muted-foreground">
-                “Our creative process dosent come first. Research does. It's the first process”
-                <br />— Abby. K, CCO, King Labs
-              </p>
-            </div>
-          </div>
-
-          {/* Right Column: Images */}
-          <div className="flex flex-col items-center">
-            <img src="/home/client-req-home.png" alt="Aaluxury Brand Presentation" className="w-full h-auto object-contain" />
-          </div>
+          )}
         </div>
-
-        {/* Mobile/Tablet View for PROCESS text */}
-        <div className="md:hidden mt-8">
-          <div className="max-w-md">
-            <h2 className="text-4xl font-bold font-display mb-2">Process</h2>
-            <p className="text-sm text-muted-foreground">
-              “Our creative process dosent come first. Research does. It's the first process”
-              <br />— Abby. K, CCO, King Labs
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* New section with full-width image */}
-      <section className="py-16 px-4 bg-[#f2f2f2]">
-        <img src="home/aalux-resu-in-sea.png" alt="Aaluxury products in a seaside setting" className="w-full h-auto" />
-      </section>
-
-      <section className="py-16 px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* Right Column (Text) first on mobile) */}
-        <div className="order-1 md:order-2">
-          <h2 className="text-4xl font-bold mb-4 font-display">Problem</h2>
-          <p className="text-sm text-muted-foreground mb-8">
-            Aalux Labs, a beginning luxury brand, sought a distinctive visual identity to penetrate the competitive global market. Their challenge was to create a logo and branding that conveyed luxury and sophistication while resonating with an international audience.
-          </p>
-          <h2 className="text-4xl font-bold mb-4 font-display">King</h2>
-          <p className="text-sm text-muted-foreground">
-            Our approach began with in-depth market research and brand strategy development. We crafted a logo that blends classic elegance with modern simplicity, utilizing a custom typeface and a refined color palette to embody the brand's high-end aspirations and global vision.
-          </p>
-        </div>
-
-        {/* Left Column (Image) */}
-        <div className="order-2 md:order-1 flex justify-center">
-          <img src="/home/prob-king-sol.png" alt="Aaluxury Intro Hero Mobile" className="w-full h-auto object-contain" />
-        </div>
-      </section>
-
-      <section className="py-16 px-4">
-        <img src="/home/aalux-body-img.png" alt="Aaluxury Moodboard" className="w-full h-auto" />
-      </section>
-
-
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="mb-8">
-            <h2 className="text-4xl font-bold mb-4 font-display">Solution</h2>
-            <p className="text-muted-foreground mx-0 my-0 px-0 py-0 text-sm text-left left text">
-              Based on the chosen moodboard, we developed a comprehensive brand identity system. This included the final logo design, a refined color palette, typography guidelines, and imagery standards, all carefully crafted to elevate Aalux Labs' presence in the luxury market and support their goal of global expansion.
-            </p>
-          </div>
-          <div className="w-full flex justify-center">
-            <img src="/home/aalux-bento.png" alt="Aaluxury Brand Presentation" className="w-full max-w-10xl h-auto object-cover" />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* Left Column: Text */}
-        <div>
-          <h2 className="text-4xl font-bold mb-4 font-display">Others</h2>
-          <p className="text-sm text-muted-foreground">
-            The brand asked for a more vibrant vibe and packaging for a wider audience which they decided to market as the norm while their luxury is kept for high end customers. So, we delivered.
-          </p>
-        </div>
-        {/* Right Column: Image */}
-        <img src="/home/alux-label.png" alt="Other Project Image" />
-      </section>
-
-      <section className="py-15 py-4 px-4 bg-[#f2f2f2]">
-        <img src="/home/alux-bento-vibe.png" alt="Full width image" className="w-full h-auto" />
       </section>
 
       <Cta />

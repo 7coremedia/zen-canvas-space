@@ -117,6 +117,10 @@ export default {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -132,6 +136,7 @@ export default {
         "gradient": "gradient 8s ease infinite",
         enter: "fade-in 0.3s ease-out, scale-in 0.2s ease-out",
         exit: "fade-out 0.3s ease-out, scale-out 0.2s ease-out",
+        marquee: "marquee 22s linear infinite",
       },
     },
   },

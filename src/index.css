@@ -145,6 +145,7 @@ All colors MUST be HSL.
   .hover-scale:hover {
     transform: scale(1.05);
   }
+
   .pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
@@ -155,14 +156,19 @@ All colors MUST be HSL.
     font-weight: 500;
     letter-spacing: 0.025em;
   }
-  
+
+  .font-display.normal-case,
+  .font-display.lowercase,
+  .font-display.capitalize {
+    text-transform: none;
+  }
+
   /* Hero section enhancements */
   .hero-gradient {
     background: linear-gradient(45deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%);
     background-size: 400% 400%;
     animation: gradient 8s ease infinite;
   }
-  
   .typewriter-cursor {
     border-right: 2px solid;
     animation: blink 1s infinite;
