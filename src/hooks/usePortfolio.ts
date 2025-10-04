@@ -52,18 +52,18 @@ export function usePortfolioItems() {
 
   const updateOrder = useMutation({
     mutationFn: async (updates: { id: string; order_index: number }[]) => {
-      // Use UPSERT to handle multiple updates in one call
-      const { error } = await supabase
-        .from("portfolios")
-        .upsert(
-          updates.map(({ id, order_index }) => ({
+      // Using .upsert() requires all fields. Looping with .update() is safer for partial updates.
+      for (const update of updates) {
+        const { error } = await supabase
+          .from("portfolios")
+          .update({
             id,
             order_index,
             updated_at: new Date().toISOString(),
-          }))
-        );
-
-      if (error) throw error;
+          })
+          .eq("id", update.id);
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolioItems"] });

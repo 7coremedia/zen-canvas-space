@@ -45,6 +45,14 @@ export default function EditPortfolio() {
         is_published: data.is_published,
         is_multiple_partners: data.is_multiple_partners ?? false,
         brand_name: data.brand_name ?? null,
+        // New fields
+        industry: data.industry,
+        location: data.location,
+        our_role: data.our_role,
+        the_challenge: data.the_challenge,
+        the_solution: data.the_solution,
+        notes: data.notes,
+        is_notes_downloadable: data.is_notes_downloadable,
         updated_at: new Date().toISOString(),
       };
 
@@ -186,6 +194,14 @@ export default function EditPortfolio() {
           tagline: (portfolio as any).tagline,
           year: (portfolio as any).year,
           is_published: portfolio.is_published,
+          // New fields
+          industry: (portfolio as any).industry,
+          location: (portfolio as any).location,
+          our_role: (portfolio as any).our_role,
+          the_challenge: (portfolio as any).the_challenge,
+          the_solution: (portfolio as any).the_solution,
+          notes: (portfolio as any).notes,
+          is_notes_downloadable: (portfolio as any).is_notes_downloadable,
           is_multiple_partners: (portfolio as any).is_multiple_partners,
           brand_name: (portfolio as any).brand_name,
           media_url: (portfolio as any).cover_url ?? (portfolio as any).media_url,

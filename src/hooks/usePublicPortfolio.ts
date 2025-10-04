@@ -24,6 +24,13 @@ export interface PublicPortfolioItem {
   is_published: boolean;
   portfolio_type?: 'gallery' | 'case_study';
   pdf_url?: string | null;
+  industry?: string;
+  location?: string;
+  our_role?: string;
+  the_challenge?: string;
+  the_solution?: string;
+  notes?: any;
+  is_notes_downloadable?: boolean;
   created_at: string;
   updated_at: string;
   partners?: PublicPartner[];
