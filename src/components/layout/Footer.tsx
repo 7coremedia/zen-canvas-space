@@ -27,7 +27,19 @@ export default function Footer() {
             </div>
             <div className="md:col-start-7 md:col-span-5 lg:col-start-8 lg:col-span-4">
               <p className="text-sm md:text-base leading-relaxed text-neutral-800">
-                KING’S EMPIRE is the branding force that shapes culture through design. We don’t build brands—we crown kings. With strategy, creativity, and relentless execution, we transform names into legacies. For visionaries who demand power, presence, and permanence, there is no alternative—only the Empire.
+                KING is Africa’s leading design agency. We help brands in Lagos, Abuja, Port Harcourt, Ibadan, Kano and across Nigeria bring their ideas to life with world-class logos, branding, and creative work.
+              </p>
+              <p className="mt-4 text-sm md:text-base leading-relaxed text-neutral-800">
+                From simple logos to full campaigns, fashion ads, movies, music, books, and digital content—we design for all of Africa. Our team is home to some of the best logo designers in Nigeria and across the continent.
+              </p>
+              <p className="mt-4 text-sm md:text-base leading-relaxed text-neutral-800">
+                But KING is more than design. We are Africa’s first and largest collaborative design platform. We shape how people see Africa, how they feel about it, and what they believe. Our work is about culture as much as business.
+              </p>
+              <p className="mt-4 text-sm md:text-base leading-relaxed text-neutral-800">
+                We offer design consultation, brand identity, advertising, fashion and lifestyle campaigns, creative direction, and more. If it needs design, KING makes it happen.
+              </p>
+              <p className="mt-4 text-sm md:text-base leading-relaxed text-neutral-800">
+                We don’t just design. We build culture.
               </p>
             </div>
           </div>

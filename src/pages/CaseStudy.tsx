@@ -8,6 +8,7 @@ import MultiplePartnersHeader from "@/components/case-study/MultiplePartnersHead
 import SinglePartnerHeader from "@/components/case-study/SinglePartnerHeader";
 import PortfolioMediaDisplay from "@/components/portfolio/PortfolioMediaDisplay";
 import PortfolioItem from "@/components/portfolio/PortfolioItem";
+import ProjectInfoOverlay from "@/components/smart-blocks/ProjectInfoOverlay";
 import PortfolioActions from "@/components/portfolio/PortfolioActions";
 import { cn } from '@/lib/utils';
 
@@ -15,6 +16,9 @@ export default function CaseStudy() {
   const { slug } = useParams<{ slug: string }>();
   const { data: currentCaseStudy, isLoading, error } = usePublicPortfolioItem(slug || '');
   const { data: portfolioMedia, isLoading: isLoadingMedia } = usePublicPortfolioMedia(currentCaseStudy?.id || '');
+  
+  // Fetch all portfolio items to find related ones.
+  // Note: usePublicPortfolioItem already fetches the full item, so we can use `currentCaseStudy` for the overlay.
   const { data: allPortfolioItems } = usePublicPortfolio();
 
   if (isLoading) {
@@ -45,7 +49,7 @@ export default function CaseStudy() {
   const projectTags = [
     currentCaseStudy.category,
     currentCaseStudy.client || "Client Work",
-    "Design",
+    currentCaseStudy.industry || "Design",
     "Creative",
     "KING",
   ];
@@ -133,10 +137,16 @@ export default function CaseStudy() {
         <div className="mb-12 border-t border-b border-gray-200 py-6">
           <h2 className="font-display text-2xl font-medium mb-3">Project Details</h2>
           <p className="text-gray-700 text-base mb-2">
-            <span className="font-semibold">Brand:</span> {currentCaseStudy.client || "Confidential Brand"}
+            <span className="font-semibold">Client:</span> {currentCaseStudy.client || "Confidential"}
           </p>
           <p className="text-gray-700 text-base">
-            <span className="font-semibold">Year:</span> {currentCaseStudy.year}
+            <span className="font-semibold">Industry:</span> {currentCaseStudy.industry || "N/A"}
+          </p>
+          <p className="text-gray-700 text-base">
+            <span className="font-semibold">Location:</span> {currentCaseStudy.location || "N/A"}
+          </p>
+          <p className="text-gray-700 text-base">
+            <span className="font-semibold">Year:</span> {currentCaseStudy.year || new Date(currentCaseStudy.created_at).getFullYear()}
           </p>
           <p className="text-gray-700 text-base mt-2">
             {currentCaseStudy.tagline}
@@ -170,6 +180,12 @@ export default function CaseStudy() {
           slug={slug || ''}
           variant="bottom"
         />
+      </div>
+
+      {/* Floating "About project" button */}
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
+        {/* Pass the full currentCaseStudy object which now contains all the new details */}
+        <ProjectInfoOverlay projectData={currentCaseStudy} />
       </div>
     </div>
   );

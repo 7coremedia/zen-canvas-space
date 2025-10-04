@@ -8,6 +8,7 @@ import ProcessTabs from "@/components/sections/ProcessTabs";
 import { CornerRightDown, ChevronDown } from 'lucide-react';
 import PortfolioShowcase from "@/components/sections/PortfolioShowcase";
 import { usePublicPortfolio } from "@/hooks/usePublicPortfolio";
+import ProjectInfoOverlay, { ProjectDetails } from "@/components/smart-blocks/ProjectInfoOverlay";
 import DesignSelector from "@/components/smart-blocks/smart-overlay-action";
 
 import aaluxuryBrandingPresentationHero from "@/assets/My Uploads/aaluxury-branding-presentation-hero.jpg";
@@ -197,6 +198,19 @@ const Index = () => {
     const message = `Hi King, I'm interested in the ${planName} plan. I'd like to discuss pricing and next steps.`;
     return `/contact?plan=${encodeURIComponent(planName)}&message=${encodeURIComponent(message)}`;
   };
+
+  // Mock data for the new ProjectInfoOverlay
+  const mockProjectData: ProjectDetails = {
+    client: "Aalux Labs",
+    industry: "Luxury Beauty",
+    location: "Lagos, Nigeria",
+    our_role: "Full Brand Identity & Strategy",
+    the_challenge: "Aalux Labs, a beginning luxury brand, sought a distinctive visual identity to penetrate the competitive global market. Their challenge was to create a logo and branding that conveyed luxury and sophistication while resonating with an international audience.",
+    the_solution: "Our approach began with in-depth market research and brand strategy development. We crafted a logo that blends classic elegance with modern simplicity, utilizing a custom typeface and a refined color palette to embody the brand's high-end aspirations and global vision.",
+    notes: { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Initial research focused on competitor analysis in the EU and US luxury cosmetics markets. Moodboard V2 was selected by the client for its emphasis on 'quiet luxury'." }] }] },
+    is_notes_downloadable: true,
+  };
+
   // Add scroll effect for DesignSelector
   useEffect(() => {
     const handleScroll = () => {
@@ -235,8 +249,9 @@ const Index = () => {
         <Hero />
       </div>
       
+      {/* Floating Project Info Overlay */}
       {/* Floating Design Selector */}
-      <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-500 ${
+      <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-500 ${        
         showDesignSelector ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
       }`}>
         <DesignSelector />
