@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import PortfolioItemForm from "@/components/forms/PortfolioItemForm";
+import CreatePortfolioFormV2 from "@/components/admin/CreatePortfolioFormV2";
 
 export default function CreatePortfolio() {
   const navigate = useNavigate();
@@ -13,14 +13,28 @@ export default function CreatePortfolio() {
   const { mutateAsync: createPortfolio } = useMutation({
     mutationFn: async (data: any): Promise<void> => {
       const { data: { user } } = await supabase.auth.getUser();
-
+      
+      // First, create the portfolio item
       const { data: portfolio, error } = await supabase
         .from("portfolios")
         .insert([{
-          ...data,
+          slug: data.title.toLowerCase().replace(/\s+/g, '-'),
+          title: data.title,
+          client: data.client,
+          category: data.category,
+          tagline: data.tagline,
+          year: data.year,
+          cover_url: data.media_url,
+          media_url: data.media_url,
+          media_type: 'image',
+          full_image_url: data.full_image_url,
+          is_published: data.is_published,
+          is_multiple_partners: data.is_multiple_partners || false,
+          brand_name: data.brand_name,
+          portfolio_type: data.portfolio_type || 'gallery',
+          pdf_url: data.portfolio_type === 'case_study' ? (data.pdf_url || null) : null,
+          order_index: 0,
           user_id: user?.id,
-          // Ensure slug is generated if not provided, or use the one from the form
-          slug: data.slug || data.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
         }])
         .select()
         .single();
@@ -29,9 +43,30 @@ export default function CreatePortfolio() {
         console.error("Portfolio creation error:", error);
         throw error;
       }
-      
-      // The logic for partners and media files can be added here if needed,
-      // similar to the old implementation. For now, focusing on the core portfolio item.
+
+      // Create media files entries only for gallery portfolios
+      if (data.portfolio_type !== 'case_study' && data.media_files && data.media_files.length > 0) {
+        const mediaData = data.media_files.map((media: any, index: number) => ({
+          portfolio_id: portfolio.id,
+          url: media.url,
+          media_type: media.type,
+          file_name: media.name,
+          file_size: media.size || null,
+          display_order: index,
+          is_cover: false,
+        }));
+
+        const { error: mediaError } = await supabase
+          .from("portfolio_media")
+          .insert(mediaData);
+
+        if (mediaError) {
+          console.error("Media creation error:", mediaError);
+          // Don't throw error for media, just log it
+        }
+      }
+
+      // Then, create partners if they exist
       if (data.partners && data.partners.length > 0 && portfolio) {
         const partnersData = data.partners.map((partner: any) => ({
           portfolio_id: portfolio.id,
@@ -92,9 +127,9 @@ export default function CreatePortfolio() {
         </p>
       </div>
 
-      <PortfolioItemForm
+      <CreatePortfolioFormV2
         onSubmit={handleCreate}
-        isSubmitting={isLoading}
+        isLoading={isLoading}
       />
     </main>
   );
