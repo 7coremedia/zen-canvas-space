@@ -2,21 +2,23 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { usePublicPortfolio } from "@/hooks/usePublicPortfolio";
 
-const SLIDE_INTERVAL = 5000;
+const DEFAULT_PORTFOLIO_TITLE = "Logos That are destined to work!";
 
 export default function PortfolioShowcase() {
   const { data: portfolioItems, isLoading } = usePublicPortfolio();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
-    if (!portfolioItems?.length) return;
+    if (!portfolioItems?.length || hasInitialized) return;
 
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % portfolioItems.length);
-    }, SLIDE_INTERVAL);
+    const defaultIndex = portfolioItems.findIndex((item) =>
+      item.title?.trim().toLowerCase() === DEFAULT_PORTFOLIO_TITLE.toLowerCase()
+    );
 
-    return () => clearInterval(interval);
-  }, [portfolioItems]);
+    setCurrentIndex(defaultIndex >= 0 ? defaultIndex : 0);
+    setHasInitialized(true);
+  }, [portfolioItems, hasInitialized]);
 
   if (isLoading) {
     return (
@@ -41,7 +43,7 @@ export default function PortfolioShowcase() {
   };
 
   return (
-    <section className="relative min-h-[65vh] sm:min-h-[75vh] md:min-h-screen w-full overflow-hidden">
+    <section className="group relative min-h-[65vh] sm:min-h-[75vh] md:min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0">
         {portfolioItems.map((item, index) => (
           <div
@@ -77,7 +79,7 @@ export default function PortfolioShowcase() {
           </span>
         </div>
 
-        <div className="mt-8 sm:mt-10 flex items-center gap-3 sm:gap-4">
+        <div className="mt-8 sm:mt-10 flex items-center gap-3 sm:gap-4 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
           <button
             type="button"
             onClick={() => goTo(currentIndex - 1)}
@@ -97,7 +99,7 @@ export default function PortfolioShowcase() {
         </div>
       </div>
 
-      <div className="absolute bottom-6 sm:bottom-10 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:gap-3">
+      <div className="absolute bottom-6 sm:bottom-10 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:gap-3 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
         {portfolioItems.map((_, index) => (
           <button
             key={index}

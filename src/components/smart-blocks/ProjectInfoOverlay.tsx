@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Info } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,17 @@ type Props = {
 export default function ProjectInfoOverlay({ className, projectData }: Props) {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = open ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -54,19 +65,13 @@ export default function ProjectInfoOverlay({ className, projectData }: Props) {
         align="center"
         sideOffset={10}
         className={cn(
-          "w-[min(92vw,680px)] p-0 rounded-xl overflow-hidden border border-black/10 bg-white/35 backdrop-blur-2xl shadow-2xl",
-          "data-[state=open]:animate-in data-[side=bottom]:slide-in-from-top-2"
+          "w-[min(92vw,680px)] max-h-[85vh] p-0 rounded-xl overflow-hidden border border-black/10 bg-white/35 backdrop-blur-2xl shadow-2xl flex flex-col",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[side=bottom]:slide-in-from-top-2"
         )}
       >
         <ProjectInfoCard
           details={projectData}
-          isEditable={false} // In the portfolio view, notes are read-only
-          onDownloadNotes={() => {
-            // This function will handle the download logic, similar to BrandProfileDetails.
-            // We can use a library like html-to-image or jsPDF to generate the file.
-            console.log("Downloading notes...");
-            alert("Note download functionality will be implemented here.");
-          }}
+          isEditable={false}
         />
       </PopoverContent>
     </Popover>

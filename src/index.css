@@ -17,6 +17,22 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  @font-face {
+    font-family: "Playfair Display Local";
+    src: url("./assets/Fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf") format("truetype-variations");
+    font-weight: 300 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Playfair Display Local";
+    src: url("./assets/Fonts/Playfair_Display/PlayfairDisplay-Italic-VariableFont_wght.ttf") format("truetype-variations");
+    font-weight: 300 900;
+    font-style: italic;
+    font-display: swap;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 225 15% 10%;
@@ -113,6 +129,32 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  .home-hero-headline {
+    font-family: "Playfair Display Local", "Playfair Display", serif;
+    font-weight: 400;
+    text-transform: none;
+  }
+  .rotating-word {
+    position: relative;
+    padding-inline: 0.35rem;
+    isolation: isolate;
+  }
+  .rotating-word::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -0.35rem 0;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, rgba(254, 215, 96, 0.8), rgba(255, 196, 54, 0));
+    opacity: 0;
+    transform: scaleX(0.4);
+    transform-origin: center;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .rotating-word-active::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
   .bg-gradient-primary {
     background-image: var(--gradient-primary);
   }

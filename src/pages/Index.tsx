@@ -257,9 +257,6 @@ const Index = () => {
         <DesignSelector />
       </div>
 
-      {/* New premium content blocks */}
-      <PortfolioShowcase />
-
       <section className="px-4 py-12 md:py-16 bg-[#f2f2f2]">
         <div className="container mx-auto">
           <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-tight mb-8">
@@ -280,10 +277,10 @@ const Index = () => {
                 cover: 'https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/c65g2s60x15.png',
               },
               {
-                title: 'H202 Labs',
-                tag: 'Tech & Medicine',
-                to: '/portfolio/skincare-from-within',
-                cover: 'https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/3a5abacjjan.png',
+                title: "New Identity, New Logo",
+                tag: "Fragrance & Beauty",
+                to: "/portfolio/new-identity,-new-logo-(brand-logo)",
+                cover: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/new-identity-new-logo-cover.png",
               },
             ].map((item, i) => (
               <article
@@ -318,6 +315,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <PortfolioShowcase />
 
       {/* Case Studies Spotlight */}
       <section className="px-4 py-12 md:py-16 bg-[#f2f2f2]">

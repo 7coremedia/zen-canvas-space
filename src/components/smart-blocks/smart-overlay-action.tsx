@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
@@ -112,7 +112,7 @@ export default function DesignSelector({ className, onSelect }: Props) {
 					aria-label="Open design category selector"
 				>
 					<span className="opacity-90">I want design for</span>
-					<ChevronDown className="h-4 w-4 opacity-80" />
+					{open ? <ChevronUp className="h-4 w-4 opacity-80" /> : <ChevronDown className="h-4 w-4 opacity-80" />}
 				</Button>
 			</PopoverTrigger>
 

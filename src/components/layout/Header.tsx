@@ -12,15 +12,11 @@ import { useUser } from "@/hooks/usePortfolioAuth";
 
 export default function Header() {
   const location = useLocation();
-  const isCasePage = location.pathname.startsWith("/portfolio/");
-  // Treat all pages except home as light (black text). Case pages now use black.
-  const isLight = location.pathname !== "/";
+  // Use light (black text) styling across all routes, including the homepage.
+  const isLight = true;
   const isHome = location.pathname === "/";
   const isMobile = useIsMobile();
-  const {
-    user,
-    signOut
-  } = useAuth();
+  const { user, signOut } = useAuth();
   const { role } = useUser();
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [isHidden, setIsHidden] = React.useState(false);
@@ -55,7 +51,7 @@ export default function Header() {
   // Use fixed positioning on all non-home pages so the header can reappear on scroll-up anywhere
   const positionClass = isHome ? "absolute" : "fixed";
   return <header className={cn(positionClass, "inset-x-0 top-1.5 z-50 h-16 bg-transparent transition-transform duration-300 will-change-transform", isHidden ? "-translate-y-full" : "translate-y-0")}>
-      <div className={cn("container mx-auto flex h-full items-center justify-between", isLight ? "text-black" : "text-white")}> 
+      <div className={cn("container mx-auto grid h-full grid-cols-[auto_1fr_auto] items-center", isLight ? "text-black" : "text-white")}> 
         {/* Left: Menu + Portfolio pill */}
         <div className="flex items-center gap-3">
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -150,9 +146,11 @@ export default function Header() {
         </div>
 
         {/* Center: Logo */}
-        <NavLink to="/" aria-label="Home" className="inline-flex items-center">
-          <img src={logoSrc} alt="KING" className={cn("h-7 md:h-9", !isLight && "invert")} />
-        </NavLink>
+        <div className="flex items-center justify-center pl-10 md:pl-16">
+          <NavLink to="/" aria-label="Home" className="inline-flex items-center">
+            <img src={logoSrc} alt="KING" className={cn("h-7 md:h-9", !isLight && "invert")} />
+          </NavLink>
+        </div>
 
         {/* Right: Contact + CTA */}
         <div className="flex items-center gap-4">

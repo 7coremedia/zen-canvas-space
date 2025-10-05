@@ -1,80 +1,154 @@
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useState, useEffect } from "react";
-import heroImage from "@/assets/hero-king.jpg";
+import heroImageDesktop from "@/assets/king-comes-for-his-crown.webp";
+import heroImageMobile from "@/assets/the-crown-is-his-mobile.webp";
+import brandsWorkedWith from "@/assets/brands-worked-with.png";
+import heroImageMuseum from "@/assets/hero-image-museum.webp";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { Briefcase } from "lucide-react";
-import GlowingInput from "./GlowingInput";
-import { useTypewriter } from "@/hooks/useTypewriter";
-import { useABTest } from "@/hooks/useABTest";
+import DesignSelector from "@/components/smart-blocks/smart-overlay-action";
 
-// Copy variants for A/B testing
-const copyVariants = [
-  {
-    id: 'warlike',
-    title: 'We craft brands that nuke the competition.',
-    subtitle: 'We don\'t design—we crown ideas into empires.',
-    description: 'We craft brands that dominate, disrupt, and dethrone.',
-    tagline: 'While others play safe, we build movements that make rivals wonder how they lost it all.'
-  },
-  {
-    id: 'regal',
-    title: 'We crown ideas into movements.',
-    subtitle: 'We craft brands that command attention, crush competitors, and turn markets into kingdoms.',
-    description: 'The brands we build don\'t just lead—they reign.',
-    tagline: ''
-  },
-  {
-    id: 'spellbinding',
-    title: 'We craft brands that cast a spell.',
-    subtitle: 'Movements that pull crowds, keep people waiting, and make the media chase.',
-    description: 'We don\'t design—we ignite obsessions.',
-    tagline: 'Competitors don\'t just lose customers—they lose control.'
-  }
+const rotatingTerms = [
+  "Collaborative",
+  "Branding",
+  "UI/UX",
+  "Ads",
+  "Music",
+  "Film",
+  "Fashion",
+  "Anything"
 ];
 
-// Function to apply italics to specific words
-const applyItalics = (text: string, wordsToItalicize: string[]) => {
-  let result = text;
-  wordsToItalicize.forEach(word => {
-    const regex = new RegExp(`\\b${word}\\b`, 'gi');
-    result = result.replace(regex, `<em>${word.toLowerCase()}</em>`);
-  });
-  return result;
-};
+const ctaOptions = [
+  { label: "Commission Contract", to: "/contracts" },
+  { label: "Partnership", to: "/partnership" },
+  { label: "Jobs", to: "/jobs" },
+  { label: "About", to: "/about" },
+];
 
 export default function Hero() {
-  const selectedCopy = useABTest(copyVariants, 'hero-copy');
-  const [showTypewriter, setShowTypewriter] = useState(false);
-  
-  // Typewriter effect for the subtitle and description
-  const typewriterWords = [
-    selectedCopy.subtitle,
-    selectedCopy.description,
-    selectedCopy.tagline
-  ].filter(Boolean).map(text => {
-    if (selectedCopy.id === 'warlike') {
-      return applyItalics(text, ['craft', 'competition']);
-    } else if (selectedCopy.id === 'regal') {
-      return applyItalics(text, ['crown', 'movements']);
-    } else {
-      return applyItalics(text, ['craft', 'spell']);
-    }
-  });
+  const [activeWordIndex, setActiveWordIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fadeOutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fadeInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [ctaIndex, setCtaIndex] = useState(0);
+  const [isCtaTransitioning, setIsCtaTransitioning] = useState(false);
+  const ctaIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const ctaFadeOutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ctaFadeInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const contractButtonRef = useRef<HTMLButtonElement | null>(null);
+  const contractLabelRef = useRef<HTMLSpanElement | null>(null);
+  const [ctaWidth, setCtaWidth] = useState<number | null>(null);
 
-  const { text: typewriterText, isTyping } = useTypewriter({
-    words: typewriterWords,
-    typeSpeed: 80,
-    deleteSpeed: 40,
-    delaySpeed: 2000,
-    loop: true
-  });
-
-  // Start typewriter effect after title animation
   useEffect(() => {
-    const timer = setTimeout(() => setShowTypewriter(true), 1000);
-    return () => clearTimeout(timer);
+    const triggerTransition = () => {
+      setIsTransitioning(true);
+      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
+      if (fadeInTimeoutRef.current) clearTimeout(fadeInTimeoutRef.current);
+
+      fadeOutTimeoutRef.current = setTimeout(() => {
+        setActiveWordIndex((prev) => (prev + 1) % rotatingTerms.length);
+      }, 220);
+
+      fadeInTimeoutRef.current = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 620);
+    };
+
+    intervalRef.current = setInterval(triggerTransition, 8000);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
+      if (fadeInTimeoutRef.current) clearTimeout(fadeInTimeoutRef.current);
+    };
   }, []);
+
+  const activeWord = rotatingTerms[activeWordIndex];
+  const activeCta = ctaOptions[ctaIndex];
+
+  const headlineLines = [
+    (
+      <>
+        <span className="font-normal">We</span>{" "}
+        <span className="font-normal">are</span>{" "}
+        <span className="font-bold">Africa’s</span>
+      </>
+    ),
+    (
+      <>
+        <span className="font-bold italic">Largest</span>{" "}
+        <span
+          key={activeWord}
+          className={`rotating-word italic font-normal inline-block transition-all duration-600 ease-out ${
+            isTransitioning ? "opacity-0 translate-y-3 blur-[2px]" : "opacity-100 translate-y-0 blur-0 rotating-word-active"
+          }`}
+        >
+          {activeWord}
+        </span>
+      </>
+    ),
+    (
+      <>
+        <span className="italic font-normal">Design</span>{" "}
+        <span className="font-normal">Agency</span>
+      </>
+    )
+  ];
+
+  useEffect(() => {
+    const triggerCtaTransition = () => {
+      setIsCtaTransitioning(true);
+      if (ctaFadeOutTimeoutRef.current) clearTimeout(ctaFadeOutTimeoutRef.current);
+      if (ctaFadeInTimeoutRef.current) clearTimeout(ctaFadeInTimeoutRef.current);
+
+      ctaFadeOutTimeoutRef.current = setTimeout(() => {
+        setCtaIndex((prev) => (prev + 1) % ctaOptions.length);
+      }, 220);
+
+      ctaFadeInTimeoutRef.current = setTimeout(() => {
+        setIsCtaTransitioning(false);
+      }, 620);
+    };
+
+    ctaIntervalRef.current = setInterval(triggerCtaTransition, 30000);
+
+    return () => {
+      if (ctaIntervalRef.current) clearInterval(ctaIntervalRef.current);
+      if (ctaFadeOutTimeoutRef.current) clearTimeout(ctaFadeOutTimeoutRef.current);
+      if (ctaFadeInTimeoutRef.current) clearTimeout(ctaFadeInTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (!contractButtonRef.current || !contractLabelRef.current) {
+        setCtaWidth(null);
+        return;
+      }
+
+      const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches;
+      if (!isDesktop) {
+        setCtaWidth(null);
+        return;
+      }
+
+      const labelWidth = contractLabelRef.current.scrollWidth;
+      const computedStyle = getComputedStyle(contractButtonRef.current);
+      const paddingLeft = parseFloat(computedStyle.paddingLeft || "0");
+      const paddingRight = parseFloat(computedStyle.paddingRight || "0");
+      const horizontalPadding = paddingLeft + paddingRight;
+      setCtaWidth(labelWidth + horizontalPadding);
+    };
+
+    requestAnimationFrame(updateWidth);
+    window.addEventListener("resize", updateWidth);
+
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+    };
+  }, [ctaIndex]);
 
   return (
     <section className="relative h-[100svh] min-h-[520px] sm:min-h-[620px] w-full overflow-hidden">
@@ -85,71 +159,97 @@ export default function Hero() {
       </Helmet>
       
       {/* Background Image */}
-      <img
-        src={heroImage}
-        alt="KING hero background"
-        loading="eager"
-        className="absolute inset-0 h-full w-full object-cover pointer-events-none"
-      />
+      <picture className="absolute inset-0 h-full w-full pointer-events-none">
+        <source media="(max-width: 767px)" srcSet={heroImageMobile} />
+        <img
+          src={heroImageDesktop}
+          alt="KING hero background"
+          loading="eager"
+          className="h-full w-full object-cover pointer-events-none"
+        />
+      </picture>
 
       {/* Animated Background Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40 animate-gradient bg-[length:400%_400%] pointer-events-none" />
 
-      {/* Hero Content - Hidden on larger screens */}
-      <div className="relative z-10 flex h-full items-start justify-center px-4 pt-32 md:hidden pointer-events-none">
-        <div className="mx-auto max-w-4xl text-center text-white">
-          {/* Main Title - Bold and Static with Playfair Display */}
-          <h1 
-            className="mb-4 font-display text-3xl font-medium leading-tight tracking-tight md:text-5xl lg:text-6xl xl:text-7xl"
-            dangerouslySetInnerHTML={{
-              __html: selectedCopy.id === 'warlike' 
-                ? applyItalics(selectedCopy.title, ['craft', 'competition'])
-                : selectedCopy.id === 'regal'
-                ? applyItalics(selectedCopy.title, ['crown', 'movements'])
-                : applyItalics(selectedCopy.title, ['craft', 'spell'])
-            }}
-          />
+      {/* Hero Content */}
+      <div className="relative z-10 flex h-full items-start justify-center px-6 pt-40 md:pt-48 pointer-events-none">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-start text-left text-black gap-10 pointer-events-auto lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex w-full flex-col items-start gap-10">
+          <h1 className="home-hero-headline leading-[1.18] tracking-[-0.06em] text-[28px] sm:text-[34px] md:text-[40px] lg:text-[48px]">
+            {headlineLines.map((line, index) => (
+              <span key={index} className="block">
+                {line}
+              </span>
+            ))}
+          </h1>
 
-          {/* Typewriter Section - 14px size */}
-          {showTypewriter && (
-            <div className="mb-6 min-h-[60px] text-sm font-medium leading-relaxed md:text-base lg:text-lg">
-              <span 
-                className="text-white/90"
-                dangerouslySetInnerHTML={{ __html: typewriterText }}
+          <div className="flex flex-col gap-1.5 text-left font-sans text-[11px] text-black/70 sm:text-xs md:text-sm max-w-md">
+            <p className="leading-relaxed">
+              Brands. Websites. Apps. Movies. Books. Fashion. Commercials. Music. Advertisements.
+            </p>
+            <p className="leading-relaxed">
+              We are Africa’s largest and most collaborative design agency — shaping creativity for it all.
+            </p>
+            <p className="leading-snug text-black/80">
+              We are <span className="font-bold">Africa’s Cultural DNA</span> in art form.
+            </p>
+          </div>
+
+      <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-6 pointer-events-none">
+        <img
+          src={brandsWorkedWith}
+          alt="Partner brands"
+          className="w-full max-w-5xl opacity-95"
+          loading="lazy"
+        />
+      </div>
+
+          <div className="flex flex-wrap items-center gap-3 text-left sm:gap-4">
+            <NavLink to="/contact" className="w-auto">
+              <Button
+                size="default"
+                className="w-auto px-5 py-3 text-xs sm:text-sm font-semibold text-black bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-200 hover:to-amber-300 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                Contact KING
+              </Button>
+            </NavLink>
+            <NavLink to={activeCta.to} className="w-auto">
+              <Button
+                variant="outline"
+                size="default"
+                ref={contractButtonRef}
+                style={ctaWidth ? { width: `${ctaWidth}px`, transition: "width 0.4s ease" } : undefined}
+                className="w-auto border-black/20 bg-white/80 px-5 py-3 text-xs sm:text-sm font-semibold text-black hover:bg-black/5 transition-all duration-300"
+              >
+                <span
+                  key={activeCta.label}
+                  className={`inline-block transition-all duration-600 ease-out ${
+                    isCtaTransitioning ? "opacity-0 translate-y-2 blur-[2px]" : "opacity-100 translate-y-0 blur-0"
+                  }`}
+                >
+                  {activeCta.label}
+                </span>
+              </Button>
+            </NavLink>
+          </div>
+          </div>
+
+          <div className="relative hidden w-full max-w-md lg:block">
+            <div className="relative h-[360px] overflow-hidden rounded-[32px] bg-black/5 backdrop-blur-sm transition-transform duration-300 lg:-translate-y-16">
+              <img
+                src={heroImageMuseum}
+                alt="Gallery installation"
+                className="h-full w-full object-cover origin-center scale-[1.6]"
+                loading="eager"
               />
-              {/* Blinking Cursor */}
-              <span className={`ml-1 inline-block h-4 w-0.5 bg-yellow-400 md:h-6 ${isTyping ? 'animate-blink' : ''}`} />
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Glowing Input Component */}
-      <div className="absolute inset-x-0 bottom-32 z-20 flex justify-center px-4">
-        <GlowingInput />
-      </div>
-
-      {/* Bottom CTA buttons - Animated with gold shimmer */}
-      <div className="absolute inset-x-0 bottom-8 z-20 flex items-center justify-center px-6 text-white">
-        <div className="mx-auto flex w-full max-w-xl items-center justify-center gap-4">
-          <NavLink to="/contact" className="flex-1">
-            <Button 
-              size="default"
-              className="w-full gold-shimmer px-6 py-4 text-sm font-semibold text-black backdrop-blur-sm transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl touch-manipulation"
-            >
-              Start With KING
-            </Button>
-          </NavLink>
-          
-          <NavLink to="/portfolio" className="flex-1">
-            <Button 
-              variant="outline" 
-              size="default"
-              className="w-full border-white/30 bg-white/10 px-6 py-4 text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-lg touch-manipulation"
-            >
-              View Portfolio <Briefcase className="ml-2 h-4 w-4" />
-            </Button>
-          </NavLink>
+            <div className="pointer-events-auto absolute left-1/2 bottom-6 flex -translate-x-1/2 lg:bottom-10">
+              <DesignSelector
+                className="!w-auto !rounded-2xl !bg-gradient-to-r !from-amber-300 !to-amber-400 !border-none !px-4 !py-1.5 !h-10 !min-h-0 !text-[11px] sm:!text-xs !font-semibold !text-black !shadow-lg hover:!from-amber-200 hover:!to-amber-300"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
