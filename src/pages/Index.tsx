@@ -280,7 +280,7 @@ const Index = () => {
                 title: "New Identity, New Logo",
                 tag: "Fragrance & Beauty",
                 to: "/portfolio/new-identity,-new-logo-(brand-logo)",
-                cover: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/new-identity-new-logo-cover.png",
+                cover: "https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/1vmg5mladruh.jpg",
               },
             ].map((item, i) => (
               <article
