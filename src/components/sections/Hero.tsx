@@ -21,7 +21,7 @@ const rotatingTerms = [
 
 const ctaOptions = [
   { label: "Commission Contract", to: "/contracts" },
-  { label: "Partnership", to: "/partnership" },
+  { label: "Partnership", to: "/jobs" },
   { label: "Jobs", to: "/jobs" },
   { label: "About", to: "/about" },
 ];
@@ -170,13 +170,13 @@ export default function Hero() {
       </picture>
 
       {/* Animated Background Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40 animate-gradient bg-[length:400%_400%] pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40 pointer-events-none" />
 
       {/* Hero Content */}
       <div className="relative z-10 flex h-full items-start justify-center px-6 pt-40 md:pt-48 pointer-events-none">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-start text-left text-black gap-10 pointer-events-auto lg:flex-row lg:items-end lg:justify-between">
           <div className="flex w-full flex-col items-start gap-10">
-          <h1 className="home-hero-headline leading-[1.18] tracking-[-0.06em] text-[28px] sm:text-[34px] md:text-[40px] lg:text-[48px]">
+          <h1 className="home-hero-headline leading-[1.12] tracking-[-0.06em] text-[34px] sm:text-[40px] md:text-[48px] lg:text-[56px]">
             {headlineLines.map((line, index) => (
               <span key={index} className="block">
                 {line}
@@ -184,7 +184,7 @@ export default function Hero() {
             ))}
           </h1>
 
-          <div className="flex flex-col gap-1.5 text-left font-sans text-[11px] text-black/70 sm:text-xs md:text-sm max-w-md">
+          <div className="flex flex-col gap-1.5 text-left font-sans text-[13px] text-black/70 sm:text-sm md:text-base max-w-md">
             <p className="leading-relaxed">
               Brands. Websites. Apps. Movies. Books. Fashion. Commercials. Music. Advertisements.
             </p>
@@ -196,33 +196,25 @@ export default function Hero() {
             </p>
           </div>
 
-      <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-6 pointer-events-none">
-        <img
-          src={brandsWorkedWith}
-          alt="Partner brands"
-          className="w-full max-w-5xl opacity-95"
-          loading="lazy"
-        />
-      </div>
-
-          <div className="flex flex-wrap items-center gap-3 text-left sm:gap-4">
-            <NavLink to="/contact" className="w-auto">
+          <div className="flex w-full flex-row flex-wrap items-center gap-3 sm:gap-4">
+            <NavLink to="/contact" className="flex-1 min-w-[150px] sm:min-w-0 sm:w-auto">
               <Button
                 size="default"
-                className="w-auto px-5 py-3 text-xs sm:text-sm font-semibold text-black bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-200 hover:to-amber-300 transition-all duration-300 shadow-md hover:shadow-lg"
+                className="w-full px-5 py-3 text-sm font-semibold text-black bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-200 hover:to-amber-300 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Contact KING
               </Button>
             </NavLink>
-            <NavLink to={activeCta.to} className="w-auto">
+            <NavLink to={activeCta.to} className="flex-1 min-w-[150px] sm:min-w-0 sm:w-auto">
               <Button
                 variant="outline"
                 size="default"
                 ref={contractButtonRef}
                 style={ctaWidth ? { width: `${ctaWidth}px`, transition: "width 0.4s ease" } : undefined}
-                className="w-auto border-black/20 bg-white/80 px-5 py-3 text-xs sm:text-sm font-semibold text-black hover:bg-black/5 transition-all duration-300"
+                className="w-full border-black/20 bg-white/80 px-5 py-3 text-sm font-semibold text-black hover:bg-black/5 transition-all duration-300"
               >
                 <span
+                  ref={contractLabelRef}
                   key={activeCta.label}
                   className={`inline-block transition-all duration-600 ease-out ${
                     isCtaTransitioning ? "opacity-0 translate-y-2 blur-[2px]" : "opacity-100 translate-y-0 blur-0"
@@ -233,6 +225,19 @@ export default function Hero() {
               </Button>
             </NavLink>
           </div>
+          <div className="absolute inset-x-0 bottom-[100px] z-30 flex justify-center sm:hidden pointer-events-none">
+            <div className="pointer-events-auto">
+              <DesignSelector className="!w-auto !rounded-2xl !bg-gradient-to-r !from-amber-300 !to-amber-400 !border-none !px-4 !py-2 !h-10 !min-h-0 !text-[11px] !font-semibold !text-black !shadow-lg hover:!from-amber-200 hover:!to-amber-300" />
+            </div>
+          </div>
+      <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-8 sm:pb-0 pointer-events-none">
+        <img
+          src={brandsWorkedWith}
+          alt="Partner brands"
+          className="w-[140%] max-w-none opacity-95 sm:w-full sm:max-w-5xl"
+          loading="lazy"
+        />
+      </div>
           </div>
 
           <div className="relative hidden w-full max-w-md lg:block">
