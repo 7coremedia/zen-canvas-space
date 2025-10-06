@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface PortfolioItemProps {
   title: string;
@@ -14,11 +15,15 @@ export default function PortfolioItem({
   title,
   category,
   imageUrl,
+  slug,
 }: PortfolioItemProps) {
   const [loaded, setLoaded] = React.useState(false);
 
   return (
-    <div className="relative group select-none">
+    <Link
+      to={`/portfolio/${slug}`}
+      className="relative group block select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black/60 rounded-2xl"
+    >
       {/* Media container with rounded corners (non-interactive) */}
       <div className="relative w-full bg-gray-100 rounded-2xl overflow-hidden">
         {/* Skeleton */}
@@ -58,6 +63,6 @@ export default function PortfolioItem({
         <h3 className="font-display text-base font-medium leading-tight">{title}</h3>
         <p className="text-xs text-gray-500 mt-1">{category}</p>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -12,6 +12,7 @@ import {
   Edit3,
   List,
   Database,
+  BookOpen,
 } from "lucide-react";
 
 export default function ManagementDashboard() {
@@ -62,6 +63,13 @@ export default function ManagementDashboard() {
       icon: Edit3,
       href: "/management/portfolio",
       roles: ["is_admin", "is_moderator", "is_worker"],
+    },
+    {
+      title: "Manage Volumes",
+      description: "Create, edit, and publish KING Volumes",
+      icon: BookOpen,
+      href: "/management/volumes",
+      roles: ["is_admin", "is_moderator"],
     },
   ];
   const hasAccess = (allowedRoles: string[]) => {

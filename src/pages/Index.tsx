@@ -230,7 +230,7 @@ const Index = () => {
   return (
     <main className="bg-[#f2f2f2] relative">
       <Helmet>
-        <title>KING – Branding & Creative Portfolio</title>
+        <title>The Design Agency Defining the Future of African Culture | Branding, Design &amp; UI/UX</title>
         <meta name="description" content="Premium branding, logo design, and creative portfolio by KING. Explore work, services, and start your brand journey." />
         <link rel="canonical" href="/" />
         <script type="application/ld+json">

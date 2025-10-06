@@ -19,6 +19,8 @@ import BrandDetails from "./pages/BrandDetails";
 import Dashboard from "./pages/Dashboard";
 import BrandingChat from "./pages/BrandingChat";
 import BrandProfileDetails from "./pages/BrandProfileDetails";
+import Volumes from "./pages/Volumes";
+import VolumeDetail from "./pages/VolumeDetail";
 // Dashboard imports
 import ProtectedLayout from "./components/layout/ProtectedLayout";
 import ManagementDashboard from "./pages/management/Index";
@@ -26,12 +28,14 @@ import DashboardPortfolio from "./pages/management/Portfolio";
 import CreatePortfolio from "./pages/management/CreatePortfolio";
 import EditPortfolio from "./pages/management/EditPortfolio";
 import RoleManagement from "./pages/management/RoleManagement";
+import ManagementVolumes from "./pages/management/Volumes";
 
 import { AuthProvider } from "@/hooks/useAuth";
 import { PortfolioAuthProvider } from "@/hooks/usePortfolioAuth";
 import CursorRing from "@/components/ui/CursorRing";
 import Jobs from "./pages/Jobs";
 import Contracts from "./pages/Contracts";
+import { cn } from "@/lib/utils";
 
 const queryClient = new QueryClient();
 
@@ -39,17 +43,25 @@ function AppShell() {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const isChatPage = location.pathname === "/branding-chat";
+  const isVolumeRoute = location.pathname.startsWith("/volumes");
   return (
     <>
       <CursorRing enabled={false} size={56} />
       {!isChatPage && <Header />}
-      <main className={isHome ? "" : isChatPage ? "" : "pt-28 md:pt-32"}>
+      <main
+        className={cn(
+          !isHome && !isChatPage && "pt-28 md:pt-32",
+          isVolumeRoute && "bg-[#1a1b1d]"
+        )}
+      >
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:slug" element={<CaseStudy />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/volumes" element={<Volumes />} />
+          <Route path="/volumes/:id" element={<VolumeDetail />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/contracts" element={<Contracts />} />
           <Route path="/onboarding" element={<Onboarding />} />
@@ -61,6 +73,7 @@ function AppShell() {
             <Route path="portfolio" element={<DashboardPortfolio />} />
             <Route path="portfolio/new" element={<CreatePortfolio />} />
             <Route path="portfolio/:id" element={<EditPortfolio />} />
+            <Route path="volumes" element={<ManagementVolumes />} />
             <Route path="roles" element={<RoleManagement />} />
           </Route>
           <Route path="/brand/:id" element={<BrandDetails />} />

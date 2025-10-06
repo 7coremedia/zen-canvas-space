@@ -77,6 +77,15 @@ export default function ProtectedLayout() {
               <span className="hidden sm:inline">Portfolio Management</span>
             </a>
             {(role?.is_admin || role?.is_moderator) && (
+              <a
+                href="/management/volumes"
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                <span className="sm:hidden">Volumes</span>
+                <span className="hidden sm:inline">Volumes Management</span>
+              </a>
+            )}
+            {(role?.is_admin || role?.is_moderator) && (
               <a 
                 href="/management/roles" 
                 className="text-sm font-medium transition-colors hover:text-primary"

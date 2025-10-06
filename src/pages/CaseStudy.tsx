@@ -54,6 +54,21 @@ export default function CaseStudy() {
     "KING",
   ];
 
+  const roleItems = (currentCaseStudy.our_role || "")
+    .split(/\r?\n|•|,/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  const challengeParagraphs = (currentCaseStudy.the_challenge || "")
+    .split(/\n+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  const solutionParagraphs = (currentCaseStudy.the_solution || "")
+    .split(/\n+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
@@ -86,6 +101,121 @@ export default function CaseStudy() {
           slug={slug || ''}
         />
       )}
+
+      {/* Cover Image */}
+      {currentCaseStudy.cover_url && (
+        <section className="w-full pt-6 pb-8">
+          <div className="container mx-auto px-4">
+            <div className="overflow-hidden rounded-3xl border border-black/5 shadow-sm bg-white">
+              <img
+                src={currentCaseStudy.cover_url}
+                alt={`${currentCaseStudy.title} cover`}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Project Overview */}
+      <section className="container mx-auto px-4 pt-6 pb-6">
+        <div className="lg:flex lg:justify-end">
+          <div className="w-full lg:max-w-5xl">
+            <div className="grid gap-10 lg:grid-cols-[minmax(240px,280px)_minmax(320px,1fr)] lg:items-start">
+              <div className="space-y-6">
+                <div>
+                  <h2 className="font-display text-xs uppercase tracking-[0.35em] text-gray-500 mb-2">Client</h2>
+                  <p className="text-base text-gray-900 font-medium">
+                    {currentCaseStudy.client || "Confidential"}
+                  </p>
+                  {currentCaseStudy.client_url && (
+                    <a
+                      href={currentCaseStudy.client_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-block text-sm text-gray-600 underline underline-offset-4"
+                    >
+                      {currentCaseStudy.client_url.replace(/^https?:\/\//, "")}
+                    </a>
+                  )}
+                </div>
+
+                <div className="grid gap-4">
+                  <div>
+                    <h3 className="font-display text-xs uppercase tracking-[0.35em] text-gray-500 mb-1">Industry</h3>
+                    <p className="text-sm text-gray-700">
+                      {currentCaseStudy.industry || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xs uppercase tracking-[0.35em] text-gray-500 mb-1">Location</h3>
+                    <p className="text-sm text-gray-700">
+                      {currentCaseStudy.location || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xs uppercase tracking-[0.35em] text-gray-500 mb-1">Year</h3>
+                    <p className="text-sm text-gray-700">
+                      {currentCaseStudy.year || new Date(currentCaseStudy.created_at).getFullYear()}
+                    </p>
+                  </div>
+                </div>
+
+                {(roleItems.length > 0 || currentCaseStudy.our_role) && (
+                  <div>
+                    <h3 className="font-display text-xs uppercase tracking-[0.35em] text-gray-500 mb-2">Our Role</h3>
+                    {roleItems.length > 1 ? (
+                      <ul className="space-y-1 text-sm text-gray-700 list-disc list-inside">
+                        {roleItems.map((role) => (
+                          <li key={role}>{role}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-700">
+                        {roleItems[0] || currentCaseStudy.our_role}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-8">
+                {challengeParagraphs.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="font-display text-sm uppercase tracking-[0.3em] text-gray-500">
+                      The Challenge
+                    </h3>
+                    {challengeParagraphs.map((paragraph, index) => (
+                      <p key={`challenge-${index}`} className="text-base text-gray-800 leading-relaxed">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                )}
+
+                {solutionParagraphs.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="font-display text-sm uppercase tracking-[0.3em] text-gray-500">
+                      The Solution
+                    </h3>
+                    {solutionParagraphs.map((paragraph, index) => (
+                      <p key={`solution-${index}`} className="text-base text-gray-800 leading-relaxed">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                )}
+
+                {!challengeParagraphs.length && !solutionParagraphs.length && currentCaseStudy.tagline && (
+                  <p className="text-base text-gray-800 leading-relaxed">
+                    {currentCaseStudy.tagline}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main Media Section - No Container for full-width */} 
       {currentCaseStudy.portfolio_type === 'case_study' ? (
@@ -131,26 +261,6 @@ export default function CaseStudy() {
               {tag}
             </span>
           ))}
-        </div>
-
-        {/* SEO Details / Brand Info Section */}
-        <div className="mb-12 border-t border-b border-gray-200 py-6">
-          <h2 className="font-display text-2xl font-medium mb-3">Project Details</h2>
-          <p className="text-gray-700 text-base mb-2">
-            <span className="font-semibold">Client:</span> {currentCaseStudy.client || "Confidential"}
-          </p>
-          <p className="text-gray-700 text-base">
-            <span className="font-semibold">Industry:</span> {currentCaseStudy.industry || "N/A"}
-          </p>
-          <p className="text-gray-700 text-base">
-            <span className="font-semibold">Location:</span> {currentCaseStudy.location || "N/A"}
-          </p>
-          <p className="text-gray-700 text-base">
-            <span className="font-semibold">Year:</span> {currentCaseStudy.year || new Date(currentCaseStudy.created_at).getFullYear()}
-          </p>
-          <p className="text-gray-700 text-base mt-2">
-            {currentCaseStudy.tagline}
-          </p>
         </div>
 
         {/* More Projects Section */}

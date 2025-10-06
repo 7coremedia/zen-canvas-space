@@ -57,8 +57,7 @@ export function usePortfolioItems() {
         const { error } = await supabase
           .from("portfolios")
           .update({
-            id,
-            order_index,
+            order_index: update.order_index,
             updated_at: new Date().toISOString(),
           })
           .eq("id", update.id);

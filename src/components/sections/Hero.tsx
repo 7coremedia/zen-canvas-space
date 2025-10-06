@@ -153,7 +153,7 @@ export default function Hero() {
   return (
     <section className="relative h-[100svh] min-h-[520px] sm:min-h-[620px] w-full overflow-hidden">
       <Helmet>
-        <title>KING – Branding & Creative Portfolio</title>
+        <title>The Design Agency Defining the Future of African Culture | Branding, Design &amp; UI/UX</title>
         <meta name="description" content="Crafting brands that command attention. Explore work, services, and start your brand journey with KING." />
         <link rel="canonical" href="/" />
       </Helmet>
