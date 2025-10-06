@@ -39,7 +39,7 @@ export const volumeFormSchema = z.object({
   isPublished: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   isLatest: z.boolean().default(false),
-  insights: z.array(insightSchema).min(1, "Add at least one Field Note"),
+  insights: z.array(insightSchema).min(1, "Add at least one highlight"),
 
 });
 
@@ -304,10 +304,13 @@ export default function VolumeForm({
             name="orderIndex"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Order Index</FormLabel>
+                <FormLabel>Display order</FormLabel>
                 <FormControl>
                   <Input type="number" min={0} {...field} />
                 </FormControl>
+                <div className="text-xs text-muted-foreground">
+                  Lower numbers appear first in the public list.
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -319,9 +322,9 @@ export default function VolumeForm({
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-3">
                   <div>
-                    <FormLabel>Published</FormLabel>
+                    <FormLabel>Publish on site</FormLabel>
                     <div className="text-xs text-muted-foreground">
-                      Published volumes appear on the public site.
+                      Toggle on to make this volume visible to everyone.
                     </div>
                   </div>
                   <FormControl>
@@ -336,9 +339,9 @@ export default function VolumeForm({
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-3">
                   <div>
-                    <FormLabel>Featured</FormLabel>
+                    <FormLabel>Feature this volume</FormLabel>
                     <div className="text-xs text-muted-foreground">
-                      Highlight this volume in featured slots.
+                      Promote this volume in featured slots around the site.
                     </div>
                   </div>
                   <FormControl>
@@ -353,9 +356,9 @@ export default function VolumeForm({
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-3">
                   <div>
-                    <FormLabel>Latest</FormLabel>
+                    <FormLabel>Mark as latest release</FormLabel>
                     <div className="text-xs text-muted-foreground">
-                      Mark as the latest edition shown on Volumes.
+                      Display this volume as the newest edition in feeds.
                     </div>
                   </div>
                   <FormControl>
@@ -369,7 +372,7 @@ export default function VolumeForm({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <FormLabel className="text-sm font-medium">Field Notes / Key Moves</FormLabel>
+            <FormLabel className="text-sm font-medium">Highlights</FormLabel>
             <Button
               type="button"
               variant="outline"
@@ -377,7 +380,7 @@ export default function VolumeForm({
               onClick={() => append({ value: "" })}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add note
+              Add highlight
             </Button>
           </div>
           <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
@@ -389,7 +392,7 @@ export default function VolumeForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs text-muted-foreground">
-                      Note {index + 1}
+                      Highlight {index + 1}
                     </FormLabel>
                     <div className="flex items-start gap-2">
                       <FormControl>
