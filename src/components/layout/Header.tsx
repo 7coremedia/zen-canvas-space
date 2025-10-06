@@ -145,6 +145,13 @@ export default function Header() {
                       PORTFOLIO
                     </NavLink>
                     <NavLink
+                      to="/volumes"
+                      className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight"
+                      onClick={() => setSheetOpen(false)}
+                    >
+                      VOLUMES
+                    </NavLink>
+                    <NavLink
                       to="/contracts"
                       className="block font-display font-medium text-4xl md:text-5xl lg:text-6xl text-foreground hover:text-accent transition-colors tracking-tight"
                       onClick={() => setSheetOpen(false)}
