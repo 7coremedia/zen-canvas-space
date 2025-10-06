@@ -32,8 +32,6 @@ const mapVolumeToDb = (input: Partial<VolumeRecord>) => ({
   lead_paragraph: input.leadParagraph ?? null,
   hero_image_url: input.heroImageUrl ?? null,
   is_published: input.isPublished ?? false,
-  is_featured: input.isFeatured ?? false,
-  is_latest: input.isLatest ?? false,
   order_index: input.orderIndex ?? 0,
   created_at: input.createdAt ?? new Date().toISOString(),
 });
