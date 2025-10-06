@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -113,6 +113,13 @@ export default function VolumeForm({
   onCancel,
   className,
 }: VolumeFormProps) {
+  const volumeId = initialData?.id;
+  const storageKey = useMemo(
+    () => (volumeId ? `volume-form-draft:${volumeId}` : "volume-form-draft:new"),
+    [volumeId]
+  );
+  const isHydratingRef = useRef(false);
+
   const form = useForm<VolumeFormValues>({
     resolver: zodResolver(volumeFormSchema),
     defaultValues: {
@@ -138,11 +145,49 @@ export default function VolumeForm({
     name: "insights",
   });
 
+  const clearDraft = useCallback(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.removeItem(storageKey);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const rawDraft = window.localStorage.getItem(storageKey);
+    if (!rawDraft) return;
+    try {
+      const parsed = JSON.parse(rawDraft) as Partial<VolumeFormValues>;
+      isHydratingRef.current = true;
+      form.reset({
+        ...form.getValues(),
+        ...parsed,
+        insights:
+          parsed.insights && parsed.insights.length > 0
+            ? parsed.insights
+            : [{ value: "" }],
+        orderIndex:
+          typeof parsed.orderIndex === "number"
+            ? parsed.orderIndex
+            : Number(parsed.orderIndex ?? 0),
+      });
+    } catch (error) {
+      console.warn("Invalid volume form draft, clearing stored copy", error);
+      window.localStorage.removeItem(storageKey);
+    } finally {
+      isHydratingRef.current = false;
+    }
+  }, [form, storageKey]);
+
   const titleValue = watch("title");
   const slugValue = watch("slug");
 
   useEffect(() => {
     if (initialData) {
+      if (typeof window !== "undefined") {
+        const existingDraft = window.localStorage.getItem(storageKey);
+        if (existingDraft) {
+          return;
+        }
+      }
       form.reset({
         volumeNumber: initialData.volumeNumber,
         slug: initialData.slug,
@@ -159,7 +204,7 @@ export default function VolumeForm({
         insights: getInsightsFromContent(initialData),
       });
     }
-  }, [initialData, form, defaultOrderIndex]);
+  }, [initialData, form, defaultOrderIndex, storageKey]);
 
   useEffect(() => {
     if (!initialData && titleValue && !slugValue) {
@@ -172,6 +217,28 @@ export default function VolumeForm({
       setValue("orderIndex", defaultOrderIndex);
     }
   }, [initialData, defaultOrderIndex, setValue]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const subscription = watch((values) => {
+      if (isHydratingRef.current) return;
+      const currentValues = values as VolumeFormValues;
+      const sanitized: VolumeFormValues = {
+        ...currentValues,
+        orderIndex: Number(currentValues.orderIndex ?? 0),
+        insights:
+          currentValues.insights && currentValues.insights.length > 0
+            ? currentValues.insights
+            : [{ value: "" }],
+      };
+      try {
+        window.localStorage.setItem(storageKey, JSON.stringify(sanitized));
+      } catch (error) {
+        console.warn("Unable to persist volume form draft", error);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, storageKey]);
 
   const submitHandler = async (values: VolumeFormValues) => {
     await onSubmit({
@@ -189,7 +256,13 @@ export default function VolumeForm({
       isLatest: values.isLatest,
       content: buildContentArray(values.leadParagraph, values.insights),
     });
+    clearDraft();
   };
+
+  const handleCancel = useCallback(() => {
+    clearDraft();
+    onCancel?.();
+  }, [clearDraft, onCancel]);
 
   return (
     <Form {...form}>
@@ -419,7 +492,7 @@ export default function VolumeForm({
         </div>
         <div className="flex items-center justify-end gap-3">
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={isSubmitting}>
               Cancel
             </Button>
           )}
