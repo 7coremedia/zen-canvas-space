@@ -220,15 +220,15 @@ export default function VolumeForm({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const subscription = watch((values) => {
+    const persistValues = () => {
       if (isHydratingRef.current) return;
-      const currentValues = values as VolumeFormValues;
+      const currentValues = form.getValues();
       const sanitized: VolumeFormValues = {
         ...currentValues,
         orderIndex: Number(currentValues.orderIndex ?? 0),
         insights:
           currentValues.insights && currentValues.insights.length > 0
-            ? currentValues.insights
+            ? currentValues.insights.map((item) => ({ value: item.value ?? "" }))
             : [{ value: "" }],
       };
       try {
@@ -236,9 +236,19 @@ export default function VolumeForm({
       } catch (error) {
         console.warn("Unable to persist volume form draft", error);
       }
+    };
+
+    const subscription = watch(() => {
+      persistValues();
     });
-    return () => subscription.unsubscribe();
-  }, [watch, storageKey]);
+
+    window.addEventListener("beforeunload", persistValues);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener("beforeunload", persistValues);
+    };
+  }, [watch, storageKey, form]);
 
   const submitHandler = async (values: VolumeFormValues) => {
     await onSubmit({
