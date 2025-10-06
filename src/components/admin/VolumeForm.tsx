@@ -37,6 +37,8 @@ export const volumeFormSchema = z.object({
     }),
   orderIndex: z.coerce.number().int().min(0, "Order must be zero or greater"),
   isPublished: z.boolean().default(false),
+  isFeatured: z.boolean().default(false),
+  isLatest: z.boolean().default(false),
   insights: z.array(insightSchema).min(1, "Add at least one Field Note"),
 
 });
@@ -54,6 +56,8 @@ export type VolumeSubmitPayload = {
   heroImageUrl?: string;
   orderIndex: number;
   isPublished: boolean;
+  isFeatured: boolean;
+  isLatest: boolean;
   content: string[];
 };
 
@@ -118,6 +122,8 @@ export default function VolumeForm({
       heroImageUrl: initialData?.heroImageUrl ?? "",
       orderIndex: initialData?.orderIndex ?? defaultOrderIndex,
       isPublished: initialData?.isPublished ?? false,
+      isFeatured: initialData?.isFeatured ?? false,
+      isLatest: initialData?.isLatest ?? false,
       insights: getInsightsFromContent(initialData),
     },
   });
@@ -130,6 +136,26 @@ export default function VolumeForm({
 
   const titleValue = watch("title");
   const slugValue = watch("slug");
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        volumeNumber: initialData.volumeNumber,
+        slug: initialData.slug,
+        title: initialData.title,
+        writer: initialData.writer,
+        goal: initialData.goal,
+        summary: initialData.summary,
+        leadParagraph: getLeadParagraph(initialData),
+        heroImageUrl: initialData.heroImageUrl ?? "",
+        orderIndex: initialData.orderIndex ?? defaultOrderIndex,
+        isPublished: initialData.isPublished ?? false,
+        isFeatured: initialData.isFeatured ?? false,
+        isLatest: initialData.isLatest ?? false,
+        insights: getInsightsFromContent(initialData),
+      });
+    }
+  }, [initialData, form, defaultOrderIndex]);
 
   useEffect(() => {
     if (!initialData && titleValue && !slugValue) {
@@ -155,6 +181,8 @@ export default function VolumeForm({
       heroImageUrl: values.heroImageUrl?.trim() ? values.heroImageUrl.trim() : undefined,
       orderIndex: values.orderIndex,
       isPublished: values.isPublished,
+      isFeatured: values.isFeatured,
+      isLatest: values.isLatest,
       content: buildContentArray(values.leadParagraph, values.insights),
     });
   };
@@ -280,23 +308,59 @@ export default function VolumeForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={control}
-            name="isPublished"
-            render={({ field }) => (
-              <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                <div>
-                  <FormLabel>Published</FormLabel>
-                  <div className="text-xs text-muted-foreground">
-                    Published volumes appear on the public site.
+          <div className="grid gap-3 sm:grid-cols-3">
+            <FormField
+              control={control}
+              name="isPublished"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                  <div>
+                    <FormLabel>Published</FormLabel>
+                    <div className="text-xs text-muted-foreground">
+                      Published volumes appear on the public site.
+                    </div>
                   </div>
-                </div>
-                <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                  <div>
+                    <FormLabel>Featured</FormLabel>
+                    <div className="text-xs text-muted-foreground">
+                      Highlight this volume in featured slots.
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="isLatest"
+              render={({ field }) => (
+                <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                  <div>
+                    <FormLabel>Latest</FormLabel>
+                    <div className="text-xs text-muted-foreground">
+                      Mark as the latest edition shown on Volumes.
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="space-y-3">

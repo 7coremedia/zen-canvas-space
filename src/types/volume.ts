@@ -10,6 +10,8 @@ export type VolumeRecord = {
   leadParagraph?: string | null;
   heroImageUrl?: string | null;
   isPublished: boolean;
+  isFeatured?: boolean;
+  isLatest?: boolean;
   orderIndex: number;
   createdAt?: string;
   updatedAt?: string;

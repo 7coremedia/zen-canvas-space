@@ -14,6 +14,8 @@ const mapVolumeFromDb = (row: any): VolumeRecord => ({
   leadParagraph: row.lead_paragraph ?? null,
   heroImageUrl: row.hero_image_url ?? null,
   isPublished: row.is_published,
+  isFeatured: row.is_featured ?? false,
+  isLatest: row.is_latest ?? false,
   orderIndex: row.order_index,
   createdAt: row.created_at,
   updatedAt: row.updated_at,
@@ -30,6 +32,8 @@ const mapVolumeToDb = (input: Partial<VolumeRecord>) => ({
   lead_paragraph: input.leadParagraph ?? null,
   hero_image_url: input.heroImageUrl ?? null,
   is_published: input.isPublished ?? false,
+  is_featured: input.isFeatured ?? false,
+  is_latest: input.isLatest ?? false,
   order_index: input.orderIndex ?? 0,
 });
 
