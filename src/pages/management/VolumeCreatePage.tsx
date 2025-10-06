@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '@/hooks/usePortfolioAuth';
 import { useVolumes } from '@/hooks/useVolumes';
-import VolumeForm, { VolumeFormValues, VolumeSubmitPayload } from '@/components/admin/VolumeForm';
+import VolumeForm, { VolumeSubmitPayload } from '@/components/admin/VolumeForm';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
 
@@ -19,29 +19,9 @@ export default function VolumeCreatePage() {
     }
   }, [user, role, navigate]);
 
-  const handleSubmit = async (values: VolumeFormValues) => {
+  const handleSubmit = async (payload: VolumeSubmitPayload) => {
     setIsSubmitting(true);
     try {
-      const payload: VolumeSubmitPayload = {
-        ...values,
-        // Ensure all required fields are included
-        slug: values.slug, // This is now required by the schema
-        volumeNumber: values.volumeNumber,
-        title: values.title,
-        writer: values.writer,
-        goal: values.goal,
-        summary: values.summary,
-        leadParagraph: values.leadParagraph,
-        heroImageUrl: values.heroImageUrl,
-        orderIndex: values.orderIndex,
-        isPublished: values.isPublished || false,
-        isFeatured: values.isFeatured || false,
-        isLatest: values.isLatest || false,
-        content: values.leadParagraph 
-          ? [values.leadParagraph, ...values.insights.map(i => i.value)] 
-          : values.insights.map(i => i.value),
-      };
-      
       await createVolume(payload);
       
       toast({

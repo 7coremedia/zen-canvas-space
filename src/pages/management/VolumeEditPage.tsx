@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useUser } from '@/hooks/usePortfolioAuth';
 import { useVolumes } from '@/hooks/useVolumes';
-import VolumeForm, { VolumeFormValues, VolumeSubmitPayload } from '@/components/admin/VolumeForm';
+import VolumeForm, { VolumeSubmitPayload } from '@/components/admin/VolumeForm';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
 
@@ -31,32 +31,15 @@ export default function VolumeEditPage() {
     }
   }, [user, role, navigate, volumes, id, isVolumesLoading]);
 
-  const handleSubmit = async (values: VolumeFormValues) => {
+  const handleSubmit = async (values: VolumeSubmitPayload) => {
     if (!volume) return;
     
     setIsSubmitting(true);
     try {
-      const payload: VolumeSubmitPayload = {
-        // Include all required fields explicitly
+      await updateVolume({
+        ...values,
         id: volume.id,
-        slug: values.slug,
-        volumeNumber: values.volumeNumber,
-        title: values.title,
-        writer: values.writer,
-        goal: values.goal,
-        summary: values.summary,
-        leadParagraph: values.leadParagraph,
-        heroImageUrl: values.heroImageUrl,
-        orderIndex: values.orderIndex,
-        isPublished: values.isPublished || false,
-        isFeatured: values.isFeatured || false,
-        isLatest: values.isLatest || false,
-        content: values.leadParagraph 
-          ? [values.leadParagraph, ...values.insights.map(i => i.value)] 
-          : values.insights.map(i => i.value),
-      };
-      
-      await updateVolume(payload);
+      });
       
       toast({
         title: 'Success',
