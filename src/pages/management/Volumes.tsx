@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Plus, Edit2, Trash2 } from "lucide-react";
+import { VolumeRecord } from "@/types/volume";
 
 // Moved to VolumeForm component
 
@@ -110,7 +111,7 @@ export default function ManagementVolumes() {
             <p className="text-muted-foreground mb-6">
               Create your first KING Volume to power the public content experience.
             </p>
-            <Button onClick={startCreate}>
+            <Button onClick={handleCreateNew}>
               <Plus className="mr-2 h-4 w-4" />
               Create Volume
             </Button>
