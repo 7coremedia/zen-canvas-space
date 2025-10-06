@@ -28,13 +28,14 @@ const mapVolumeToDb = (input: Partial<VolumeRecord>) => ({
   writer: input.writer,
   goal: input.goal,
   summary: input.summary,
-  content: input.content,
+  content: input.content ?? [],
   lead_paragraph: input.leadParagraph ?? null,
   hero_image_url: input.heroImageUrl ?? null,
   is_published: input.isPublished ?? false,
   is_featured: input.isFeatured ?? false,
   is_latest: input.isLatest ?? false,
   order_index: input.orderIndex ?? 0,
+  created_at: input.createdAt ?? new Date().toISOString(),
 });
 
 export const volumeQueryKeys = {
@@ -62,7 +63,7 @@ export function useVolumes() {
     mutationFn: async (payload: Partial<VolumeRecord>) => {
       const { data, error } = await supabase
         .from("volumes")
-        .insert(mapVolumeToDb(payload))
+        .insert([mapVolumeToDb(payload)])
         .select()
         .single();
 
