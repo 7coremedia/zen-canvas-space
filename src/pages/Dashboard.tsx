@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { PlusCircle, ArrowRight, RefreshCw, Database } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { migrateVolumes } from '@/services/volumeMigration';
 // Define the type for onboarding responses from Supabase
 type OnboardingResponse = {
   id: string;
@@ -39,6 +41,8 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [brands, setBrands] = useState<OnboardingResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMigrating, setIsMigrating] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -66,6 +70,15 @@ export default function Dashboard() {
     fetchBrands();
   }, [user]);
 
+  const handleMigrateVolumes = async () => {
+    const { success, message } = await migrateVolumes();
+    
+    if (success) {
+      // Refresh the page or update the UI as needed
+      window.location.reload();
+    }
+  };
+
   return (
     <main className="container mx-auto py-12">
       <Helmet>
@@ -85,6 +98,39 @@ export default function Dashboard() {
             New Brand
           </Link>
         </Button>
+      </div>
+
+      <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="border-dashed border-2">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <Database className="h-5 w-5" />
+              </div>
+              <CardTitle className="text-lg">Migrate Volumes</CardTitle>
+            </div>
+            <CardDescription className="text-sm">
+              Update existing volumes to the new format for better management
+            </CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={handleMigrateVolumes}
+              disabled={isMigrating}
+            >
+              {isMigrating ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Migrating...
+                </>
+              ) : (
+                'Migrate Now'
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
 
       {loading ? (

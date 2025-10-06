@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useUser } from "@/hooks/usePortfolioAuth";
 import { useVolumes } from "@/hooks/useVolumes";
@@ -16,44 +16,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Plus, Edit2, Trash2 } from "lucide-react";
 
-const insightSchema = z.object({
-  value: z.string().min(1, "Content cannot be empty"),
-});
-
-const volumeFormSchema = z.object({
-  volumeNumber: z.string().min(1, "Volume number is required"),
-  slug: z.string().min(1, "Slug is required"),
-  title: z.string().min(1, "Title is required"),
-  writer: z.string().min(1, "Writer is required"),
-  goal: z.string().min(1, "Goal is required"),
-  summary: z.string().min(1, "Summary is required"),
-  leadParagraph: z.string().min(1, "Lead paragraph is required"),
-  heroImageUrl: z
-    .string()
-    .url("Enter a valid URL")
-    .optional()
-    .or(z.literal("")),
-  orderIndex: z.coerce.number().int().min(0, "Order must be zero or greater"),
-  isPublished: z.boolean().default(false),
-  insights: z
-    .array(insightSchema)
-    .min(1, "Add at least one Field Notes entry"),
-});
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-const buildContentArray = (lead: string, insights: { value: string }[]) => {
-  const trimmedLead = lead.trim();
-  const rest = insights.map((item) => item.value.trim()).filter(Boolean);
-  return trimmedLead ? [trimmedLead, ...rest] : rest;
-};
-
-type VolumeFormValues = z.infer<typeof volumeFormSchema>;
+// Moved to VolumeForm component
 
 export default function ManagementVolumes() {
   const navigate = useNavigate();
@@ -63,14 +26,8 @@ export default function ManagementVolumes() {
     volumes,
     isLoading,
     error,
-    createVolume,
-    updateVolume,
     deleteVolume,
   } = useVolumes();
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingVolume, setEditingVolume] = useState<VolumeRecord | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!user || !(role?.is_admin || role?.is_moderator)) {
@@ -83,136 +40,12 @@ export default function ManagementVolumes() {
     [volumes]
   );
 
-  const form = useForm<VolumeFormValues>({
-    resolver: zodResolver(volumeFormSchema),
-    defaultValues: {
-      volumeNumber: "",
-      slug: "",
-      title: "",
-      writer: "",
-      goal: "",
-      summary: "",
-      leadParagraph: "",
-      heroImageUrl: "",
-      orderIndex: volumes.length,
-      isPublished: false,
-      insights: [{ value: "" }],
-    },
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "insights",
-  });
-
-  useEffect(() => {
-    if (!dialogOpen) {
-      return;
-    }
-
-    if (editingVolume) {
-      const lead = editingVolume.leadParagraph ?? editingVolume.content[0] ?? "";
-      const insights = (lead ? editingVolume.content.slice(1) : editingVolume.content).map(
-        (entry) => ({ value: entry })
-      );
-
-      form.reset({
-        volumeNumber: editingVolume.volumeNumber,
-        slug: editingVolume.slug,
-        title: editingVolume.title,
-        writer: editingVolume.writer,
-        goal: editingVolume.goal,
-        summary: editingVolume.summary,
-        leadParagraph: lead,
-        heroImageUrl: editingVolume.heroImageUrl ?? "",
-        orderIndex: editingVolume.orderIndex ?? 0,
-        isPublished: editingVolume.isPublished,
-        insights: insights.length > 0 ? insights : [{ value: "" }],
-      });
-    } else {
-      form.reset({
-        volumeNumber: `Volume ${volumes.length + 1}`,
-        slug: "",
-        title: "",
-        writer: "",
-        goal: "",
-        summary: "",
-        leadParagraph: "",
-        heroImageUrl: "",
-        orderIndex: volumes.length,
-        isPublished: false,
-        insights: [{ value: "" }],
-      });
-    }
-  }, [dialogOpen, editingVolume, form, volumes.length]);
-
-  const titleValue = form.watch("title");
-  const slugValue = form.watch("slug");
-
-  useEffect(() => {
-    if (!dialogOpen) return;
-    if (editingVolume) return;
-    if (slugValue) return;
-    if (!titleValue) return;
-
-    form.setValue("slug", slugify(titleValue));
-  }, [titleValue, slugValue, editingVolume, dialogOpen, form]);
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-    setEditingVolume(null);
+  const handleCreateNew = () => {
+    navigate("/management/volumes/new");
   };
 
-  const handleSubmit = async (values: VolumeFormValues) => {
-    setIsSaving(true);
-    const payload = {
-      slug: values.slug,
-      volumeNumber: values.volumeNumber,
-      title: values.title,
-      writer: values.writer,
-      goal: values.goal,
-      summary: values.summary,
-      leadParagraph: values.leadParagraph,
-      heroImageUrl: values.heroImageUrl?.trim() ? values.heroImageUrl.trim() : undefined,
-      isPublished: values.isPublished,
-      orderIndex: values.orderIndex,
-      content: buildContentArray(values.leadParagraph, values.insights),
-    } as Partial<VolumeRecord>;
-
-    try {
-      if (editingVolume) {
-        await updateVolume({
-          ...(editingVolume as VolumeRecord),
-          ...payload,
-          id: editingVolume.id,
-          content: buildContentArray(values.leadParagraph, values.insights),
-        });
-        toast({
-          title: "Volume updated",
-          description: `${values.title} saved successfully`,
-        });
-      } else {
-        await createVolume({
-          ...payload,
-          orderIndex: values.orderIndex ?? volumes.length,
-          isPublished: values.isPublished,
-        });
-        toast({
-          title: "Volume created",
-          description: `${values.title} added to the library`,
-        });
-      }
-      handleCloseDialog();
-    } catch (err: any) {
-      console.error(err);
-      toast({
-        title: "Error",
-        description: err?.message ?? "Failed to save volume",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
+  const handleEdit = (volumeId: string) => {
+    navigate(`/management/volumes/${volumeId}/edit`);
   };
 
   const handleDelete = async (volume: VolumeRecord) => {
@@ -237,16 +70,6 @@ export default function ManagementVolumes() {
     }
   };
 
-  const startCreate = () => {
-    setEditingVolume(null);
-    setDialogOpen(true);
-  };
-
-  const startEdit = (volume: VolumeRecord) => {
-    setEditingVolume(volume);
-    setDialogOpen(true);
-  };
-
   if (!user || !(role?.is_admin || role?.is_moderator)) {
     return null;
   }
@@ -264,9 +87,11 @@ export default function ManagementVolumes() {
             Publish and update KING Volumes. Each entry powers the public volumes experience and individual detail pages.
           </p>
         </div>
-        <Button onClick={startCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          New Volume
+        <Button asChild>
+          <Link to="/management/volumes/new">
+            <Plus className="mr-2 h-4 w-4" />
+            New Volume
+          </Link>
         </Button>
       </div>
 
@@ -328,11 +153,12 @@ export default function ManagementVolumes() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => startEdit(volume)}
+                        asChild
                         className="h-8 w-8"
-                        aria-label={`Edit ${volume.title}`}
                       >
-                        <Edit2 className="h-4 w-4" />
+                        <Link to={`/management/volumes/${volume.id}/edit`} aria-label={`Edit ${volume.title}`}>
+                          <Edit2 className="h-4 w-4" />
+                        </Link>
                       </Button>
                       <Button
                         variant="ghost"
@@ -352,219 +178,6 @@ export default function ManagementVolumes() {
         )}
       </Card>
 
-      <Dialog open={dialogOpen} onOpenChange={(open) => !open && handleCloseDialog()}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editingVolume ? "Edit Volume" : "Create Volume"}
-            </DialogTitle>
-            <DialogDescription>
-              {editingVolume
-                ? "Update volume details and key field notes."
-                : "Publish a new KING Volume for the public library."}
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="volumeNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Volume Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Volume I" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug</FormLabel>
-                      <FormControl>
-                        <Input placeholder="volume-i" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="sm:col-span-2">
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Brand Systems for Bold African Futures" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="writer"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Writer</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Chima Obidi, Strategy Lead" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="goal"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Goal</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Position KING as the go-to culture-led branding studio." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="summary"
-                  render={({ field }) => (
-                    <FormItem className="sm:col-span-2">
-                      <FormLabel>Summary</FormLabel>
-                      <FormControl>
-                        <Textarea rows={3} placeholder="A friendly guide to building a full identity system..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="leadParagraph"
-                  render={({ field }) => (
-                    <FormItem className="sm:col-span-2">
-                      <FormLabel>Editorial Lede</FormLabel>
-                      <FormControl>
-                        <Textarea rows={3} placeholder="Strong brands start with a promise..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="heroImageUrl"
-                  render={({ field }) => (
-                    <FormItem className="sm:col-span-2">
-                      <FormLabel>Hero Image URL (optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="orderIndex"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Order Index</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={0} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="isPublished"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                      <div>
-                        <FormLabel>Published</FormLabel>
-                        <div className="text-xs text-muted-foreground">
-                          Published volumes appear on the public site.
-                        </div>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <FormLabel className="text-sm font-medium">Field Notes / Key Moves</FormLabel>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => append({ value: "" })}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add note
-                  </Button>
-                </div>
-                <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
-                  {fields.map((fieldItem, index) => (
-                    <FormField
-                      key={fieldItem.id}
-                      control={form.control}
-                      name={`insights.${index}.value`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs text-muted-foreground">
-                            Note {index + 1}
-                          </FormLabel>
-                          <div className="flex items-start gap-2">
-                            <FormControl>
-                              <Textarea rows={2} {...field} />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 mt-1"
-                              onClick={() => remove(index)}
-                              disabled={fields.length === 1}
-                              aria-label={`Remove note ${index + 1}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3">
-                <Button type="button" variant="outline" onClick={handleCloseDialog} disabled={isSaving}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSaving}>
-                  {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {editingVolume ? "Save changes" : "Create volume"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
     </main>
   );
 }

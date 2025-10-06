@@ -97,17 +97,21 @@ interface VolumeFormProps {
   defaultOrderIndex?: number;
   isSubmitting?: boolean;
   submitLabel?: string;
+  submitButtonContent?: React.ReactNode;
   onSubmit: (payload: VolumeSubmitPayload) => Promise<void>;
   onCancel?: () => void;
+  className?: string;
 }
 
 export default function VolumeForm({
   initialData,
   defaultOrderIndex = 0,
-  isSubmitting,
-  submitLabel = "Save volume",
+  isSubmitting = false,
+  submitLabel = initialData ? "Update volume" : "Create volume",
+  submitButtonContent,
   onSubmit,
   onCancel,
+  className,
 }: VolumeFormProps) {
   const form = useForm<VolumeFormValues>({
     resolver: zodResolver(volumeFormSchema),
@@ -189,7 +193,7 @@ export default function VolumeForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(submitHandler)} className="space-y-8">
+      <form onSubmit={handleSubmit(submitHandler)} className={`space-y-8 ${className || ''}`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={control}
@@ -410,16 +414,23 @@ export default function VolumeForm({
             ))}
           </div>
         </div>
-
         <div className="flex items-center justify-end gap-3">
           {onCancel && (
             <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
               Cancel
             </Button>
           )}
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {submitLabel}
+          <Button
+            type="submit"
+            className="w-full sm:w-auto"
+            disabled={isSubmitting}
+          >
+            {submitButtonContent || (
+              <>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {submitLabel}
+              </>
+            )}
           </Button>
         </div>
       </form>
