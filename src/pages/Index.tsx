@@ -315,7 +315,7 @@ const Index = () => {
             ].map((item, i) => (
               <article
                 key={i}
-                className="min-w-[85vw] md:min-w-0 snap-center md:snap-align-none group h-full transition-transform duration-300 ease-out md:hover:-translate-y-2"
+                className="min-w-[80vw] md:min-w-0 snap-center md:snap-align-none group h-full transition-transform duration-300 ease-out md:hover:-translate-y-2"
               >
                 <a
                   href={(item as any).to ?? undefined}
