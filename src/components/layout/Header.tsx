@@ -2,7 +2,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Heart, Briefcase, LogOut, User, FileText, X } from "lucide-react";
+import { Heart, Briefcase, LogOut, User, FileText, X } from "lucide-react";
 import logoUrl from "@/assets/king-logo.svg";
 import mobileLogoUrl from "@/assets/king-logo-mobile.svg";
 import { cn } from "@/lib/utils";
@@ -87,7 +87,21 @@ export default function Header() {
                   isLight ? "text-black/90 hover:bg-black/5" : "text-white/90 hover:bg-white/10"
                 )}
               >
-                <Menu />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-9 h-9"
+                >
+                  <line x1="3" x2="21" y1="9" y2="9" />
+                  <line x1="3" x2="21" y1="15" y2="15" />
+                </svg>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-full h-full bg-background p-0 border-none max-w-full sm:max-w-md">

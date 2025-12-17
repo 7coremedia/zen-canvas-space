@@ -10,7 +10,6 @@ import { NavLink } from "react-router-dom";
 
 const rotatingTerms = [
   "Brand",
-  "Fashion",
   "UI/UX",
   "Ads",
   "Music",
