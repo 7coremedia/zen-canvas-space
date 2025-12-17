@@ -9,14 +9,12 @@ import { NavLink } from "react-router-dom";
 
 
 const rotatingTerms = [
-  "Collaborative",
-  "Branding",
+  "Brand",
+  "Fashion",
   "UI/UX",
   "Ads",
   "Music",
-  "Film",
-  "Fashion",
-  "Anything"
+  "Film"
 ];
 
 const ctaOptions = [
@@ -175,7 +173,7 @@ export default function Hero() {
       <div className="relative z-10 flex h-full items-start justify-center px-6 pt-40 md:pt-48 pointer-events-none">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-start text-left text-black gap-10 pointer-events-auto lg:flex-row lg:items-end lg:justify-between">
           <div className="flex w-full flex-col items-start gap-12 sm:gap-10">
-            <h1 className="home-hero-headline leading-[1.05] tracking-[-0.06em] text-[13.5vw] sm:text-[60px] md:text-[72px] lg:text-[86px]">
+            <h1 className="home-hero-headline leading-[1.05] tracking-[-0.06em] text-[13.5vw] sm:text-[40px] md:text-[48px] lg:text-[56px]">
               {headlineLines.map((line, index) => (
                 <span key={index} className="block">
                   {line}
@@ -188,7 +186,7 @@ export default function Hero() {
                 Brands. Websites. Apps. Movies. Books. Fashion. Commercials. Music. Advertisements.
               </p>
               <p className="leading-relaxed">
-                We are Africa’s largest and most collaborative design agency — shaping creativity for it all.
+                We are Africa’s largest and most collaborative design agency shaping creativity for it all.
               </p>
               <p className="leading-snug text-black/80">
                 We are <span className="font-bold">Africa’s Cultural DNA</span> in art form.

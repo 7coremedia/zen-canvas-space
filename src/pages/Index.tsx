@@ -363,7 +363,32 @@ const Index = () => {
         </div>
       </section>
 
-      <PortfolioShowcase />
+      <div className="hidden md:block">
+        <PortfolioShowcase />
+      </div>
+
+      {/* Open Letter to business owners */}
+      <section className="px-4 py-16 md:py-24 bg-[#f2f2f2]">
+        <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <div className="md:col-span-5">
+            <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-[-0.02em]">A letter to <em className="italic">founders</em> & builders</h2>
+          </div>
+          <div className="md:col-span-7">
+            <p className="text-base md:text-lg text-neutral-800 leading-relaxed mb-6">
+              You don’t just need a logo—you need a brand that moves people. A brand that makes decisions easier, prices higher, and growth faster. That’s why we build systems, not trends. Systems that carry your story and make your customers the <em className="italic">hero</em>.
+            </p>
+            <p className="text-base md:text-lg text-neutral-800 leading-relaxed mb-6">
+              We work in tight sprints with honest feedback loops. You’ll see progress quickly, test it with real users, and get a brand that feels inevitable. If you’re ready to build what lasts, we’re ready to crown the next king.
+            </p>
+            <img
+              src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/King-Crowns-Brands.png"
+              alt="King Crowns branding collage"
+              className="w-full rounded object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Case Studies Spotlight */}
       <section className="px-4 py-12 md:py-16 bg-[#f2f2f2]">
@@ -428,28 +453,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Open Letter to business owners */}
-      <section className="px-4 py-16 md:py-24 bg-[#f2f2f2]">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-          <div className="md:col-span-5">
-            <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-[-0.02em]">A letter to <em className="italic">founders</em> & builders</h2>
-          </div>
-          <div className="md:col-span-7">
-            <p className="text-base md:text-lg text-neutral-800 leading-relaxed mb-6">
-              You don’t just need a logo—you need a brand that moves people. A brand that makes decisions easier, prices higher, and growth faster. That’s why we build systems, not trends. Systems that carry your story and make your customers the <em className="italic">hero</em>.
-            </p>
-            <p className="text-base md:text-lg text-neutral-800 leading-relaxed mb-6">
-              We work in tight sprints with honest feedback loops. You’ll see progress quickly, test it with real users, and get a brand that feels inevitable. If you’re ready to build what lasts, we’re ready to crown the next king.
-            </p>
-            <img
-              src="https://hnuwgbalqqgnxtajjywh.supabase.co/storage/v1/object/public/portfolio-assets/King-Crowns-Brands.png"
-              alt="King Crowns branding collage"
-              className="w-full rounded object-cover"
-              loading="lazy"
-            />
-          </div>
-        </div>
-      </section>
+
 
       {/* Luxury color billboard with Playfair headline */}
       <section className="relative bg-[#1b1917] text-white overflow-hidden py-16 md:py-24">
