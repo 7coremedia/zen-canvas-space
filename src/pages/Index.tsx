@@ -21,7 +21,8 @@ import heroKing from "@/assets/hero-king.png";
 import FullScreenImage from "@/components/sections/FullScreenImage";
 import heroKingJpg from "@/assets/hero-king.jpg";
 import aaluxuryMoodboard from "@/assets/aaluxury-brand-pres.jpg";
-import aaluxResuInSea from "@/assets/aalux-resu-in-sea.png"; // Import the new image
+import aaluxResuInSea from "@/assets/aalux-resu-in-sea.png";
+import brandsWorkedWith from "@/assets/brands-worked-with.png";
 
 const Index = () => {
   const [showDesignSelector, setShowDesignSelector] = useState(false);
@@ -248,17 +249,23 @@ const Index = () => {
       <div ref={heroRef}>
         <Hero />
       </div>
-      
+
       {/* Floating Project Info Overlay */}
       {/* Floating Design Selector */}
-      <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-500 ${        
-        showDesignSelector ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
-      }`}>
+      <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 transition-all duration-500 ${showDesignSelector ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}>
         <DesignSelector />
       </div>
 
       <section className="px-4 py-12 md:py-16 bg-[#f2f2f2]">
         <div className="container mx-auto">
+          <div className="hidden md:block w-full h-24 relative overflow-hidden mb-12 max-w-5xl mx-auto opacity-95">
+            <img
+              src={brandsWorkedWith}
+              alt="Brands we have worked with"
+              className="absolute bottom-0 left-0 w-full h-auto"
+            />
+          </div>
           <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-tight mb-8">
             Featured <em className="italic">projects</em>
           </h2>
@@ -629,9 +636,8 @@ const Index = () => {
                     className="rounded-3xl bg-[#f2f2f2] p-6 md:p-10"
                   >
                     <div
-                      className={`grid grid-cols-1 gap-6 md:gap-10 ${
-                        section.stacked ? "" : "md:grid-cols-2 md:items-center"
-                      }`}
+                      className={`grid grid-cols-1 gap-6 md:gap-10 ${section.stacked ? "" : "md:grid-cols-2 md:items-center"
+                        }`}
                     >
                       <div className={section.reverse ? "order-2 md:order-1" : "order-1"}>
                         <h3 className="font-display text-3xl md:text-4xl font-medium normal-case mb-4">{section.title}</h3>
@@ -765,9 +771,8 @@ const CaseStudySpotlight = () => {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`h-2.5 w-2.5 rounded-full ${
-                index === currentIndex ? "bg-neutral-900" : "bg-neutral-300"
-              }`}
+              className={`h-2.5 w-2.5 rounded-full ${index === currentIndex ? "bg-neutral-900" : "bg-neutral-300"
+                }`}
               aria-label={`View case study ${index + 1}`}
             />
           ))}
