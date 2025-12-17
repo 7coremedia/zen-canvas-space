@@ -27,6 +27,26 @@ import brandsWorkedWith from "@/assets/brands-worked-with.png";
 const Index = () => {
   const [showDesignSelector, setShowDesignSelector] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Hint animation for horizontal scroll on mobile
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      const hintScroll = () => {
+        if (window.innerWidth < 768 && container.scrollLeft === 0) {
+          container.scrollTo({ left: 60, behavior: 'smooth' });
+          setTimeout(() => {
+            container.scrollTo({ left: 0, behavior: 'smooth' });
+          }, 800);
+        }
+      };
+
+      // Delay slightly for initial render/layout
+      const timer = setTimeout(hintScroll, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
   const portraitStripPlaceholders = Array.from({ length: 8 });
   const ambitionCardImages = [
     {
@@ -269,7 +289,10 @@ const Index = () => {
           <h2 className="font-display normal-case text-4xl md:text-6xl font-medium tracking-tight mb-8">
             Featured <em className="italic">projects</em>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12 items-start">
+          <div
+            ref={scrollRef}
+            className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10 lg:gap-12 overflow-x-auto md:overflow-visible pb-8 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory md:snap-none items-start"
+          >
             {[
               {
                 title: 'Aalux Labs',
@@ -292,14 +315,14 @@ const Index = () => {
             ].map((item, i) => (
               <article
                 key={i}
-                className="group h-full transition-transform duration-300 ease-out hover:-translate-y-2"
+                className="min-w-[85vw] md:min-w-0 snap-center md:snap-align-none group h-full transition-transform duration-300 ease-out md:hover:-translate-y-2"
               >
                 <a
                   href={(item as any).to ?? undefined}
                   className="block h-full"
                   aria-label={`Open project ${item.title}`}
                 >
-                  <div className="relative w-full aspect-[16/9] overflow-hidden rounded bg-neutral-200 transition-shadow duration-300 group-hover:shadow-xl">
+                  <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl bg-neutral-200 transition-shadow duration-300 group-hover:shadow-xl">
                     {(item as any).cover ? (
                       <img
                         src={(item as any).cover}
