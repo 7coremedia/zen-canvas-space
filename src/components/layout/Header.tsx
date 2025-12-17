@@ -234,9 +234,25 @@ export default function Header() {
                   </div>
                 </nav>
 
+
+
                 {/* Footer */}
                 <div className="p-6 border-t border-muted mt-auto">
-                  <p className="text-sm text-muted-foreground"> 2024 KING. All rights reserved.</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-foreground">Theme</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const isDark = document.documentElement.classList.toggle('dark');
+                        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                      }}
+                      className="rounded-full px-4"
+                    >
+                      Toggle Mode
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground"> 2026 KING. All rights reserved.</p>
                 </div>
               </div>
             </SheetContent>
@@ -253,17 +269,17 @@ export default function Header() {
               Portfolio <Briefcase className="ml-1" />
             </Button>
           </NavLink>
-        </div>
+        </div >
 
         {/* Center: Logo */}
-        <div className="flex items-center justify-center pl-10 md:pl-16">
+        < div className="flex items-center justify-center pl-10 md:pl-16" >
           <NavLink to="/" aria-label="Home" className="inline-flex items-center">
             <img src={logoSrc} alt="KING" className={cn("h-7 md:h-9", !isLight && "invert")} />
           </NavLink>
-        </div>
+        </div >
 
         {/* Right: Contact + CTA */}
-        <div className="flex items-center gap-4">
+        < div className="flex items-center gap-4" >
           <NavLink
             to="/contact"
             className={cn(
@@ -273,30 +289,32 @@ export default function Header() {
           >
             Contact Us <Heart className="ml-2 h-4 w-4" />
           </NavLink>
-          {user ? (
-            <NavLink to="/dashboard">
-              <Button
-                variant="dashboard"
-                className={cn(
-                  "px-4 flex items-center gap-2 text-base",
-                  isLight
-                    ? "text-black border-black hover:text-black/80 hover:border-black/80"
-                    : "text-slate-50 border-slate-50 hover:text-slate-50/90 hover:border-slate-50/90"
-                )}
-              >
-                <User className="h-4 w-4" />
-                Dashboard
-              </Button>
-            </NavLink>
-          ) : (
-            <NavLink to="/onboarding">
-              <Button variant="gold" className="px-4">
-                Start My Brand
-              </Button>
-            </NavLink>
-          )}
-        </div>
-      </div>
-    </header>
+          {
+            user ? (
+              <NavLink to="/dashboard">
+                <Button
+                  variant="dashboard"
+                  className={cn(
+                    "px-4 flex items-center gap-2 text-base",
+                    isLight
+                      ? "text-black border-black hover:text-black/80 hover:border-black/80"
+                      : "text-slate-50 border-slate-50 hover:text-slate-50/90 hover:border-slate-50/90"
+                  )}
+                >
+                  <User className="h-4 w-4" />
+                  Dashboard
+                </Button>
+              </NavLink>
+            ) : (
+              <NavLink to="/onboarding">
+                <Button variant="gold" className="px-4">
+                  Start My Brand
+                </Button>
+              </NavLink>
+            )
+          }
+        </div >
+      </div >
+    </header >
   );
 }

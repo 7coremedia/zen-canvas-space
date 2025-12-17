@@ -147,7 +147,7 @@ export default function Hero() {
   }, [ctaIndex]);
 
   return (
-    <section className="relative h-[100svh] min-h-[520px] sm:min-h-[620px] w-full overflow-hidden">
+    <section className="relative h-[100svh] min-h-[520px] sm:min-h-[620px] w-full overflow-hidden bg-white sm:bg-transparent">
       <Helmet>
         <title>The Design Agency Defining the Future of African Culture | Branding, Design &amp; UI/UX</title>
         <meta name="description" content="Crafting brands that command attention. Explore work, services, and start your brand journey with KING." />
@@ -155,7 +155,7 @@ export default function Hero() {
       </Helmet>
 
       {/* Background Image */}
-      <picture className="absolute inset-0 h-full w-full pointer-events-none">
+      <picture className="absolute inset-0 h-full w-full pointer-events-none hidden sm:block">
         <source media="(max-width: 767px)" srcSet={heroImageMobile} />
         <img
           src={heroImageDesktop}
@@ -166,7 +166,7 @@ export default function Hero() {
       </picture>
 
       {/* Animated Background Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40 pointer-events-none hidden sm:block" />
 
       {/* Hero Content */}
       <div className="relative z-10 flex h-full items-start justify-center px-6 pt-40 md:pt-48 pointer-events-none">
