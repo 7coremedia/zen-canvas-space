@@ -34,17 +34,34 @@ const Index = () => {
     const container = scrollRef.current;
     if (container) {
       const hintScroll = () => {
-        if (window.innerWidth < 768 && container.scrollLeft === 0) {
-          container.scrollTo({ left: 60, behavior: 'smooth' });
+        if (window.innerWidth < 768 && container.scrollLeft < 20) {
+          // Temporarily disable snap to allow smooth scrolling without fighting
+          container.style.scrollSnapType = 'none';
+
+          // Nudge right
+          container.scrollTo({ left: 80, behavior: 'smooth' });
+
+          // Return to start and re-enable snap
           setTimeout(() => {
             container.scrollTo({ left: 0, behavior: 'smooth' });
+
+            // Re-enable snap after the "back" animation completes
+            setTimeout(() => {
+              container.style.scrollSnapType = '';
+            }, 600);
           }, 800);
         }
       };
 
-      // Delay slightly for initial render/layout
-      const timer = setTimeout(hintScroll, 2000);
-      return () => clearTimeout(timer);
+      // Initial run
+      const timer = setTimeout(hintScroll, 2500);
+      // Repeat every 15 seconds
+      const interval = setInterval(hintScroll, 15000);
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(interval);
+      };
     }
   }, []);
   const portraitStripPlaceholders = Array.from({ length: 8 });

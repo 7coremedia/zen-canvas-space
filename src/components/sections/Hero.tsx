@@ -6,7 +6,7 @@ import heroImageMobile from "@/assets/the-crown-is-his-mobile.webp";
 import heroImageMuseum from "@/assets/hero-image-museum.webp";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import DesignSelector from "@/components/smart-blocks/smart-overlay-action";
+
 
 const rotatingTerms = [
   "Collaborative",
@@ -174,8 +174,8 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-10 flex h-full items-start justify-center px-6 pt-40 md:pt-48 pointer-events-none">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-start text-left text-black gap-10 pointer-events-auto lg:flex-row lg:items-end lg:justify-between">
-          <div className="flex w-full flex-col items-start gap-10">
-            <h1 className="home-hero-headline leading-[1.12] tracking-[-0.06em] text-[34px] sm:text-[40px] md:text-[48px] lg:text-[56px]">
+          <div className="flex w-full flex-col items-start gap-12 sm:gap-10">
+            <h1 className="home-hero-headline leading-[1.05] tracking-[-0.06em] text-[13.5vw] sm:text-[60px] md:text-[72px] lg:text-[86px]">
               {headlineLines.map((line, index) => (
                 <span key={index} className="block">
                   {line}
@@ -223,11 +223,7 @@ export default function Hero() {
                 </Button>
               </NavLink>
             </div>
-            <div className="absolute inset-x-0 bottom-[100px] z-30 flex justify-center sm:hidden pointer-events-none">
-              <div className="pointer-events-auto">
-                <DesignSelector className="!w-auto !rounded-2xl !bg-gradient-to-r !from-amber-300 !to-amber-400 !border-none !px-4 !py-2 !h-10 !min-h-0 !text-[11px] !font-semibold !text-black !shadow-lg hover:!from-amber-200 hover:!to-amber-300" />
-              </div>
-            </div>
+
 
           </div>
 
@@ -240,11 +236,7 @@ export default function Hero() {
                 loading="eager"
               />
             </div>
-            <div className="pointer-events-auto absolute left-1/2 bottom-6 flex -translate-x-1/2 lg:bottom-10">
-              <DesignSelector
-                className="!w-auto !rounded-2xl !bg-gradient-to-r !from-amber-300 !to-amber-400 !border-none !px-4 !py-1.5 !h-10 !min-h-0 !text-[11px] sm:!text-xs !font-semibold !text-black !shadow-lg hover:!from-amber-200 hover:!to-amber-300"
-              />
-            </div>
+
           </div>
         </div>
       </div>
