@@ -8,13 +8,7 @@ import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
 
 
-const rotatingTerms = [
-  "Brand",
-  "UI/UX",
-  "Ads",
-  "Music",
-  "Film"
-];
+
 
 const ctaOptions = [
   { label: "Commission Contract", to: "/contracts" },
@@ -24,11 +18,6 @@ const ctaOptions = [
 ];
 
 export default function Hero() {
-  const [activeWordIndex, setActiveWordIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const fadeOutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fadeInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [ctaIndex, setCtaIndex] = useState(0);
   const [isCtaTransitioning, setIsCtaTransitioning] = useState(false);
   const ctaIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -37,58 +26,73 @@ export default function Hero() {
   const contractButtonRef = useRef<HTMLButtonElement | null>(null);
   const contractLabelRef = useRef<HTMLSpanElement | null>(null);
   const [ctaWidth, setCtaWidth] = useState<number | null>(null);
-
   useEffect(() => {
-    const triggerTransition = () => {
-      setIsTransitioning(true);
-      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
-      if (fadeInTimeoutRef.current) clearTimeout(fadeInTimeoutRef.current);
+    const triggerCtaTransition = () => {
+      setIsCtaTransitioning(true);
+      if (ctaFadeOutTimeoutRef.current) clearTimeout(ctaFadeOutTimeoutRef.current);
+      if (ctaFadeInTimeoutRef.current) clearTimeout(ctaFadeInTimeoutRef.current);
 
-      fadeOutTimeoutRef.current = setTimeout(() => {
-        setActiveWordIndex((prev) => (prev + 1) % rotatingTerms.length);
+      ctaFadeOutTimeoutRef.current = setTimeout(() => {
+        setCtaIndex((prev) => (prev + 1) % ctaOptions.length);
       }, 220);
 
-      fadeInTimeoutRef.current = setTimeout(() => {
-        setIsTransitioning(false);
+      ctaFadeInTimeoutRef.current = setTimeout(() => {
+        setIsCtaTransitioning(false);
       }, 620);
     };
 
-    intervalRef.current = setInterval(triggerTransition, 8000);
+    ctaIntervalRef.current = setInterval(triggerCtaTransition, 30000);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
-      if (fadeInTimeoutRef.current) clearTimeout(fadeInTimeoutRef.current);
+      if (ctaIntervalRef.current) clearInterval(ctaIntervalRef.current);
+      if (ctaFadeOutTimeoutRef.current) clearTimeout(ctaFadeOutTimeoutRef.current);
+      if (ctaFadeInTimeoutRef.current) clearTimeout(ctaFadeInTimeoutRef.current);
     };
   }, []);
 
-  const activeWord = rotatingTerms[activeWordIndex];
+  useEffect(() => {
+    const updateWidth = () => {
+      if (!contractButtonRef.current || !contractLabelRef.current) {
+        setCtaWidth(null);
+        return;
+      }
+
+      const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches;
+      if (!isDesktop) {
+        setCtaWidth(null);
+        return;
+      }
+
+      const labelWidth = contractLabelRef.current.scrollWidth;
+      const computedStyle = getComputedStyle(contractButtonRef.current);
+      const paddingLeft = parseFloat(computedStyle.paddingLeft || "0");
+      const paddingRight = parseFloat(computedStyle.paddingRight || "0");
+      const horizontalPadding = paddingLeft + paddingRight;
+      setCtaWidth(labelWidth + horizontalPadding);
+    };
+
+    requestAnimationFrame(updateWidth);
+    window.addEventListener("resize", updateWidth);
+
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+    };
+  }, [ctaIndex]);
+
   const activeCta = ctaOptions[ctaIndex];
 
   const headlineLines = [
     (
       <>
-        <span className="font-normal">We</span>{" "}
-        <span className="font-normal">are</span>{" "}
-        <span className="font-bold">Africa’s</span>
+        <span className="font-normal">The</span>{" "}
+        <span className="italic font-normal">Architects</span>{" "}
+        <span className="font-normal">of</span>
       </>
     ),
     (
       <>
-        <span className="font-bold italic">Largest</span>{" "}
-        <span
-          key={activeWord}
-          className={`rotating-word italic font-normal inline-block transition-all duration-600 ease-out ${isTransitioning ? "opacity-0 translate-y-3 blur-[2px]" : "opacity-100 translate-y-0 blur-0 rotating-word-active"
-            }`}
-        >
-          {activeWord}
-        </span>
-      </>
-    ),
-    (
-      <>
-        <span className="italic font-normal">Design</span>{" "}
-        <span className="font-normal">Agency</span>
+        <span className="font-normal">the</span>{" "}
+        <span className="italic font-normal">Future.</span>
       </>
     )
   ];
@@ -180,15 +184,12 @@ export default function Hero() {
               ))}
             </h1>
 
-            <div className="flex flex-col gap-1.5 text-left font-sans text-[13px] text-black/70 sm:text-sm md:text-base max-w-md">
+            <div className="flex flex-col gap-4 text-left font-sans text-[13px] text-black/70 sm:text-sm md:text-base max-w-md">
               <p className="leading-relaxed">
-                Brands. Websites. Apps. Movies. Books. Fashion. Commercials. Music. Advertisements.
+                We don’t build brands; we engineer cultural shifts. Using <span className="font-bold text-black">design psychology</span> and <span className="font-bold text-black">aggressive positioning</span>, we turn high-stakes startups into the inevitable leaders of tomorrow.
               </p>
-              <p className="leading-relaxed">
-                We are Africa’s largest and most collaborative design agency shaping creativity for it all.
-              </p>
-              <p className="leading-snug text-black/80">
-                We are <span className="font-bold">Africa’s Cultural DNA</span> in art form.
+              <p className="leading-relaxed font-medium text-black/90">
+                If you aren't here to redefine your category, you aren't ready for the CROWN.
               </p>
             </div>
 
